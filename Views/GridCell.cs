@@ -78,12 +78,16 @@ namespace PixPuzzle
 
 		public void MarkComplete() 
 		{
+			IsComplete = true;
+
 			label.BackgroundColor = label.TextColor;
 			label.TextColor = UIColor.Yellow;
 		}
 
 		public void UnmarkComplete() 
 		{
+			IsComplete = false;
+
 			label.BackgroundColor = UIColor.White;
 			label.TextColor = color.UIColor;
 		}
@@ -95,6 +99,23 @@ namespace PixPuzzle
 			set {
 				label.Hidden = !value;
 			}
+		}
+
+		#region Events
+
+		public override void TouchesMoved (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		{
+			Console.WriteLine("X:"+X+" Y:"+Y);
+			base.TouchesMoved (touches, evt);
+		}
+
+		#endregion
+
+		#region Properties
+
+		public bool IsComplete
+		{
+			get;set;
 		}
 
 		public int X {
@@ -123,6 +144,8 @@ namespace PixPuzzle
 			get;
 			set;
 		}
+
+		#endregion
 	}
 }
 

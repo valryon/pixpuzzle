@@ -40,10 +40,21 @@ namespace PixPuzzle
 
 			grid = new GameGrid((int)image.Size.Width,(int)image.Size.Height);
 
+			// Setup scrollview
 			UIScrollView scrollView = new UIScrollView(new RectangleF(0,0,UIScreen.MainScreen.Bounds.Height,UIScreen.MainScreen.Bounds.Width));
 			scrollView.ScrollEnabled = true;
 			scrollView.BackgroundColor = UIColor.Gray;
 			scrollView.ContentSize = new SizeF(grid.Frame.Width,grid.Frame.Height);
+
+			// Scrolling with two fingers
+			foreach(UIGestureRecognizer gestureRecognizer in scrollView.GestureRecognizers) {     
+				if (gestureRecognizer is UIPanGestureRecognizer) {
+					UIPanGestureRecognizer panGR = (UIPanGestureRecognizer) gestureRecognizer;
+					panGR.MinimumNumberOfTouches = 2;               
+					panGR.MaximumNumberOfTouches = 2;
+				}
+
+			}
 
 			scrollView.AddSubview(grid);
 			View.AddSubview (scrollView);
