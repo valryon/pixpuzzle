@@ -128,10 +128,32 @@ namespace PixPuzzle
 					borders +=1;
 				}
 
+				bool stopFloodFill = false;
+
+				// If we got stuck in a corner
 				if(borders == 4) 
 				{
+					stopFloodFill = true;
+				}
+
+				if(count >= 9) 
+				{
+					stopFloodFill = true;
+				}
+
+				// Stop flood fill
+				if(stopFloodFill) {
+					cellToExplore.Clear();
+					
+					// Mark as last
 					lastCell = currentCell;
 				}
+			}
+
+			// Complete "1" series
+			if(firstCell == lastCell) 
+			{
+				firstCell.MarkComplete();
 			}
 
 			firstCell.SetCount(count);

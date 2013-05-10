@@ -33,6 +33,13 @@ namespace PixPuzzle
 		{
 			return base.GetHashCode ();
 		}
+
+		public UIColor UIColor
+		{
+			get {
+				return new UIColor(R,G,B,A);
+			}
+		}
 	}
 
 	public class GridCell : UIView
@@ -59,7 +66,7 @@ namespace PixPuzzle
 
 			AddSubview (label);
 
-			IsTextDisplayed  = false;
+//			IsTextDisplayed  = false;
 			Color = new CellColor();
 		}
 
@@ -67,6 +74,18 @@ namespace PixPuzzle
 		{
 			label.Text = val.ToString ();
 			//label.BackgroundColor = UIColor.LightGray;
+		}
+
+		public void MarkComplete() 
+		{
+			label.BackgroundColor = label.TextColor;
+			label.TextColor = UIColor.Yellow;
+		}
+
+		public void UnmarkComplete() 
+		{
+			label.BackgroundColor = UIColor.White;
+			label.TextColor = color.UIColor;
 		}
 
 		public bool IsTextDisplayed {
@@ -95,7 +114,7 @@ namespace PixPuzzle
 			set {
 				this.color = value;
 				
-				UIColor uiColor = new UIColor (color.R, color.G, color.B, color.A);
+				UIColor uiColor = color.UIColor;
 				label.TextColor = uiColor;
 			}
 		}
