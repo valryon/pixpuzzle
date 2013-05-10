@@ -115,5 +115,6 @@
   <ItemGroup>
     <BundleResource Include="Resources\mario.png" />
     <BundleResource Include="Resources\kirby.jpg" />
+    <BundleResource Include="Resources\chip.png" />
   </ItemGroup>
 </Project>

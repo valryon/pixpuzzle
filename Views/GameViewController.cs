@@ -35,11 +35,12 @@ namespace PixPuzzle
 			base.ViewDidLoad ();
 			
 			// Load the image
-//			UIImage image = UIImage.FromFile ("mario.png");
-			UIImage image = UIImage.FromFile ("kirby.jpg");
+			UIImage image = UIImage.FromFile ("chip.png");
 			Bitmap bitmap = new Bitmap(image);
 
 			grid = new GameGrid((int)image.Size.Width,(int)image.Size.Height);
+
+			View.Frame = grid.Frame;
 
 			UIScrollView scrollView = new UIScrollView(View.Frame);
 			scrollView.ScrollEnabled = true;
@@ -53,11 +54,20 @@ namespace PixPuzzle
 
 					// Get the pixel color
 					Color c = bitmap.GetPixel(x,y);
-					grid.SetPixelData(x,y,new UIColor(c.R/255f, c.G/255f, c.B/255f, c.A/255f));
+
+					CellColor cellColor = new CellColor() {
+						A = c.A/255f,
+						R = c.R/255f, 
+						G = c.G/255f, 
+						B = c.B/255f
+					};
+
+					grid.SetPixelData(x,y, cellColor);
 				}	
 			}
 
-
+			// Launch the setup process
+			grid.SetupGrid();
 		}
 	}
 }
