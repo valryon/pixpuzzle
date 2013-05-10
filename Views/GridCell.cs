@@ -1,5 +1,6 @@
 using System;
 using MonoTouch.UIKit;
+using System.Drawing;
 
 namespace PixPuzzle
 {
@@ -12,10 +13,13 @@ namespace PixPuzzle
 			: base(frame)
 		{
 			// Create label
-			label = new UILabel(frame);
+			label = new UILabel(new RectangleF(0,0,frame.Width,frame.Height));
 			label.Hidden = false;
 			label.TextColor = UIColor.Black;
 			label.Text = "9";
+			label.TextAlignment = UITextAlignment.Center;
+			label.Layer.BorderColor = UIColor.Black.CGColor;
+			label.Layer.BorderWidth = 1;
 
 			AddSubview(label);
 
