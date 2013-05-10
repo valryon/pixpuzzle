@@ -99,9 +99,7 @@ namespace PixPuzzle
 						count++;
 						markCell(currentCell, firstCell);
 
-						// If we can, try to move again
-
-						// If we're stuck, we have found the last serie cell
+						// We may have found the last serie cell (if we're stuck)
 						lastCell = currentCell; 
 					}
 					else {
@@ -113,8 +111,8 @@ namespace PixPuzzle
 				}
 			}
 
-			firstCell.SetValue(count+"");
-			lastCell.SetValue(count+"");
+			firstCell.SetValue("/"+count);
+			lastCell.SetValue(count+"/");
 
 			return lastCell;
 		}
