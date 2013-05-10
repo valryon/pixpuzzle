@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixPuzzle", "PixPuzzle.csproj", "{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+		Release|iPhone = Release|iPhone
+		Ad-Hoc|iPhone = Ad-Hoc|iPhone
+		AppStore|iPhone = AppStore|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Debug|iPhone.Build.0 = Debug|iPhone
+		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Release|iPhone.ActiveCfg = Release|iPhone
+		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Release|iPhone.Build.0 = Release|iPhone
+		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = PixPuzzle.csproj
+	EndGlobalSection
+EndGlobal
