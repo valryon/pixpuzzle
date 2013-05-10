@@ -1,6 +1,8 @@
 using System;
 using MonoTouch.UIKit;
 using System.Drawing;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace PixPuzzle
 {
@@ -24,6 +26,7 @@ namespace PixPuzzle
 				for (int y=0; y<imageHeight; y++) {
 
 					cells [x] [y] = new GridCell (
+						x, y,
 						new RectangleF (x * CellSize, y * CellSize, CellSize, CellSize)
 					);
 
@@ -37,7 +40,7 @@ namespace PixPuzzle
 		public void SetPixelData (int x, int y, CellColor color)
 		{
 			// Tell the cell we now have data
-			cells [x] [y].SetColor (color);
+			cells [x] [y].Color = color;
 		}
 
 		/// <summary>
@@ -57,7 +60,10 @@ namespace PixPuzzle
 						GridCell firstCell = cell;
 
 						// Find its unmarked neighbors and the last cell of the serie
-						createSerie (x, y,firstCell);
+						GridCell lastCell = createSerie (firstCell);
+
+						firstCell.IsTextDisplayed = true;
+						lastCell.IsTextDisplayed = true;
 					}
 				}
 			}
@@ -70,106 +76,80 @@ namespace PixPuzzle
 		/// <param name="x">The x coordinate.</param>
 		/// <param name="y">The y coordinate.</param>
 		/// <param name="firstCell">First cell.</param>
-		private GridCell createSerie(int x,int y, GridCell firstCell) {
-
-			firstCell.IsMarked = true;
+		private GridCell createSerie (GridCell firstCell)
+		{
 			GridCell lastCell = firstCell;
 
 			// Start from the first cell
-			int count = 1;
-			int currentX = x;
-			int currentY = y;
-			bool isStuck = false;
+			int count = 0;
+
+			Stack<GridCell> cellToExplore = new Stack<GridCell> ();
+			cellToExplore.Push (firstCell);
 
 			// Try to move in another direction
-			while(isStuck == false) 
-			{
-				// - Right
-				currentX += 1;
+			// Flood fill algorithm
+			while (cellToExplore.Count > 0) {
 
-				// Apply direction
-				if ((currentX >= 0 && currentX < width) && (currentY >= 0 || currentY < height))
-				{
-					// Get the cell
-					GridCell currentCell = cells [currentX] [currentY];
+				// Get the first cell to explore
+				GridCell currentCell = cellToExplore.Pop ();
+				count++;
 
-					// Already marked?
-					if(currentCell.IsMarked == false && currentCell.Color.Equals(firstCell.Color)) {
-						// The cell is part of the serie
-						count++;
-						markCell(currentCell, firstCell);
+				// Mark this cell
+				currentCell.IsMarked = true;
 
-						// We may have found the last serie cell (if we're stuck)
-						lastCell = currentCell; 
-					}
-					else {
-						isStuck = true;
-					}
+				// Get the neighbors
+				int borders = 0;
+				GridCell leftCell = getCell (currentCell.X - 1, currentCell.Y);
+				if (leftCell != null && leftCell.IsMarked == false && leftCell.Color.Equals (firstCell.Color)) {
+					cellToExplore.Push (leftCell);
 				}
 				else {
-					isStuck = true;
+					borders +=1;
+				}
+				GridCell rightCell = getCell (currentCell.X + 1, currentCell.Y);
+				if (rightCell != null && rightCell.IsMarked == false && rightCell.Color.Equals (firstCell.Color)) {
+					cellToExplore.Push (rightCell);
+				}
+				else {
+					borders +=1;
+				}
+				GridCell upCell = getCell (currentCell.X, currentCell.Y - 1);
+				if (upCell != null && upCell.IsMarked == false && upCell.Color.Equals (firstCell.Color)) {
+					cellToExplore.Push (upCell);
+				}
+				else {
+					borders +=1;
+				}
+				GridCell downCell = getCell (currentCell.X, currentCell.Y + 1);
+				if (downCell != null && downCell.IsMarked == false && downCell.Color.Equals (firstCell.Color)) {
+					cellToExplore.Push (downCell);
+				}
+				else {
+					borders +=1;
+				}
+
+				if(borders == 4) 
+				{
+					lastCell = currentCell;
 				}
 			}
 
-			firstCell.SetValue("/"+count);
-			lastCell.SetValue(count+"/");
+			firstCell.SetCount(count);
+			lastCell.SetCount(count);
 
 			return lastCell;
 		}
 
-		private void markCell(GridCell cell, GridCell firstCell) {
-			cell.SetColor(firstCell.Color);
-			cell.IsMarked = true;
-		}
-
-		private void findAllNeighbors (int x, int y,GridCell firstCell, int count = 1)
+		private GridCell getCell (int x, int y)
 		{
-			bool left = runSerie (x - 1, y, firstCell, count);
-
-			if (left) {
-				findAllNeighbors (x - 1, y, firstCell, count + 1);
+			if ((x >= 0 && x < width) && (y >= 0 && y < height)) {
+				// Get the cell
+				return cells [x] [y];
 			}
 
-			bool right = runSerie (x + 1, y, firstCell, count);
-				
-			if (right) {
-				findAllNeighbors (x + 1, y, firstCell, count + 1);
-			}
-
-			bool up = runSerie (x, y - 1, firstCell, count);
-				
-			if (up) {
-				findAllNeighbors (x, y - 1, firstCell, count + 1);
-			}
-
-			bool down = runSerie (x, y + 1, firstCell, count);
-				
-			if (down) {
-				findAllNeighbors (x, y + 1, firstCell, count + 1);
-			}
+			return null;
 		}
 
-		private bool runSerie (int x, int y, GridCell firstCell, int count)
-		{
-
-			if (x < 0 || x >= width)
-				return false;
-			if (y < 0 || y >= height)
-				return false;
-
-			GridCell currentCell = cells [x] [y];
-
-			if(currentCell.IsMarked) {
-				return false;
-			}
-
-			currentCell.SetValue (count.ToString ());
-			currentCell.IsTextDisplayed (true);
-
-			currentCell.IsMarked = true;
-
-			return true;
-		}
 	}
 }
 
