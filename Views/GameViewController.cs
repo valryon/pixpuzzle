@@ -40,11 +40,11 @@ namespace PixPuzzle
 
 			grid = new GameGrid((int)image.Size.Width,(int)image.Size.Height);
 
-			View.Frame = grid.Frame;
-
-			UIScrollView scrollView = new UIScrollView(View.Frame);
+			UIScrollView scrollView = new UIScrollView(new RectangleF(0,0,UIScreen.MainScreen.Bounds.Height,UIScreen.MainScreen.Bounds.Width));
 			scrollView.ScrollEnabled = true;
 			scrollView.BackgroundColor = UIColor.Gray;
+			scrollView.ContentSize = new SizeF(grid.Frame.Width,grid.Frame.Height);
+
 			scrollView.AddSubview(grid);
 			View.AddSubview (scrollView);
 
