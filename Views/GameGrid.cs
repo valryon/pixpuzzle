@@ -11,7 +11,6 @@ namespace PixPuzzle
 		public const int CellSize = 32;
 		private GridCell[][] cells;
 		private int width, height;
-
 		// Path data
 		private GridCell firstSelectedCell, lastSelectedCell;
 
@@ -39,7 +38,6 @@ namespace PixPuzzle
 				}
 			}
 		}
-
 		#region Grid creation
 
 		public void SetPixelData (int x, int y, CellColor color)
@@ -47,7 +45,6 @@ namespace PixPuzzle
 			// Tell the cell we now have data
 			cells [x] [y].DefineBaseColor (color);
 		}
-
 		/// <summary>
 		/// Prepare the grid
 		/// </summary>
@@ -154,7 +151,6 @@ namespace PixPuzzle
 
 			return lastCell;
 		}
-
 		#endregion
 
 		#region Grid tools
@@ -177,7 +173,6 @@ namespace PixPuzzle
 
 			return getCell (x, y);
 		}
-
 		#endregion
 
 		#region Events
@@ -194,8 +189,7 @@ namespace PixPuzzle
 
 				bool pathStarted = startPathCreation (cell);
 
-				if(pathStarted) 
-				{
+				if (pathStarted) {
 					this.BringSubviewToFront (cell);
 				}
 			}
@@ -223,21 +217,23 @@ namespace PixPuzzle
 
 		public override void TouchesEnded (MonoTouch.Foundation.NSSet touches, UIEvent evt)
 		{
-			endPathCreation ();
+			endPathCreation (false);
 
 			base.TouchesEnded (touches, evt);
 		}
-
 		#endregion
 
 		#region Path creation behavior
 
-		private bool startPathCreation(GridCell cell) {
+		private bool startPathCreation (GridCell cell)
+		{
+
 			if (cell != null) {
+
 				// Check if the cell has a valid path object.
 				// If not or already closed path, do nothing
 				// (you cannot take a cell without path and start messing around)
-				if (cell.Path != null && cell.Path.IsClosed == false && cell.Path.IsLastCell(cell)) {
+				if (cell.Path != null && cell.Path.IsClosed == false && cell.Path.IsLastCell (cell)) {
 					firstSelectedCell = cell;
 
 					firstSelectedCell.SelectCell ();
@@ -251,35 +247,67 @@ namespace PixPuzzle
 			return false;
 		}
 
-		private void createPath(GridCell cell) {
-			// We're in the grid and the cell is available for path
-			if (cell != null && cell.Path == null) {
-				// Add the cell to the path
-				firstSelectedCell.Path.Cells.Add (cell);
-				cell.DefinePath (firstSelectedCell.Path);
+		private void createPath (GridCell cell)
+		{
+			// We're in the grid and we moved (not the same cell)
+			if (cell != null && cell != lastSelectedCell) {
 
 				lastSelectedCell = cell;
 
+				if (cell.Path == null) {
+					// The cell is available for path
+
+					// Add the cell to the path
+					firstSelectedCell.Path.Cells.Add (cell);
+					cell.DefinePath (firstSelectedCell.Path);
+				}
+				else if (cell.IsPathStartOrEnd) {
+					// Already a path but it's an end or a start 
+
+					// Many things to check
+					// - Not already in the path
+					// - Same colors
+					if (firstSelectedCell.Path.Cells.Contains (cell) == false
+						&& firstSelectedCell.Color.Equals (cell.Color)) {
+
+						// Fusion!
+						firstSelectedCell.Path.Fusion (cell.Path);
+						cell.DefinePath (firstSelectedCell.Path);
+
+						// End the creation, the path is complete
+						endPathCreation (true);
+					}
+				} else if(firstSelectedCell.Path.Cells.Contains (cell)){
+
+					// We're getting back and that's not allowed
+					endPathCreation (false);
+				}
+
+				Console.WriteLine ("Path complete: "+cell.Path.IsClosed);
 				Console.WriteLine ("Current path length: "+cell.Path.Length);
 			}
-			// Else we cancel the current path creation 
-			else if(cell != firstSelectedCell && cell != lastSelectedCell){
-				endPathCreation();
+			else if (cell != firstSelectedCell && cell != lastSelectedCell) {
+				// The cell is invalid (probably out of the grid)
+				// Stop the path
+				endPathCreation (false);
 			}
 		}
 
-		private void endPathCreation() {
-			// Touch ended, check the path
+		private void endPathCreation (bool success)
+		{
+			// Check the created path
 			if (firstSelectedCell != null && lastSelectedCell != null) {
+
+				Console.WriteLine ("End path creation success: "+success);
+
 				// Check if grid is complete
 
 				// Unselect cell
-				lastSelectedCell.UnselectCell ();
+				lastSelectedCell.UnselectCell (success);
 				lastSelectedCell = null;
 				firstSelectedCell = null;
 			}
 		}
-
 		#endregion
 	}
 }
