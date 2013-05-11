@@ -30,18 +30,41 @@ namespace PixPuzzle
 			ExpectedLength = expectedLength;
 		}
 
-		public void AddCell(GridCell cell) {
+		public void AddCell (GridCell cell)
+		{
 			Cells.Add (cell);
 
+			updateCellsBut (cell);
+		}
+
+		public void RemoveCellAfter (GridCell cell)
+		{
+			int index = Cells.IndexOf (cell);
+
+			List<GridCell> cellsToRemove = new List<GridCell> ();
+
+			for (int i=index+1; i < Cells.Count; i++) {
+				cellsToRemove.Add (Cells[i]);
+			}
+
+			foreach(var cellToRemove in cellsToRemove) {
+				Cells.Remove(cellToRemove);
+				cellToRemove.DefinePath (null);
+			}
+
+			updateCellsBut (null);
+		}
+
+		private void updateCellsBut (GridCell cell)
+		{
 			foreach (var c in Cells) {
 
 				// Update existing cells
-				if(c != cell) {
+				if (c != cell) {
 					c.UpdateViewFromPath ();
 				}
 			}
 		}
-
 		/// <summary>
 		/// Fusion the specified other path.
 		/// </summary>
@@ -71,6 +94,20 @@ namespace PixPuzzle
 				return false;
 
 			return Cells [Cells.Count -1] == cell;
+		}
+
+		/// <summary>
+		/// Path first cell
+		/// </summary>
+		/// <value>The first cell.</value>
+		public GridCell FirstCell
+		{
+			get {
+				if (Cells.Count == 0)
+					return null;
+
+				return Cells [0];
+			}
 		}
 
 		public bool IsValid {

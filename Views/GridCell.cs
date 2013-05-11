@@ -57,9 +57,6 @@ namespace PixPuzzle
 			// Create label
 			label = new UILabel (new RectangleF (0, 0, frame.Width, frame.Height));
 			label.Hidden = false;
-			label.BackgroundColor = UIColor.FromRGB (230, 230, 230);
-			label.TextColor = UIColor.Black;
-			label.Text = "";
 			label.TextAlignment = UITextAlignment.Center;
 
 			// The border
@@ -69,6 +66,7 @@ namespace PixPuzzle
 			AddSubview (label);
 
 			// Default values
+			DefinePath (null);
 			IsPathStartOrEnd = false;
 		}
 		/// <summary>
@@ -94,7 +92,6 @@ namespace PixPuzzle
 			// The cell is the beginning or the end of a path
 			DefinePath (new Path(this, pathLength));
 		}
-
 		#region Update cell
 
 		/// <summary>
@@ -118,7 +115,7 @@ namespace PixPuzzle
 				this.Transform = CGAffineTransform.MakeScale (1.25f, 1.25f);
 
 				UIView.Animate (0.5f,
-				               () => {
+				                () => {
 					this.Transform = CGAffineTransform.MakeScale (1f, 1f);					
 				});
 			}
@@ -134,19 +131,25 @@ namespace PixPuzzle
 			// Update the cell view
 			UpdateViewFromPath ();
 		}
-
 		/// <summary>
 		/// Update the cell view because the path has changed
 		/// </summary>
-		public void UpdateViewFromPath() {
-			if (IsPathStartOrEnd == false) {
-				this.label.TextColor = UIColor.LightGray;
-				this.label.Text = Path.Length.ToString();
-				this.label.BackgroundColor = Path.Color.UIColor;
-			} 
-			// TODO Style for end and starts
+		public void UpdateViewFromPath ()
+		{
+			if (Path == null) {
+				// THe empty style
+				label.TextColor = UIColor.Black;
+				label.BackgroundColor = UIColor.FromRGB (230, 230, 230);
+				label.Text = "";
+			} else {
+				if (IsPathStartOrEnd == false) {
+					this.label.TextColor = UIColor.LightGray;
+					this.label.Text = Path.Length.ToString ();
+					this.label.BackgroundColor = Path.Color.UIColor;
+				} 
+				// TODO Style for end and starts
+			}
 		}
-
 		/// <summary>
 		/// Mark the cell as being in a complete path
 		/// </summary>
@@ -154,7 +157,7 @@ namespace PixPuzzle
 		{
 			label.BackgroundColor = Path.Color.UIColor;
 			label.TextColor = UIColor.Yellow;
-			this.label.Text = Path.Length.ToString();
+			this.label.Text = Path.Length.ToString ();
 		}
 		/// <summary>
 		/// The cell isn't in a valid path anymore
@@ -164,7 +167,6 @@ namespace PixPuzzle
 			label.BackgroundColor = UIColor.White;
 			label.TextColor = color.UIColor;
 		}
-
 		#endregion
 
 		#region Properties

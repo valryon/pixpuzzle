@@ -12,7 +12,7 @@ namespace PixPuzzle
 		private GridCell[][] cells;
 		private int width, height;
 		// Path data
-		private GridCell firstSelectedCell, lastSelectedCell;
+		private GridCell firstPathCell, lastSelectedCell;
 
 		public GameGrid (int imageWidth, int imageHeight)
 			: base(new RectangleF(0,0, imageWidth * CellSize, imageHeight * CellSize))
@@ -202,7 +202,7 @@ namespace PixPuzzle
 			if (touches.Count == 1) {
 
 				// Valid movement
-				if (firstSelectedCell != null) {
+				if (firstPathCell != null) {
 					UITouch touch = (UITouch)touches.AnyObject;
 
 					PointF fingerLocation = touch.LocationInView (this);
@@ -238,11 +238,10 @@ namespace PixPuzzle
 					bool isPathLastCell = cell.Path.IsLastCell (cell);
 
 					if (isPathClosed == false && isPathLastCell) {
-						firstSelectedCell = cell;
+						firstPathCell = cell.Path.FirstCell;
 
-						firstSelectedCell.SelectCell ();
-
-						lastSelectedCell = firstSelectedCell;
+						cell.SelectCell ();
+						lastSelectedCell = cell;
 
 						Console.WriteLine ("Starting a new path.");
 
@@ -260,91 +259,97 @@ namespace PixPuzzle
 
 		private void createPath (GridCell cell)
 		{
-			// THe path must be valid
-			if (firstSelectedCell.Path.Length >= firstSelectedCell.Path.ExpectedLength) {
-
+			// The path length must be respected
+			bool lengthOk = (firstPathCell.Path.Length < firstPathCell.Path.ExpectedLength);
+			
+			if (lengthOk == false) {
 				Console.WriteLine ("The path is too long!");
+			}
 
-				endPathCreation (false);
+			// We're in the grid and we moved (not the same cell)
+			if (cell != null && cell != lastSelectedCell) {
 
-			} else {
-				// We're in the grid and we moved (not the same cell)
-				if (cell != null && cell != lastSelectedCell) {
+				cell.SelectCell ();
 
-					lastSelectedCell = cell;
+				lastSelectedCell = cell;
 
-					if (cell.Path == null) {
-						// The cell is available for path
+				if (cell.Path == null) {
+					// The cell is available for path
 
-						// Add the cell to the path
-						firstSelectedCell.Path.AddCell (cell);
-						cell.DefinePath (firstSelectedCell.Path);
+					// Add the cell to the path
+					if (lengthOk) {
+						firstPathCell.Path.AddCell (cell);
+						cell.DefinePath (firstPathCell.Path);
 
 						Console.WriteLine ("Adding cell to the path.");
 						Console.WriteLine ("Current path length: "+cell.Path.Length);
-
-					} else {
-
-						// Already a path in the target cell
-
-						bool sameColor = cell.Path.Color.Equals (firstSelectedCell.Path.Color);
-						bool sameLength = (cell.Path.ExpectedLength == firstSelectedCell.Path.ExpectedLength);
-
-						// -- It's a completely different path, do not override
-						if (sameColor == false
-							|| sameLength == false) {
-
-							Console.WriteLine ("Cannot mix two differents path.");
-
-							endPathCreation (false);
-						} else if (cell.IsPathStartOrEnd) {
-							// We're at an end or a start
-
-							// Does it cloes the path?
-							if (firstSelectedCell.Path.Length + 1 == firstSelectedCell.Path.ExpectedLength) {
-								// Fusion!
-								Console.WriteLine ("Fusion!");
-								firstSelectedCell.Path.Fusion (cell.Path);
-								cell.DefinePath (firstSelectedCell.Path);
-
-								// End the creation, the path is complete
-								Console.WriteLine ("Path complete!");
-								endPathCreation (true);
-							} else {
-								Console.WriteLine ("Path is too short!");
-								endPathCreation (false);
-							}
-						} else if (firstSelectedCell.Path.Cells.Contains (cell)) {
-
-							Console.WriteLine ("Cannot go back");
-
-							// We're getting back and that's not allowed
-							endPathCreation (false);
-						} 
-
 					}
 
-				} else if (cell != firstSelectedCell && cell != lastSelectedCell) {
+				} else {
 
-					Console.WriteLine ("Invalid cell for path");
+					// Already a path in the target cell
 
-					// The cell is invalid (probably out of the grid)
-					// Stop the path
-					endPathCreation (false);
+					bool sameColor = cell.Path.Color.Equals (firstPathCell.Path.Color);
+					bool sameLength = (cell.Path.ExpectedLength == firstPathCell.Path.ExpectedLength);
+
+					// -- It's a completely different path, do not override
+					if (sameColor == false
+						|| sameLength == false) {
+
+						Console.WriteLine ("Cannot mix two differents path.");
+
+						endPathCreation (false);
+					} else if (cell.IsPathStartOrEnd) {
+						// We're at an end or a start
+
+						// Does it cloes the path?
+						if (firstPathCell.Path.Length + 1 == firstPathCell.Path.ExpectedLength) {
+
+							// Fusion!
+							Console.WriteLine ("Fusion!");
+							firstPathCell.Path.Fusion (cell.Path);
+							cell.DefinePath (firstPathCell.Path);
+
+							// End the creation, the path is complete
+							Console.WriteLine ("Path complete!");
+							endPathCreation (true);
+						} else {
+							Console.WriteLine ("Path is not the right lengeh!");
+							endPathCreation (false);
+						}
+					} else if (firstPathCell.Path.Cells.Contains (cell)) {
+
+						// We're getting back 
+						// Remove all the cells past the one we jut reached
+						if (cell != firstPathCell) {
+							Console.WriteLine ("Removing cell");
+							firstPathCell.Path.RemoveCellAfter (cell);
+						}
+					} 
+
 				}
+
+			} else if (cell != firstPathCell && cell != lastSelectedCell) {
+
+				Console.WriteLine ("Invalid cell for path");
+
+				// The cell is invalid (probably out of the grid)
+				// Stop the path
+				endPathCreation (false);
 			}
+
 		}
 
 		private void endPathCreation (bool success)
 		{
 			// Check the created path
-			if (firstSelectedCell != null && lastSelectedCell != null) {
+			if (firstPathCell != null && lastSelectedCell != null) {
 
 				Console.WriteLine ("End path creation (success: "+success+")");
 
 				// Path complete?
-				if (firstSelectedCell.Path.IsValid) {
-					foreach (GridCell cell in firstSelectedCell.Path.Cells) {
+				if (firstPathCell.Path.IsValid) {
+					foreach (GridCell cell in firstPathCell.Path.Cells) {
 						cell.MarkComplete ();
 					}
 				}
@@ -354,7 +359,7 @@ namespace PixPuzzle
 				// Unselect cell
 				lastSelectedCell.UnselectCell (success);
 				lastSelectedCell = null;
-				firstSelectedCell = null;
+				firstPathCell = null;
 			}
 		}
 		#endregion
