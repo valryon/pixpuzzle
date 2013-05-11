@@ -56,8 +56,9 @@ namespace PixPuzzle
 			// Create label
 			label = new UILabel (new RectangleF (0, 0, frame.Width, frame.Height));
 			label.Hidden = false;
+			label.BackgroundColor = UIColor.FromRGB(230,230,230);
 			label.TextColor = UIColor.Black;
-			label.Text = "*";
+			label.Text = "";
 			label.TextAlignment = UITextAlignment.Center;
 
 			// The border

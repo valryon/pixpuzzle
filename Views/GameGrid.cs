@@ -78,6 +78,7 @@ namespace PixPuzzle
 		/// <param name="firstCell">First cell.</param>
 		private GridCell createSerie (GridCell firstCell)
 		{
+			Random random = new Random (182); // Predictable seed
 			GridCell lastCell = firstCell;
 
 			// Start from the first cell
@@ -98,36 +99,31 @@ namespace PixPuzzle
 				currentCell.IsMarked = true;
 
 				// Get the neighbors
+				// -- We use a 4-directional algorithms
+				List<Point> availableDirections = new List<Point> ()
+				{
+					new Point(-1,0),
+					new Point(1,0),
+					new Point(0,-1),
+					new Point(0,1)
+				};
+				// -- Use a random direction for better results
 				int borders = 0;
-				GridCell leftCell = getCell (currentCell.X - 1, currentCell.Y);
-				if (leftCell != null && leftCell.IsMarked == false && leftCell.Color.Equals (firstCell.Color)) {
-					cellToExplore.Push (leftCell);
-				}
-				else {
-					borders +=1;
-				}
-				GridCell rightCell = getCell (currentCell.X + 1, currentCell.Y);
-				if (rightCell != null && rightCell.IsMarked == false && rightCell.Color.Equals (firstCell.Color)) {
-					cellToExplore.Push (rightCell);
-				}
-				else {
-					borders +=1;
-				}
-				GridCell upCell = getCell (currentCell.X, currentCell.Y - 1);
-				if (upCell != null && upCell.IsMarked == false && upCell.Color.Equals (firstCell.Color)) {
-					cellToExplore.Push (upCell);
-				}
-				else {
-					borders +=1;
-				}
-				GridCell downCell = getCell (currentCell.X, currentCell.Y + 1);
-				if (downCell != null && downCell.IsMarked == false && downCell.Color.Equals (firstCell.Color)) {
-					cellToExplore.Push (downCell);
-				}
-				else {
-					borders +=1;
-				}
+				while (availableDirections.Count > 0) {
 
+					int index = random.Next (availableDirections.Count);
+
+					Point p = availableDirections [index];
+					availableDirections.Remove (p);
+
+					GridCell nextCell = getCell (currentCell.X + p.X, currentCell.Y + p.Y);
+					if (nextCell != null && nextCell.IsMarked == false && nextCell.Color.Equals (firstCell.Color)) {
+						cellToExplore.Push (nextCell);
+					}
+					else {
+						borders +=1;
+					}
+				}
 				bool stopFloodFill = false;
 
 				// If we got stuck in a corner
