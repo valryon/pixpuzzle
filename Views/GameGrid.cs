@@ -237,6 +237,10 @@ namespace PixPuzzle
 					bool isPathClosed = cell.Path.IsClosed;
 					bool isPathLastCell = cell.Path.IsLastCell (cell);
 
+					// Debug
+					Console.WriteLine ("**Cell X:"+cell.X + " cell:"+cell.Y);
+					Console.WriteLine ("**Path state - closed:"+isPathClosed + " isPathLastCell:"+isPathLastCell);
+
 					if (isPathClosed == false && isPathLastCell) {
 						firstPathCell = cell.Path.FirstCell;
 
@@ -246,9 +250,7 @@ namespace PixPuzzle
 						Console.WriteLine ("Starting a new path.");
 
 						return true;
-					} else {
-						Console.WriteLine ("Path state - closed:"+isPathClosed + " lastCell:"+isPathLastCell);
-					}
+					} 
 				}
 			}
 
@@ -270,8 +272,6 @@ namespace PixPuzzle
 			if (cell != null && cell != lastSelectedCell) {
 
 				cell.SelectCell ();
-
-				lastSelectedCell = cell;
 
 				if (cell.Path == null) {
 					// The cell is available for path
@@ -299,8 +299,7 @@ namespace PixPuzzle
 						Console.WriteLine ("Cannot mix two differents path.");
 
 						endPathCreation (false);
-					} else if (cell.IsPathStartOrEnd) {
-						// We're at an end or a start
+					} else if (cell.IsPathStartOrEnd && firstPathCell != cell) {
 
 						// Does it cloes the path?
 						if (firstPathCell.Path.Length + 1 == firstPathCell.Path.ExpectedLength) {
@@ -314,18 +313,25 @@ namespace PixPuzzle
 							Console.WriteLine ("Path complete!");
 							endPathCreation (true);
 						} else {
-							Console.WriteLine ("Path is not the right lengeh!");
+							Console.WriteLine ("Path has not the right lenght!");
 							endPathCreation (false);
 						}
-					} else if (firstPathCell.Path.Cells.Contains (cell)) {
-
+					} else if (firstPathCell.Path.Cells.Contains (cell) 
+						&& Math.Abs (firstPathCell.Path.IndexOf (lastSelectedCell) - firstPathCell.Path.IndexOf (cell)) == 1) {
 						// We're getting back 
 						// Remove all the cells past the one we jut reached
-						if (cell != firstPathCell) {
-							Console.WriteLine ("Removing cell");
-							firstPathCell.Path.RemoveCellAfter (cell);
-						}
-					} 
+						// The current cell will NOT be removed
+						Console.WriteLine ("Removing cell after "+ cell);
+						firstPathCell.Path.RemoveCellAfter (cell);
+					} else {
+						// I don't know what's we're doing.
+						// ABANDON ALL THE WORK
+
+						// You cannot loop so easily!
+						Console.WriteLine ("I'm doing shit.");
+
+						endPathCreation (false);
+					}
 
 				}
 
@@ -338,6 +344,7 @@ namespace PixPuzzle
 				endPathCreation (false);
 			}
 
+			lastSelectedCell = cell;
 		}
 
 		private void endPathCreation (bool success)

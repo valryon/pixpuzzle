@@ -65,6 +65,16 @@ namespace PixPuzzle
 				}
 			}
 		}
+
+		/// <summary>
+		/// Place in the chain
+		/// </summary>
+		/// <returns>The of.</returns>
+		/// <param name="cell">Cell.</param>
+		public int IndexOf(GridCell cell) {
+			return Cells.IndexOf (cell);
+		}
+
 		/// <summary>
 		/// Fusion the specified other path.
 		/// </summary>
