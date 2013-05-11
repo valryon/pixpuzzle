@@ -141,13 +141,13 @@ namespace PixPuzzle
 				}
 			}
 
+			firstCell.DefineCellAsPathStartOrEnd (count);
+			lastCell.DefineCellAsPathStartOrEnd (count);
+
 			// Complete "1" series
 			if (firstCell == lastCell) {
 				firstCell.MarkComplete ();
 			}
-
-			firstCell.DefineCellAsPathStartOrEnd (count);
-			lastCell.DefineCellAsPathStartOrEnd (count);
 
 			return lastCell;
 		}
@@ -229,13 +229,14 @@ namespace PixPuzzle
 		{
 			if (cell != null) {
 
-				// Check if the cell has a valid path object.
-				// If not or already closed path, do nothing
-				// (you cannot take a cell without path and start messing around)
-				bool isPathClosed = cell.Path.IsClosed;
-				bool isPathLastCell = cell.Path.IsLastCell (cell);
-
 				if (cell.Path != null) {
+
+					// Check if the cell has a valid path object.
+					// If not or already closed path, do nothing
+					// (you cannot take a cell without path and start messing around)
+					bool isPathClosed = cell.Path.IsClosed;
+					bool isPathLastCell = cell.Path.IsLastCell (cell);
+
 					if (isPathClosed == false && isPathLastCell) {
 						firstSelectedCell = cell;
 
@@ -259,64 +260,78 @@ namespace PixPuzzle
 
 		private void createPath (GridCell cell)
 		{
-			// We're in the grid and we moved (not the same cell)
-			if (cell != null && cell != lastSelectedCell) {
+			// THe path must be valid
+			if (firstSelectedCell.Path.Length >= firstSelectedCell.Path.ExpectedLength) {
 
-				lastSelectedCell = cell;
+				Console.WriteLine ("The path is too long!");
 
-				if (cell.Path == null) {
-					// The cell is available for path
+				endPathCreation (false);
 
-					// Add the cell to the path
-					firstSelectedCell.Path.Cells.Add (cell);
-					cell.DefinePath (firstSelectedCell.Path);
+			} else {
+				// We're in the grid and we moved (not the same cell)
+				if (cell != null && cell != lastSelectedCell) {
 
-					Console.WriteLine ("Adding cell to the path.");
-					Console.WriteLine ("Current path length: "+cell.Path.Length);
+					lastSelectedCell = cell;
 
-				} else {
+					if (cell.Path == null) {
+						// The cell is available for path
 
-					// Already a path in the target cell
-
-					bool sameColor = cell.Path.Color.Equals (firstSelectedCell.Path.Color);
-					bool sameLength = (cell.Path.ExpectedLength == firstSelectedCell.Path.ExpectedLength);
-
-					// -- It's a completely different path, do not override
-					if (sameColor == false
-					    || sameLength == false ) {
-
-						Console.WriteLine ("Cannot mix two differents path.");
-
-						endPathCreation (false);
-					} else if (cell.IsPathStartOrEnd) {
-						// We're at an end or a start
-
-						// Fusion!
-						Console.WriteLine ("Fusion!");
-						firstSelectedCell.Path.Fusion (cell.Path);
+						// Add the cell to the path
+						firstSelectedCell.Path.AddCell (cell);
 						cell.DefinePath (firstSelectedCell.Path);
 
-						// End the creation, the path is complete
-						endPathCreation (true);
+						Console.WriteLine ("Adding cell to the path.");
+						Console.WriteLine ("Current path length: "+cell.Path.Length);
 
-						Console.WriteLine ("Path complete!");
-					} else if (firstSelectedCell.Path.Cells.Contains (cell)) {
+					} else {
 
-						Console.WriteLine ("Cannot go back");
+						// Already a path in the target cell
 
-						// We're getting back and that's not allowed
-						endPathCreation (false);
-					} 
+						bool sameColor = cell.Path.Color.Equals (firstSelectedCell.Path.Color);
+						bool sameLength = (cell.Path.ExpectedLength == firstSelectedCell.Path.ExpectedLength);
 
+						// -- It's a completely different path, do not override
+						if (sameColor == false
+							|| sameLength == false) {
+
+							Console.WriteLine ("Cannot mix two differents path.");
+
+							endPathCreation (false);
+						} else if (cell.IsPathStartOrEnd) {
+							// We're at an end or a start
+
+							// Does it cloes the path?
+							if (firstSelectedCell.Path.Length + 1 == firstSelectedCell.Path.ExpectedLength) {
+								// Fusion!
+								Console.WriteLine ("Fusion!");
+								firstSelectedCell.Path.Fusion (cell.Path);
+								cell.DefinePath (firstSelectedCell.Path);
+
+								// End the creation, the path is complete
+								Console.WriteLine ("Path complete!");
+								endPathCreation (true);
+							} else {
+								Console.WriteLine ("Path is too short!");
+								endPathCreation (false);
+							}
+						} else if (firstSelectedCell.Path.Cells.Contains (cell)) {
+
+							Console.WriteLine ("Cannot go back");
+
+							// We're getting back and that's not allowed
+							endPathCreation (false);
+						} 
+
+					}
+
+				} else if (cell != firstSelectedCell && cell != lastSelectedCell) {
+
+					Console.WriteLine ("Invalid cell for path");
+
+					// The cell is invalid (probably out of the grid)
+					// Stop the path
+					endPathCreation (false);
 				}
-
-			} else if (cell != firstSelectedCell && cell != lastSelectedCell) {
-
-				Console.WriteLine ("Invalid cell for path");
-
-				// The cell is invalid (probably out of the grid)
-				// Stop the path
-				endPathCreation (false);
 			}
 		}
 
@@ -325,7 +340,14 @@ namespace PixPuzzle
 			// Check the created path
 			if (firstSelectedCell != null && lastSelectedCell != null) {
 
-				Console.WriteLine ("End path creation success: "+success);
+				Console.WriteLine ("End path creation (success: "+success+")");
+
+				// Path complete?
+				if (firstSelectedCell.Path.IsValid) {
+					foreach (GridCell cell in firstSelectedCell.Path.Cells) {
+						cell.MarkComplete ();
+					}
+				}
 
 				// Check if grid is complete
 

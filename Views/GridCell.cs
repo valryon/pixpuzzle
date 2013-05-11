@@ -94,23 +94,8 @@ namespace PixPuzzle
 			// The cell is the beginning or the end of a path
 			DefinePath (new Path(this, pathLength));
 		}
-		/// <summary>
-		/// Mark the cell as being in a complete path
-		/// </summary>
-		public void MarkComplete ()
-		{
-			label.BackgroundColor = color.UIColor;
-			label.TextColor = UIColor.Yellow;
-		}
-		/// <summary>
-		/// The cell isn't in a valid path anymore
-		/// </summary>
-		public void UnmarkComplete ()
-		{
-			label.BackgroundColor = UIColor.White;
-			label.TextColor = color.UIColor;
-		}
-		#region Events
+
+		#region Update cell
 
 		/// <summary>
 		/// Cell has been selected (touched)
@@ -147,11 +132,39 @@ namespace PixPuzzle
 			Path = p;
 
 			// Update the cell view
+			UpdateViewFromPath ();
+		}
+
+		/// <summary>
+		/// Update the cell view because the path has changed
+		/// </summary>
+		public void UpdateViewFromPath() {
 			if (IsPathStartOrEnd == false) {
+				this.label.TextColor = UIColor.LightGray;
+				this.label.Text = Path.Length.ToString();
 				this.label.BackgroundColor = Path.Color.UIColor;
 			} 
 			// TODO Style for end and starts
 		}
+
+		/// <summary>
+		/// Mark the cell as being in a complete path
+		/// </summary>
+		public void MarkComplete ()
+		{
+			label.BackgroundColor = Path.Color.UIColor;
+			label.TextColor = UIColor.Yellow;
+			this.label.Text = Path.Length.ToString();
+		}
+		/// <summary>
+		/// The cell isn't in a valid path anymore
+		/// </summary>
+		public void UnmarkComplete ()
+		{
+			label.BackgroundColor = UIColor.White;
+			label.TextColor = color.UIColor;
+		}
+
 		#endregion
 
 		#region Properties

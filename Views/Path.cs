@@ -29,6 +29,19 @@ namespace PixPuzzle
 
 			ExpectedLength = expectedLength;
 		}
+
+		public void AddCell(GridCell cell) {
+			Cells.Add (cell);
+
+			foreach (var c in Cells) {
+
+				// Update existing cells
+				if(c != cell) {
+					c.UpdateViewFromPath ();
+				}
+			}
+		}
+
 		/// <summary>
 		/// Fusion the specified other path.
 		/// </summary>
@@ -41,7 +54,7 @@ namespace PixPuzzle
 			// Then we kill it
 			foreach (GridCell cell in otherPath.Cells) {
 				if (Cells.Contains (cell) == false) {
-					Cells.Add (cell);
+					AddCell (cell);
 				}
 			}
 
@@ -62,7 +75,7 @@ namespace PixPuzzle
 
 		public bool IsValid {
 			get {
-				return false;
+				return IsClosed && (ExpectedLength == Length);
 			}
 		}
 		/// <summary>
