@@ -45,10 +45,8 @@ namespace PixPuzzle
 	public class GridCell : UIView
 	{
 		// Values if cell is a start or end
-		private int pathLength;
-		// Values if cell is path part
-		private CellColor pathColor;
-		private PointF pathDirection;
+		private int expectedPathLength;
+
 		// Common to all cells
 		private CellColor color;
 		private UILabel label;
@@ -74,7 +72,7 @@ namespace PixPuzzle
 			AddSubview (label);
 
 			// Default values
-			pathLength = -1;
+			expectedPathLength = -1;
 		}
 		/// <summary>
 		/// Sets the color for this cell from the pixel data of the image
@@ -87,13 +85,18 @@ namespace PixPuzzle
 			UIColor uiColor = Color.UIColor;
 			label.TextColor = uiColor;
 		}
+
 		/// <summary>
 		/// Sets the number to display. It also means that the cell is a path start or end.
 		/// </summary>
 		/// <param name="val">Value.</param>
 		public void DefineCellAsPathStartOrEnd (int pathLength)
 		{
-			label.Text = pathLength.ToString ();
+			expectedPathLength = pathLength;
+			label.Text = expectedPathLength.ToString ();
+
+			// The cell is the beginning or the end of a path
+			DefinePath (new Path(this));
 		}
 		/// <summary>
 		/// Mark the cell as being in a complete path
@@ -119,7 +122,7 @@ namespace PixPuzzle
 		/// </summary>
 		public void SelectCell ()
 		{
-			this.Transform = CGAffineTransform.MakeScale (1.25f, 1.25f);
+			this.Transform = CGAffineTransform.MakeScale (0.85f, 0.85f);
 
 			UIView.Animate (0.5f,
             () => {
@@ -131,17 +134,28 @@ namespace PixPuzzle
 		/// </summary>
 		public void UnselectCell ()
 		{
+			this.Transform = CGAffineTransform.MakeScale (1.25f, 1.25f);
 
+			UIView.Animate (0.5f,
+			                () => {
+				this.Transform = CGAffineTransform.MakeScale (1f, 1f);					
+			});
 		}
+
 		/// <summary>
-		/// Tell the cell that its part of a path
+		/// Define the path where the cell is included
 		/// </summary>
-		/// <param name="direction">Direction.</param>
-		/// <param name="firstCell">First cell.</param>
-		public void CreatePath (PointF direction, GridCell firstCell)
-		{
+		/// <param name="p">P.</param>
+		public void DefinePath(Path p) {
+			Path = p;
 
+			// Update the cell view
+			if(IsPathStartOrEnd == false) 
+			{
+				this.label.BackgroundColor = Path.Color.UIColor;
+			}
 		}
+
 		#endregion
 
 		#region Properties
@@ -152,21 +166,20 @@ namespace PixPuzzle
 		/// <value><c>true</c> if this instance is path start or end; otherwise, <c>false</c>.</value>
 		public bool IsPathStartOrEnd {
 			get {
-				return pathLength > 0;
+				return expectedPathLength > 0;
 			}
 		}
+
 		/// <summary>
-		/// Tells if the cell has the right path
+		/// Cell path
 		/// </summary>
-		public bool IsValidPath {
-			get {
-				if (IsPathStartOrEnd) {
-					return true;
-				} else {
-					return color.Equals(pathColor);
-				}
-			}
+		/// <value>The path.</value>
+		public Path Path 
+		{
+			get;
+			private set;
 		}
+
 		/// <summary>
 		/// Location (X)
 		/// </summary>
@@ -183,6 +196,7 @@ namespace PixPuzzle
 			get;
 			private set;
 		}
+
 		/// <summary>
 		/// Set the right color form the image
 		/// </summary>
@@ -191,6 +205,7 @@ namespace PixPuzzle
 			get;
 			private set;
 		}
+
 		/// <summary>
 		/// Cells has been marked by grid creator
 		/// </summary>
@@ -199,6 +214,7 @@ namespace PixPuzzle
 			get;
 			set;
 		}
+
 		#endregion
 	}
 }

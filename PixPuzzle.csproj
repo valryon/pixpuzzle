@@ -90,7 +90,6 @@
   <ItemGroup>
     <Folder Include="Resources\" />
     <Folder Include="Views\" />
-    <Folder Include="Data\" />
     <Folder Include="Tools\" />
     <Folder Include="Tools\Image\" />
   </ItemGroup>
@@ -104,12 +103,12 @@
     <Compile Include="Views\GameViewController.designer.cs">
       <DependentUpon>GameViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Data\Puzzle.cs" />
     <Compile Include="Tools\Image\Bitmap.cs" />
     <Compile Include="Tools\Image\Color.cs" />
     <Compile Include="Tools\Image\ColorConverter.cs" />
     <Compile Include="Views\GameGrid.cs" />
     <Compile Include="Views\GridCell.cs" />
+    <Compile Include="Views\Path.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

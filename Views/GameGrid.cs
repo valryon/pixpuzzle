@@ -12,6 +12,9 @@ namespace PixPuzzle
 		private GridCell[][] cells;
 		private int width, height;
 
+		// Path data
+		private GridCell firstSelectedCell, lastSelectedCell;
+
 		public GameGrid (int imageWidth, int imageHeight)
 			: base(new RectangleF(0,0, imageWidth * CellSize, imageHeight * CellSize))
 		{
@@ -37,10 +40,12 @@ namespace PixPuzzle
 			}
 		}
 
+		#region Grid creation
+
 		public void SetPixelData (int x, int y, CellColor color)
 		{
 			// Tell the cell we now have data
-			cells [x] [y].DefineBaseColor(color);
+			cells [x] [y].DefineBaseColor (color);
 		}
 
 		/// <summary>
@@ -60,12 +65,12 @@ namespace PixPuzzle
 						GridCell firstCell = cell;
 
 						// Find its unmarked neighbors and the last cell of the serie
-						/* GridCell lastCell =*/ createSerie (firstCell);
+						/* GridCell lastCell =*/
+						createSerie (firstCell);
 					}
 				}
 			}
 		}
-
 		/// <summary>
 		/// Create a serie from a given cell.
 		/// </summary>
@@ -97,8 +102,7 @@ namespace PixPuzzle
 
 				// Get the neighbors
 				// -- We use a 4-directional algorithms
-				List<Point> availableDirections = new List<Point> ()
-				{
+				List<Point> availableDirections = new List<Point> () {
 					new Point(-1,0),
 					new Point(1,0),
 					new Point(0,-1),
@@ -116,27 +120,24 @@ namespace PixPuzzle
 					GridCell nextCell = getCell (currentCell.X + p.X, currentCell.Y + p.Y);
 					if (nextCell != null && nextCell.IsMarked == false && nextCell.Color.Equals (firstCell.Color)) {
 						cellToExplore.Push (nextCell);
-					}
-					else {
-						borders +=1;
+					} else {
+						borders += 1;
 					}
 				}
 				bool stopFloodFill = false;
 
 				// If we got stuck in a corner
-				if(borders == 4) 
-				{
+				if (borders == 4) {
 					stopFloodFill = true;
 				}
 
-				if(count >= 9) 
-				{
+				if (count >= 9) {
 					stopFloodFill = true;
 				}
 
 				// Stop flood fill
-				if(stopFloodFill) {
-					cellToExplore.Clear();
+				if (stopFloodFill) {
+					cellToExplore.Clear ();
 					
 					// Mark as last
 					lastCell = currentCell;
@@ -144,16 +145,19 @@ namespace PixPuzzle
 			}
 
 			// Complete "1" series
-			if(firstCell == lastCell) 
-			{
-				firstCell.MarkComplete();
+			if (firstCell == lastCell) {
+				firstCell.MarkComplete ();
 			}
 
-			firstCell.DefineCellAsPathStartOrEnd(count);
-			lastCell.DefineCellAsPathStartOrEnd(count);
+			firstCell.DefineCellAsPathStartOrEnd (count);
+			lastCell.DefineCellAsPathStartOrEnd (count);
 
 			return lastCell;
 		}
+
+		#endregion
+
+		#region Grid tools
 
 		private GridCell getCell (int x, int y)
 		{
@@ -165,7 +169,8 @@ namespace PixPuzzle
 			return null;
 		}
 
-		private GridCell getCellFromViewCoordinates(PointF viewLocation) {
+		private GridCell getCellFromViewCoordinates (PointF viewLocation)
+		{
 
 			int x = (int)(viewLocation.X / (float)CellSize);
 			int y = (int)(viewLocation.Y / (float)CellSize);
@@ -173,8 +178,9 @@ namespace PixPuzzle
 			return getCell (x, y);
 		}
 
-		private GridCell firstSelectedCell;
+		#endregion
 
+		#region Events
 
 		public override void TouchesBegan (MonoTouch.Foundation.NSSet touches, UIEvent evt)
 		{
@@ -186,12 +192,11 @@ namespace PixPuzzle
 
 				GridCell cell = getCellFromViewCoordinates (fingerLocation);
 
-				if(cell != null) 
-				{
-					firstSelectedCell = cell;
+				bool pathStarted = startPathCreation (cell);
 
-					this.BringSubviewToFront (firstSelectedCell);
-					firstSelectedCell.SelectCell ();
+				if(pathStarted) 
+				{
+					this.BringSubviewToFront (cell);
 				}
 			}
 			base.TouchesBegan (touches, evt);
@@ -201,14 +206,16 @@ namespace PixPuzzle
 		{
 			// Create a path under the finger following the grid
 			if (touches.Count == 1) {
-				UITouch touch = (UITouch)touches.AnyObject;
 
-				PointF fingerLocation = touch.LocationInView (this);
+				// Valid movement
+				if (firstSelectedCell != null) {
+					UITouch touch = (UITouch)touches.AnyObject;
 
-				GridCell cell = getCellFromViewCoordinates (fingerLocation);
+					PointF fingerLocation = touch.LocationInView (this);
 
-				if (cell != null) {
-					cell.MarkComplete ();
+					GridCell cell = getCellFromViewCoordinates (fingerLocation);
+
+					createPath (cell);
 				}
 			}
 			base.TouchesMoved (touches, evt);
@@ -216,18 +223,64 @@ namespace PixPuzzle
 
 		public override void TouchesEnded (MonoTouch.Foundation.NSSet touches, UIEvent evt)
 		{
-			// Touch ended, check the path
-
-			// Check if grid is complete
-
-			// Unselect cell
-			firstSelectedCell.UnselectCell ();
-			firstSelectedCell = null;
-
+			endPathCreation ();
 
 			base.TouchesEnded (touches, evt);
 		}
 
+		#endregion
+
+		#region Path creation behavior
+
+		private bool startPathCreation(GridCell cell) {
+			if (cell != null) {
+				// Check if the cell has a valid path object.
+				// If not or already closed path, do nothing
+				// (you cannot take a cell without path and start messing around)
+				if (cell.Path != null && cell.Path.IsClosed == false && cell.Path.IsLastCell(cell)) {
+					firstSelectedCell = cell;
+
+					firstSelectedCell.SelectCell ();
+
+					lastSelectedCell = firstSelectedCell;
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private void createPath(GridCell cell) {
+			// We're in the grid and the cell is available for path
+			if (cell != null && cell.Path == null) {
+				// Add the cell to the path
+				firstSelectedCell.Path.Cells.Add (cell);
+				cell.DefinePath (firstSelectedCell.Path);
+
+				lastSelectedCell = cell;
+
+				Console.WriteLine ("Current path length: "+cell.Path.Length);
+			}
+			// Else we cancel the current path creation 
+			else if(cell != firstSelectedCell && cell != lastSelectedCell){
+				endPathCreation();
+			}
+		}
+
+		private void endPathCreation() {
+			// Touch ended, check the path
+			if (firstSelectedCell != null && lastSelectedCell != null) {
+				// Check if grid is complete
+
+				// Unselect cell
+				lastSelectedCell.UnselectCell ();
+				lastSelectedCell = null;
+				firstSelectedCell = null;
+			}
+		}
+
+		#endregion
 	}
 }
 
