@@ -40,7 +40,7 @@ namespace PixPuzzle
 		public void SetPixelData (int x, int y, CellColor color)
 		{
 			// Tell the cell we now have data
-			cells [x] [y].Color = color;
+			cells [x] [y].DefineBaseColor(color);
 		}
 
 		/// <summary>
@@ -60,10 +60,7 @@ namespace PixPuzzle
 						GridCell firstCell = cell;
 
 						// Find its unmarked neighbors and the last cell of the serie
-						GridCell lastCell = createSerie (firstCell);
-
-						firstCell.IsTextDisplayed = true;
-						lastCell.IsTextDisplayed = true;
+						/* GridCell lastCell =*/ createSerie (firstCell);
 					}
 				}
 			}
@@ -152,8 +149,8 @@ namespace PixPuzzle
 				firstCell.MarkComplete();
 			}
 
-			firstCell.SetCount(count);
-			lastCell.SetCount(count);
+			firstCell.DefineCellAsPathStartOrEnd(count);
+			lastCell.DefineCellAsPathStartOrEnd(count);
 
 			return lastCell;
 		}
@@ -166,6 +163,69 @@ namespace PixPuzzle
 			}
 
 			return null;
+		}
+
+		private GridCell getCellFromViewCoordinates(PointF viewLocation) {
+
+			int x = (int)(viewLocation.X / (float)CellSize);
+			int y = (int)(viewLocation.Y / (float)CellSize);
+
+			return getCell (x, y);
+		}
+
+		private GridCell firstSelectedCell;
+
+
+		public override void TouchesBegan (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		{
+			// Touch began: find the cell under the finger and register it as a path start
+			if (touches.Count == 1) {
+				UITouch touch = (UITouch)touches.AnyObject;
+
+				PointF fingerLocation = touch.LocationInView (this);
+
+				GridCell cell = getCellFromViewCoordinates (fingerLocation);
+
+				if(cell != null) 
+				{
+					firstSelectedCell = cell;
+
+					this.BringSubviewToFront (firstSelectedCell);
+					firstSelectedCell.SelectCell ();
+				}
+			}
+			base.TouchesBegan (touches, evt);
+		}
+
+		public override void TouchesMoved (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		{
+			// Create a path under the finger following the grid
+			if (touches.Count == 1) {
+				UITouch touch = (UITouch)touches.AnyObject;
+
+				PointF fingerLocation = touch.LocationInView (this);
+
+				GridCell cell = getCellFromViewCoordinates (fingerLocation);
+
+				if (cell != null) {
+					cell.MarkComplete ();
+				}
+			}
+			base.TouchesMoved (touches, evt);
+		}
+
+		public override void TouchesEnded (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		{
+			// Touch ended, check the path
+
+			// Check if grid is complete
+
+			// Unselect cell
+			firstSelectedCell.UnselectCell ();
+			firstSelectedCell = null;
+
+
+			base.TouchesEnded (touches, evt);
 		}
 
 	}

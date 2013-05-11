@@ -1,6 +1,7 @@
 using System;
 using MonoTouch.UIKit;
 using System.Drawing;
+using MonoTouch.CoreGraphics;
 
 namespace PixPuzzle
 {
@@ -34,16 +35,21 @@ namespace PixPuzzle
 			return base.GetHashCode ();
 		}
 
-		public UIColor UIColor
-		{
+		public UIColor UIColor {
 			get {
-				return new UIColor(R,G,B,A);
+				return new UIColor (R, G, B, A);
 			}
 		}
 	}
 
 	public class GridCell : UIView
 	{
+		// Values if cell is a start or end
+		private int pathLength;
+		// Values if cell is path part
+		private CellColor pathColor;
+		private PointF pathDirection;
+		// Common to all cells
 		private CellColor color;
 		private UILabel label;
 
@@ -56,7 +62,7 @@ namespace PixPuzzle
 			// Create label
 			label = new UILabel (new RectangleF (0, 0, frame.Width, frame.Height));
 			label.Hidden = false;
-			label.BackgroundColor = UIColor.FromRGB(230,230,230);
+			label.BackgroundColor = UIColor.FromRGB (230, 230, 230);
 			label.TextColor = UIColor.Black;
 			label.Text = "";
 			label.TextAlignment = UITextAlignment.Center;
@@ -67,85 +73,132 @@ namespace PixPuzzle
 
 			AddSubview (label);
 
-//			IsTextDisplayed  = false;
-			Color = new CellColor();
+			// Default values
+			pathLength = -1;
 		}
-
-		public void SetCount (int val)
+		/// <summary>
+		/// Sets the color for this cell from the pixel data of the image
+		/// </summary>
+		/// <param name="color">Color.</param>
+		public void DefineBaseColor (CellColor color)
 		{
-			label.Text = val.ToString ();
-			//label.BackgroundColor = UIColor.LightGray;
+			Color = color;
+
+			UIColor uiColor = Color.UIColor;
+			label.TextColor = uiColor;
 		}
-
-		public void MarkComplete() 
+		/// <summary>
+		/// Sets the number to display. It also means that the cell is a path start or end.
+		/// </summary>
+		/// <param name="val">Value.</param>
+		public void DefineCellAsPathStartOrEnd (int pathLength)
 		{
-			IsComplete = true;
-
-			label.BackgroundColor = label.TextColor;
+			label.Text = pathLength.ToString ();
+		}
+		/// <summary>
+		/// Mark the cell as being in a complete path
+		/// </summary>
+		public void MarkComplete ()
+		{
+			label.BackgroundColor = color.UIColor;
 			label.TextColor = UIColor.Yellow;
 		}
-
-		public void UnmarkComplete() 
+		/// <summary>
+		/// The cell isn't in a valid path anymore
+		/// </summary>
+		public void UnmarkComplete ()
 		{
-			IsComplete = false;
-
 			label.BackgroundColor = UIColor.White;
 			label.TextColor = color.UIColor;
 		}
 
-		public bool IsTextDisplayed {
-			get {
-				return !label.Hidden;
-			}
-			set {
-				label.Hidden = !value;
-			}
-		}
-
 		#region Events
 
-		public override void TouchesMoved (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		/// <summary>
+		/// Cell has been selected (touched)
+		/// </summary>
+		public void SelectCell ()
 		{
-			Console.WriteLine("X:"+X+" Y:"+Y);
-			base.TouchesMoved (touches, evt);
-		}
+			this.Transform = CGAffineTransform.MakeScale (1.25f, 1.25f);
 
+			UIView.Animate (0.5f,
+            () => {
+				this.Transform = CGAffineTransform.MakeScale (1f, 1f);					
+			});
+		}
+		/// <summary>
+		/// Touch released
+		/// </summary>
+		public void UnselectCell ()
+		{
+
+		}
+		/// <summary>
+		/// Tell the cell that its part of a path
+		/// </summary>
+		/// <param name="direction">Direction.</param>
+		/// <param name="firstCell">First cell.</param>
+		public void CreatePath (PointF direction, GridCell firstCell)
+		{
+
+		}
 		#endregion
 
 		#region Properties
 
-		public bool IsComplete
-		{
-			get;set;
+		/// <summary>
+		/// Tells if we are on a cell that is the start or the end of a complete path
+		/// </summary>
+		/// <value><c>true</c> if this instance is path start or end; otherwise, <c>false</c>.</value>
+		public bool IsPathStartOrEnd {
+			get {
+				return pathLength > 0;
+			}
 		}
-
+		/// <summary>
+		/// Tells if the cell has the right path
+		/// </summary>
+		public bool IsValidPath {
+			get {
+				if (IsPathStartOrEnd) {
+					return true;
+				} else {
+					return color.Equals(pathColor);
+				}
+			}
+		}
+		/// <summary>
+		/// Location (X)
+		/// </summary>
+		/// <value>The x.</value>
 		public int X {
 			get;
 			private set;
 		}
-
+		/// <summary>
+		/// Location (Y)
+		/// </summary>
+		/// <value>The y.</value>
 		public int Y {
 			get;
 			private set;
 		}
-
+		/// <summary>
+		/// Set the right color form the image
+		/// </summary>
+		/// <value>The color.</value>
 		public CellColor Color {
-			get {
-				return color;
-			}
-			set {
-				this.color = value;
-				
-				UIColor uiColor = color.UIColor;
-				label.TextColor = uiColor;
-			}
+			get;
+			private set;
 		}
-
+		/// <summary>
+		/// Cells has been marked by grid creator
+		/// </summary>
+		/// <value><c>true</c> if this instance is marked; otherwise, <c>false</c>.</value>
 		public bool IsMarked {
 			get;
 			set;
 		}
-
 		#endregion
 	}
 }
