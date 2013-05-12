@@ -68,6 +68,10 @@ namespace PixPuzzle
 			this.Layer.BorderColor = UIColor.Black.CGColor;
 			this.Layer.BorderWidth = 1;
 
+			// Performance improvement (I guess)
+			Layer.MasksToBounds = false;
+			Layer.ShouldRasterize = true;
+
 			AddSubview (label);
 
 			// Default values
@@ -148,12 +152,18 @@ namespace PixPuzzle
 				label.BackgroundColor = defaultCellBackgroundColor;
 				label.Text = "";
 			} else {
+				// Style for path part
 				if (IsPathStartOrEnd == false) {
 					this.label.TextColor = UIColor.LightGray;
 					this.label.Text = Path.Length.ToString ();
 					this.label.BackgroundColor = Path.Color.UIColor;
 				} 
-				// TODO Style for end and starts
+				else {
+					//Style for end and starts 
+					this.label.TextColor = UIColor.LightGray;
+					this.label.BackgroundColor = Path.Color.UIColor;
+					this.label.Layer.CornerRadius = 35;
+				}
 			}
 		}
 		/// <summary>
@@ -164,6 +174,7 @@ namespace PixPuzzle
 			label.BackgroundColor = Path.Color.UIColor;
 			label.TextColor = UIColor.Yellow;
 			this.label.Text = Path.Length.ToString ();
+			this.label.Layer.CornerRadius = 0;
 		}
 		/// <summary>
 		/// The cell isn't in a valid path anymore
@@ -173,16 +184,6 @@ namespace PixPuzzle
 			label.BackgroundColor = defaultCellBackgroundColor;
 			label.TextColor = Color.UIColor;
 		}
-		#endregion
-
-		#region Drawing
-
-		public override void DrawRect (RectangleF area, UIViewPrintFormatter formatter)
-		{
-			base.DrawRect (area, formatter);
-		}
-
-
 		#endregion
 
 		#region Properties
