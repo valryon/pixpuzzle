@@ -8,15 +8,29 @@ namespace PixPuzzle
 {
 	public class GameGrid : UIView
 	{
-		public const int CellSize = 32;
+		public const int CellSizeIphone = 32;
+		public const int CellSizeIpad = 48;
 		private GridCell[][] cells;
 		private int width, height;
 		// Path data
 		private GridCell firstPathCell, lastSelectedCell;
 
 		public GameGrid (int imageWidth, int imageHeight)
-			: base(new RectangleF(0,0, imageWidth * CellSize, imageHeight * CellSize))
+			: base()
 		{
+			if (AppDelegate.UserInterfaceIdiomIsPhone) {
+				CellSize = CellSizeIphone;
+			} else {
+				CellSize = CellSizeIpad;
+			}
+
+			// Create the view 
+			Frame = new RectangleF (0, 0, imageWidth * CellSize, imageHeight * CellSize);
+
+			UITapGestureRecognizer tapGesture = new UITapGestureRecognizer (doubleTapEvent);
+			tapGesture.NumberOfTapsRequired = 2;
+			this.AddGestureRecognizer (tapGesture);
+
 			// Create the grid
 			cells = new GridCell[imageWidth][];
 			width = imageWidth;
@@ -167,7 +181,6 @@ namespace PixPuzzle
 
 		private GridCell getCellFromViewCoordinates (PointF viewLocation)
 		{
-
 			int x = (int)(viewLocation.X / (float)CellSize);
 			int y = (int)(viewLocation.Y / (float)CellSize);
 
@@ -176,6 +189,17 @@ namespace PixPuzzle
 		#endregion
 
 		#region Events
+
+		private void doubleTapEvent (UIGestureRecognizer sender)
+		{
+			if (sender.NumberOfTouches > 0) {
+
+				PointF touchLocation = sender.LocationInView (this);
+
+				GridCell cell = getCellFromViewCoordinates (touchLocation);
+				removePath (cell);
+			}
+		}
 
 		public override void TouchesBegan (MonoTouch.Foundation.NSSet touches, UIEvent evt)
 		{
@@ -369,7 +393,22 @@ namespace PixPuzzle
 				firstPathCell = null;
 			}
 		}
+
+		private void removePath (GridCell cell)
+		{
+			if (cell != null) {
+				if (cell.Path != null) {
+					cell.Path.DeleteItself ();
+					Console.WriteLine ("Deleting the path");
+				}
+			}
+		}
 		#endregion
+
+		public int CellSize { 
+			get;
+			set; 
+		}
 	}
 }
 

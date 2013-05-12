@@ -44,8 +44,9 @@ namespace PixPuzzle
 
 	public class GridCell : UIView
 	{
+		private static UIColor defaultCellBackgroundColor = UIColor.FromRGB (230, 230, 230);
+
 		// Common to all cells
-		private CellColor color;
 		private UILabel label;
 
 		public GridCell (int x, int y, RectangleF frame)
@@ -139,7 +140,7 @@ namespace PixPuzzle
 			if (Path == null) {
 				// THe empty style
 				label.TextColor = UIColor.Black;
-				label.BackgroundColor = UIColor.FromRGB (230, 230, 230);
+				label.BackgroundColor = defaultCellBackgroundColor;
 				label.Text = "";
 			} else {
 				if (IsPathStartOrEnd == false) {
@@ -164,8 +165,8 @@ namespace PixPuzzle
 		/// </summary>
 		public void UnmarkComplete ()
 		{
-			label.BackgroundColor = UIColor.White;
-			label.TextColor = color.UIColor;
+			label.BackgroundColor = defaultCellBackgroundColor;
+			label.TextColor = Color.UIColor;
 		}
 		#endregion
 

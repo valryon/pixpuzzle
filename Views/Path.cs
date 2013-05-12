@@ -55,6 +55,26 @@ namespace PixPuzzle
 			updateCellsBut (null);
 		}
 
+		/// <summary>
+		/// Delete the path, make it disappear
+		/// </summary>
+		public void DeleteItself() 
+		{
+			foreach (var c in Cells) {
+
+				c.UnmarkComplete ();
+
+				if (c.IsPathStartOrEnd == false) {
+					c.DefinePath (null);
+				} else {
+					// DO not lose information for the start and end
+					c.DefinePath (new Path(c, ExpectedLength));
+				}
+			}
+
+			Cells.Clear ();
+		}
+
 		private void updateCellsBut (GridCell cell)
 		{
 			foreach (var c in Cells) {
@@ -81,7 +101,6 @@ namespace PixPuzzle
 		/// <param name="otherPath">Other path.</param>
 		public void Fusion (Path otherPath)
 		{
-
 			// The otherPath is the loser
 			// We transfer its data
 			// Then we kill it
