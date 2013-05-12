@@ -34,9 +34,11 @@ namespace PixPuzzle
 			
 			// Load the image
 			UIImage image = UIImage.FromFile ("chip.png");
+//			UIImage image = UIImage.FromFile ("kirby.jpg");
 			Bitmap bitmap = new Bitmap (image);
 
 			grid = new GameGrid ((int)image.Size.Width, (int)image.Size.Height);
+			grid.GridCompleted += gridCompleted;
 
 			// Setup scrollview
 			UIScrollView scrollView = new UIScrollView (new RectangleF(0,0,UIScreen.MainScreen.Bounds.Height,UIScreen.MainScreen.Bounds.Width));
@@ -88,6 +90,16 @@ namespace PixPuzzle
 
 			// Launch the setup process
 			grid.SetupGrid ();
+		}
+
+		private void gridCompleted() {
+			UIAlertView alert = new UIAlertView (
+				"Game Over",
+				"You did it!",
+				null,
+				"OK");
+
+			alert.Show ();
 		}
 	}
 }

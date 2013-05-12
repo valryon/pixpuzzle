@@ -8,8 +8,13 @@ namespace PixPuzzle
 {
 	public class GameGrid : UIView
 	{
+		// Constants
+		public const int MaximumPathLength = 9;
 		public const int CellSizeIphone = 32;
 		public const int CellSizeIpad = 48;
+		// Events
+		public event Action GridCompleted;
+		// Grid
 		private GridCell[][] cells;
 		private int width, height;
 		// Path data
@@ -27,6 +32,9 @@ namespace PixPuzzle
 			// Create the view 
 			Frame = new RectangleF (0, 0, imageWidth * CellSize, imageHeight * CellSize);
 
+			// -- Gestures
+
+			// ---- Double tap to delete
 			UITapGestureRecognizer tapGesture = new UITapGestureRecognizer (doubleTapEvent);
 			tapGesture.NumberOfTapsRequired = 2;
 			this.AddGestureRecognizer (tapGesture);
@@ -142,7 +150,14 @@ namespace PixPuzzle
 					stopFloodFill = true;
 				}
 
-				if (count >= 9) {
+				// Hack
+				int max = MaximumPathLength;
+
+				if (currentCell == getCell(0,0)) {
+					max += 1;
+				}
+
+				if (count >= max) {
 					stopFloodFill = true;
 				}
 
@@ -386,11 +401,32 @@ namespace PixPuzzle
 				}
 
 				// Check if grid is complete
+				// = if all cells are in a valid path
+				bool isComplete = true;
+				for (int x=0; x<width; x++) {
+					for (int y=0; y<height; y++) {
+						isComplete &= (cells [x] [y].Path.IsValid);
+					}
+				}
+
+				if (isComplete) {
+					endGrid ();
+				}
 
 				// Unselect cell
 				lastSelectedCell.UnselectCell (success);
 				lastSelectedCell = null;
 				firstPathCell = null;
+			}
+		}
+
+		private void endGrid ()
+		{
+
+			Console.WriteLine ("Grid complete!");
+
+			if (GridCompleted != null) {
+				GridCompleted ();
 			}
 		}
 

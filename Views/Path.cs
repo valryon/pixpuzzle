@@ -60,6 +60,10 @@ namespace PixPuzzle
 		/// </summary>
 		public void DeleteItself() 
 		{
+			// Prevent 1 path to be deleted
+			if (Cells.Count <= 1)
+				return;
+
 			foreach (var c in Cells) {
 
 				c.UnmarkComplete ();
@@ -67,7 +71,7 @@ namespace PixPuzzle
 				if (c.IsPathStartOrEnd == false) {
 					c.DefinePath (null);
 				} else {
-					// DO not lose information for the start and end
+					// Do not lose information for the start and end
 					c.DefinePath (new Path(c, ExpectedLength));
 				}
 			}
