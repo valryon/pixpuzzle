@@ -405,7 +405,14 @@ namespace PixPuzzle
 				bool isComplete = true;
 				for (int x=0; x<width; x++) {
 					for (int y=0; y<height; y++) {
-						isComplete &= (cells [x] [y].Path.IsValid);
+						if(cells [x] [y].Path != null) {
+							isComplete &= (cells [x] [y].Path.IsValid);
+						}
+						else {
+							// Cell linked to no path, the grid is obvisouly not complete
+							isComplete = false;
+							break;
+						}
 					}
 				}
 

@@ -40,12 +40,16 @@ namespace PixPuzzle
 				return new UIColor (R, G, B, A);
 			}
 		}
+
+		public override string ToString ()
+		{
+			return string.Format ("R:{0} G:{0} B:{0} A:{0}", (int)(R * 255), (int)(G * 255), (int)(B * 255), (int)(A * 100));
+		}
 	}
 
 	public class GridCell : UIView
 	{
 		private static UIColor defaultCellBackgroundColor = UIColor.FromRGB (230, 230, 230);
-
 		// Common to all cells
 		private UILabel label;
 
@@ -93,6 +97,7 @@ namespace PixPuzzle
 			// The cell is the beginning or the end of a path
 			DefinePath (new Path(this, pathLength));
 		}
+
 		#region Update cell
 
 		/// <summary>
@@ -168,6 +173,16 @@ namespace PixPuzzle
 			label.BackgroundColor = defaultCellBackgroundColor;
 			label.TextColor = Color.UIColor;
 		}
+		#endregion
+
+		#region Drawing
+
+		public override void DrawRect (RectangleF area, UIViewPrintFormatter formatter)
+		{
+			base.DrawRect (area, formatter);
+		}
+
+
 		#endregion
 
 		#region Properties
