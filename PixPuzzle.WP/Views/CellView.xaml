@@ -10,6 +10,6 @@
     d:DesignHeight="32" d:DesignWidth="32">
     
     <Grid x:Name="LayoutRoot" Background="{StaticResource PhoneChromeBrush}">
-        <TextBlock x:Name="cellLabel" Grid.Column="0" Grid.Row="0" Text="-1" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <TextBlock x:Name="cellLabel" Grid.Column="0" Grid.Row="0" Text="{Binding Text}"  VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding TextColor}" />
     </Grid>
 </UserControl>

@@ -1,5 +1,6 @@
 ﻿<phone:PhoneApplicationPage 
     x:Class="PixPuzzle.WP.MainPage"
+    xmlns:Views="clr-namespace:PixPuzzle.WP.Views"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
@@ -19,7 +20,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0"></Grid>
+        <Views:GameView x:Name="GamePanel" Grid.Row="1" Margin="12,0,12,0"/>
     </Grid>
  
 </phone:PhoneApplicationPage>

@@ -10,7 +10,7 @@ using System.Windows.Data;
 
 namespace PixPuzzle.WP.ViewModels
 {
-    public class GridViewModel : Grid<CellViewModel>
+    public class GridViewModel : Grid<CellViewModel>, INotifyPropertyChanged
     {
         public GridViewModel(int width, int height)
             : base(width, height, 32)
