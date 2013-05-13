@@ -1,0 +1,214 @@
+using System;
+using System.Collections.Generic;
+
+namespace PixPuzzle.Data
+{
+	/// <summary>
+	/// Path made of cell, an ordered list of cells with a start and an end
+	/// </summary>
+	public class Path
+	{
+		/// <summary>
+		/// The path, an ordered list of cells
+		/// </summary>
+		/// <value>The path cells.</value>
+		public List<Cell> Cells { get; private set; }
+
+		/// <summary>
+		/// The color is determined by the first cell
+		/// </summary>
+		/// <value>The color of the path.</value>
+		public CellColor Color { get; private set; }
+
+		/// <summary>
+		/// The expected length of the path, in cells.
+		/// </summary>
+		/// <value>The expected length.</value>
+		public int ExpectedLength { get; private set; }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PixPuzzle.Data.Path"/> class.
+		/// </summary>
+		/// <param name="firstCell">First cell.</param>
+		/// <param name="expectedLength">Expected length.</param>
+		public Path (Cell firstCell, int expectedLength)
+		{
+			if (firstCell == null) {
+				throw new ArgumentException ();
+			}
+			Cells = new List<Cell> ();
+			Cells.Add (firstCell);
+			Color = firstCell.Color;
+
+			ExpectedLength = expectedLength;
+		}
+
+		/// <summary>
+		/// Add a cell to the path
+		/// </summary>
+		/// <param name="cell">Cell.</param>
+		public void AddCell (Cell cell)
+		{
+			Cells.Add (cell);
+
+			updateCellsBut (cell);
+		}
+
+		/// <summary>
+		/// Removes all the cells that are after the given one
+		/// </summary>
+		/// <param name="cell">Cell.</param>
+		public void RemoveCellAfter (Cell cell)
+		{
+			int index = Cells.IndexOf (cell);
+
+			List<Cell> cellsToRemove = new List<Cell> ();
+
+			for (int i=index+1; i < Cells.Count; i++) {
+				cellsToRemove.Add (Cells[i]);
+			}
+
+			foreach(var cellToRemove in cellsToRemove) {
+				Cells.Remove(cellToRemove);
+				cellToRemove.DefinePath (null);
+			}
+
+			updateCellsBut (null);
+		}
+
+		/// <summary>
+		/// Delete the path, make it disappear
+		/// </summary>
+		public void DeleteItself() 
+		{
+			// Prevent 1 path to be deleted
+			if (Cells.Count <= 1)
+				return;
+
+			foreach (var c in Cells) {
+
+				c.UnmarkComplete ();
+
+				if (c.IsPathStartOrEnd == false) {
+					c.DefinePath (null);
+				} else {
+					// Do not lose information for the start and end
+					c.DefinePath (new Path(c, ExpectedLength));
+				}
+			}
+
+			Cells.Clear ();
+		}
+
+		private void updateCellsBut (Cell cell)
+		{
+			foreach (var c in Cells) {
+
+				// Update existing cells
+				if (c != cell) {
+					c.UpdateView ();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Place in the chain
+		/// </summary>
+		/// <returns>The of.</returns>
+		/// <param name="cell">Cell.</param>
+		public int IndexOf(Cell cell) {
+			return Cells.IndexOf (cell);
+		}
+
+		/// <summary>
+		/// Fusion the specified other path.
+		/// </summary>
+		/// <param name="otherPath">Other path.</param>
+		public void Fusion (Path otherPath)
+		{
+			// The otherPath is the loser
+			// We transfer its data
+			// Then we kill it
+			foreach (Cell cell in otherPath.Cells) {
+				if (Cells.Contains (cell) == false) {
+					AddCell (cell);
+				}
+			}
+
+			otherPath.Cells.Clear ();
+		}
+		/// <summary>
+		/// Check if the cell is the last of the path
+		/// </summary>
+		/// <returns><c>true</c> if this instance is last cell the specified cell; otherwise, <c>false</c>.</returns>
+		/// <param name="cell">Cell.</param>
+		public bool IsLastCell (Cell cell)
+		{
+			if (Cells.Count == 0)
+				return false;
+
+			return Cells [Cells.Count -1] == cell;
+		}
+
+		/// <summary>
+		/// Path first cell
+		/// </summary>
+		/// <value>The first cell.</value>
+		public Cell FirstCell
+		{
+			get {
+				if (Cells.Count == 0)
+					return null;
+
+				return Cells [0];
+			}
+		}
+
+		/// <summary>
+		/// The path is closed and has the expected length
+		/// </summary>
+		/// <value><c>true</c> if this instance is valid; otherwise, <c>false</c>.</value>
+		public bool IsValid {
+			get {
+				return IsClosed && (ExpectedLength == Length);
+			}
+		}
+		/// <summary>
+		/// Current path length
+		/// </summary>
+		/// <value>The length.</value>
+		public int Length {
+			get {
+				return Cells.Count;
+			}
+		}
+		/// <summary>
+		/// A closed path is a path where the first and last cells contains a number
+		/// </summary>
+		/// <value><c>true</c> if this instance is closed; otherwise, <c>false</c>.</value>
+		public bool IsClosed {
+			get {
+				// Path is empty = obviously not closed
+				if (Cells.Count == 0) {
+					return false;
+				}
+
+				Cell firstCell = Cells [0];
+				Cell lastCell = Cells [Cells.Count - 1];
+
+				// Only one cell, more tricky, can be valid
+				if (firstCell == lastCell) {
+					return ExpectedLength == 1;
+				}
+
+				return firstCell.IsPathStartOrEnd && lastCell.IsPathStartOrEnd;
+			}
+		}
+
+		~Path ()
+		{
+			Cells.Clear ();
+		}
+	}
+}
+

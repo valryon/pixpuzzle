@@ -106,14 +106,19 @@
     <Compile Include="Tools\Image\Bitmap.cs" />
     <Compile Include="Tools\Image\Color.cs" />
     <Compile Include="Tools\Image\ColorConverter.cs" />
-    <Compile Include="Views\GameGrid.cs" />
-    <Compile Include="Views\GridCell.cs" />
-    <Compile Include="Views\Path.cs" />
+    <Compile Include="Views\CellView.cs" />
+    <Compile Include="Views\GridView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <BundleResource Include="Resources\mario.png" />
     <BundleResource Include="Resources\kirby.jpg" />
     <BundleResource Include="Resources\chip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PixPuzzle.Data\PixPuzzle.Data.iOS.csproj">
+      <Project>{ED6064DE-D146-4C60-BE69-D264D12BBEF3}</Project>
+      <Name>PixPuzzle.Data.iOS</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

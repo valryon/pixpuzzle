@@ -1,7 +1,9 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixPuzzle.iOS", "PixPuzzle.iOS/PixPuzzle.iOS.csproj", "{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixPuzzle.iOS", "PixPuzzle.iOS\PixPuzzle.iOS.csproj", "{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixPuzzle.Data.iOS", "PixPuzzle.Data\PixPuzzle.Data.iOS.csproj", "{ED6064DE-D146-4C60-BE69-D264D12BBEF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,8 +27,20 @@ Global
 		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Release|iPhone.Build.0 = Release|iPhone
 		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{E0CC0E2D-1971-4614-AF0B-8086417CBB3C}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{ED6064DE-D146-4C60-BE69-D264D12BBEF3}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{ED6064DE-D146-4C60-BE69-D264D12BBEF3}.Ad-Hoc|iPhone.Build.0 = Release|Any CPU
+		{ED6064DE-D146-4C60-BE69-D264D12BBEF3}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{ED6064DE-D146-4C60-BE69-D264D12BBEF3}.AppStore|iPhone.Build.0 = Release|Any CPU
+		{ED6064DE-D146-4C60-BE69-D264D12BBEF3}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{ED6064DE-D146-4C60-BE69-D264D12BBEF3}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{ED6064DE-D146-4C60-BE69-D264D12BBEF3}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{ED6064DE-D146-4C60-BE69-D264D12BBEF3}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{ED6064DE-D146-4C60-BE69-D264D12BBEF3}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{ED6064DE-D146-4C60-BE69-D264D12BBEF3}.Release|iPhone.Build.0 = Release|Any CPU
+		{ED6064DE-D146-4C60-BE69-D264D12BBEF3}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{ED6064DE-D146-4C60-BE69-D264D12BBEF3}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = PixPuzzle.iOS.csproj
+		StartupItem = PixPuzzle.iOS\PixPuzzle.iOS.csproj
 	EndGlobalSection
 EndGlobal
