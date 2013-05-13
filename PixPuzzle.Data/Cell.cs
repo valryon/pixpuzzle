@@ -3,20 +3,18 @@ using System.Drawing;
 
 namespace PixPuzzle.Data
 {
-	public class Cell 
+	/// <summary>
+	/// One cell of the path puzzle
+	/// </summary>
+	public abstract class Cell 
 	{
-		/// <summary>
-		/// Request cell draw update
-		/// </summary>
-		public event Action<Cell> DrawCell;
-
 		public Cell (int x, int y)
 		{
 			X = x;
 			Y = y;
 
 			// Default values
-			DefinePath (null);
+			Path = null;
 			IsPathStartOrEnd = false;
 		}
 
@@ -27,6 +25,8 @@ namespace PixPuzzle.Data
 		public void DefineBaseColor (CellColor color)
 		{
 			Color = color;
+
+			UpdateView ();
 		}
 
 		/// <summary>
@@ -38,53 +38,36 @@ namespace PixPuzzle.Data
 			IsPathStartOrEnd = true;
 
 			// The cell is the beginning or the end of a path
-			DefinePath (new Path(this, pathLength));
+			Path = new Path(this, pathLength);
+
+			UpdateView ();
 		}
 
-		#region Update cell
+		#region View
+
+		/// <summary>
+		/// Create the view
+		/// </summary>
+		public abstract void BuildView();
+
+		/// <summary>
+		/// Updates the view of the cell
+		/// </summary>
+		public abstract void UpdateView ();
+
+		#endregion
+
+		#region Update cell events
 
 		/// <summary>
 		/// Cell has been selected (touched)
 		/// </summary>
-		public void SelectCell ()
-		{
-		}
+		public abstract void SelectCell ();
 
 		/// <summary>
 		/// Touch released
 		/// </summary>
-		public void UnselectCell (bool success)
-		{
-		}
-
-		/// <summary>
-		/// Define the path where the cell is included
-		/// </summary>
-		/// <param name="p">P.</param>
-		public void DefinePath (Path p)
-		{
-			Path = p;
-		}
-
-		/// <summary>
-		/// Mark the cell as being in a complete path
-		/// </summary>
-		public void MarkComplete ()
-		{
-			IsComplete = true;
-		}
-
-		/// <summary>
-		/// The cell isn't in a valid path anymore
-		/// </summary>
-		public void UnmarkComplete ()
-		{
-			IsComplete = false;
-		}
-
-		public void UpdateView() {
-
-		}
+		public abstract void UnselectCell (bool success);
 
 		#endregion
 
@@ -99,19 +82,15 @@ namespace PixPuzzle.Data
 			private set;
 		}
 
-		public bool IsComplete {
-			get;
-			private set;
-		}
-
 		/// <summary>
 		/// Cell path
 		/// </summary>
 		/// <value>The path.</value>
 		public Path Path {
 			get;
-			private set;
+			set;
 		}
+
 		/// <summary>
 		/// Location (X)
 		/// </summary>
@@ -120,6 +99,7 @@ namespace PixPuzzle.Data
 			get;
 			private set;
 		}
+
 		/// <summary>
 		/// Location (Y)
 		/// </summary>
@@ -128,6 +108,7 @@ namespace PixPuzzle.Data
 			get;
 			private set;
 		}
+
 		/// <summary>
 		/// Set the right color form the image
 		/// </summary>
@@ -136,6 +117,7 @@ namespace PixPuzzle.Data
 			get;
 			private set;
 		}
+
 		/// <summary>
 		/// Cells has been marked by grid creator
 		/// </summary>

@@ -13,19 +13,16 @@ namespace PixPuzzle.Data
 		/// </summary>
 		/// <value>The path cells.</value>
 		public List<Cell> Cells { get; private set; }
-
 		/// <summary>
 		/// The color is determined by the first cell
 		/// </summary>
 		/// <value>The color of the path.</value>
 		public CellColor Color { get; private set; }
-
 		/// <summary>
 		/// The expected length of the path, in cells.
 		/// </summary>
 		/// <value>The expected length.</value>
 		public int ExpectedLength { get; private set; }
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PixPuzzle.Data.Path"/> class.
 		/// </summary>
@@ -42,7 +39,6 @@ namespace PixPuzzle.Data
 
 			ExpectedLength = expectedLength;
 		}
-
 		/// <summary>
 		/// Add a cell to the path
 		/// </summary>
@@ -51,9 +47,8 @@ namespace PixPuzzle.Data
 		{
 			Cells.Add (cell);
 
-			updateCellsBut (cell);
+			UpdateCells ();
 		}
-
 		/// <summary>
 		/// Removes all the cells that are after the given one
 		/// </summary>
@@ -68,18 +63,19 @@ namespace PixPuzzle.Data
 				cellsToRemove.Add (Cells[i]);
 			}
 
-			foreach(var cellToRemove in cellsToRemove) {
-				Cells.Remove(cellToRemove);
-				cellToRemove.DefinePath (null);
+			foreach (var cellToRemove in cellsToRemove) {
+				Cells.Remove (cellToRemove);
+
+				cellToRemove.Path = null;
+				cellToRemove.UpdateView ();
 			}
 
-			updateCellsBut (null);
+			UpdateCells ();
 		}
-
 		/// <summary>
 		/// Delete the path, make it disappear
 		/// </summary>
-		public void DeleteItself() 
+		public void DeleteItself ()
 		{
 			// Prevent 1 path to be deleted
 			if (Cells.Count <= 1)
@@ -87,39 +83,38 @@ namespace PixPuzzle.Data
 
 			foreach (var c in Cells) {
 
-				c.UnmarkComplete ();
-
 				if (c.IsPathStartOrEnd == false) {
-					c.DefinePath (null);
+					c.Path = null;
 				} else {
 					// Do not lose information for the start and end
-					c.DefinePath (new Path(c, ExpectedLength));
+					c.Path = new Path (c, ExpectedLength);
 				}
+
+				c.UpdateView ();
 			}
 
 			Cells.Clear ();
 		}
-
-		private void updateCellsBut (Cell cell)
+		/// <summary>
+		/// Update all the cells 
+		/// </summary>
+		public void UpdateCells ()
 		{
 			foreach (var c in Cells) {
 
 				// Update existing cells
-				if (c != cell) {
-					c.UpdateView ();
-				}
+				c.UpdateView ();
 			}
 		}
-
 		/// <summary>
 		/// Place in the chain
 		/// </summary>
 		/// <returns>The of.</returns>
 		/// <param name="cell">Cell.</param>
-		public int IndexOf(Cell cell) {
+		public int IndexOf (Cell cell)
+		{
 			return Cells.IndexOf (cell);
 		}
-
 		/// <summary>
 		/// Fusion the specified other path.
 		/// </summary>
@@ -149,13 +144,11 @@ namespace PixPuzzle.Data
 
 			return Cells [Cells.Count -1] == cell;
 		}
-
 		/// <summary>
 		/// Path first cell
 		/// </summary>
 		/// <value>The first cell.</value>
-		public Cell FirstCell
-		{
+		public Cell FirstCell {
 			get {
 				if (Cells.Count == 0)
 					return null;
@@ -163,7 +156,6 @@ namespace PixPuzzle.Data
 				return Cells [0];
 			}
 		}
-
 		/// <summary>
 		/// The path is closed and has the expected length
 		/// </summary>
