@@ -132,6 +132,33 @@ namespace PixPuzzle.Data
 
 			otherPath.Cells.Clear ();
 		}
+
+		public Cell PreviousCell (Cell cell)
+		{
+			if (Cells.Contains (cell) == false)
+				return null;
+
+			int index = Cells.IndexOf (cell);
+
+			if(index - 1 > 0) {
+				return Cells [index - 1];
+			}
+			return null;
+		}
+
+		public Cell NextCell (Cell cell)
+		{
+			if (Cells.Contains (cell) == false)
+				return null;
+
+			int index = Cells.IndexOf (cell);
+
+			if(index + 1 < Cells.Count) {
+				return Cells [index + 1];
+			}
+			return null;
+		}
+
 		/// <summary>
 		/// Check if the cell is the last of the path
 		/// </summary>

@@ -46,35 +46,67 @@ namespace PixPuzzle
 
 		public override void UpdateView ()
 		{
-			// TODO Refactoring
+			label.Text = string.Empty;
+
 			if (Path == null) {
+
 				// The empty style
 				label.TextColor = UIColor.Black;
 				label.BackgroundColor = defaultCellBackgroundColor;
-				label.Text = "";
+
 			} else {
+
+				label.BackgroundColor = Path.Color.UIColor;
+
 				bool validPath = Path.IsValid;
 
-				// Style for path part
-				if (IsPathStartOrEnd == false) {
-					label.TextColor = UIColor.LightGray;
-					label.Text = Path.Length.ToString ();
-					label.BackgroundColor = Path.Color.UIColor;
-				} else {
-					//Style for end and starts 
-					label.TextColor = UIColor.LightGray;
-					label.BackgroundColor = Path.Color.UIColor;
-					label.Layer.CornerRadius = 35;
+				// The path is valid: the background is filled
+				if (validPath) {
+					label.TextColor = UIColor.Yellow;
+					label.Layer.CornerRadius = 0;
 				}
 
-				if (validPath) {
-					label.BackgroundColor = Path.Color.UIColor;
-					label.TextColor = UIColor.Yellow;
-					this.label.Text = Path.Length.ToString ();
-					this.label.Layer.CornerRadius = 0;
-				} else {
-					label.BackgroundColor = defaultCellBackgroundColor;
+				// End or start: Display the number
+				if (IsPathStartOrEnd) {
+					label.Text = Path.ExpectedLength.ToString ();
+
+					if (validPath == false) {
+						label.Layer.CornerRadius = 15;
+						label.TextColor = UIColor.Black;
+					}
 				}
+
+				// Draw the path
+
+				// -- Previous cell
+				Cell previousCell = Path.PreviousCell(this);
+				if (previousCell != null) {
+					int previousDirectionX = -1;
+					int previousDirectioY = -1;
+
+				} else {
+
+				}
+
+				// Next cell
+				Cell nextCell= Path.NextCell(this);
+				if (nextCell != null) {
+					int nextDirectioX= -1;
+					int nextDirectioY= -1;
+
+				} else {
+					// No next cell?
+					// Display the current path length
+					// Except for starts or ends
+					if (IsPathStartOrEnd == false) {
+						label.TextColor = UIColor.LightGray;
+						label.Text = Path.Length.ToString ();
+					}
+
+				}
+
+
+
 			}
 		}
 
