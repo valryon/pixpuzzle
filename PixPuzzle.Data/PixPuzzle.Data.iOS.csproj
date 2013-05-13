@@ -44,5 +44,6 @@
     <Compile Include="Cell.cs" />
     <Compile Include="CellColor.cs" />
     <Compile Include="Path.cs" />
+    <Compile Include="CellPoint.cs" />
   </ItemGroup>
 </Project>
