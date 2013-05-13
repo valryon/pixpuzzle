@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace PixPuzzle.Data
 {
@@ -122,11 +121,11 @@ namespace PixPuzzle.Data
 
 				// Get the neighbors
 				// -- We use a 4-directional algorithms
-				List<Point> availableDirections = new List<Point> () {
-					new Point(-1,0),
-					new Point(1,0),
-					new Point(0,-1),
-					new Point(0,1)
+                List<CellPoint> availableDirections = new List<CellPoint>() {
+					new CellPoint(-1,0),
+					new CellPoint(1,0),
+					new CellPoint(0,-1),
+					new CellPoint(0,1)
 				};
 				// -- Use a random direction for better results
 				int borders = 0;
@@ -134,7 +133,7 @@ namespace PixPuzzle.Data
 
 					int index = random.Next (availableDirections.Count);
 
-					Point p = availableDirections [index];
+                    CellPoint p = availableDirections[index];
 					availableDirections.Remove (p);
 
 					Cell nextCell = GetCell (currentCell.X + p.X, currentCell.Y + p.Y);

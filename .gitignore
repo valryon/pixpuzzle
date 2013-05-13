@@ -2,6 +2,11 @@
 .DS_Store
 
 bin/
+BIN/
 obj/
 
+Thumbs.db
+
 *.userprefs
+*.user
+*.suo
