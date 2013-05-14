@@ -40,7 +40,7 @@ namespace PixPuzzle.WP.ViewModels
     public class CellViewModel : Cell, INotifyPropertyChanged
     {
         public CellViewModel(int x, int y)
-            : base(x,y)
+            : base(x, y)
         {
         }
 
@@ -74,17 +74,17 @@ namespace PixPuzzle.WP.ViewModels
             }
         }
 
-        private Color textColor;
-        public Color TextColor
+        public Brush TextColor
         {
             get
             {
-                return textColor;
-            }
-            set
-            {
-                textColor = value;
-                RaisePropertyChanged("TextColor");
+                Color color = new Color();
+                color.A = (byte)(Color.A * 255f);
+                color.R = (byte)(Color.R * 255f);
+                color.G = (byte)(Color.G * 255f);
+                color.B = (byte)(Color.B * 255f);
+
+                return new SolidColorBrush(color); ;
             }
         }
 

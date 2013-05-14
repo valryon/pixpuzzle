@@ -19,14 +19,14 @@
                                  >
                             <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
+                                    <StackPanel Orientation="Horizontal"  />
                                 </ItemsPanelTemplate>
                             </ListBox.ItemsPanel>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Border BorderBrush="White" BorderThickness="1">
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Text}"  Width="32" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                        <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Center" >
+                                            <TextBlock Text="{Binding Text}" Height="32" Width="32" Foreground="{Binding TextColor}" TextAlignment="Center" />
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>

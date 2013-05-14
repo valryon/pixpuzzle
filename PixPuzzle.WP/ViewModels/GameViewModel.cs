@@ -12,7 +12,8 @@ namespace PixPuzzle.WP.ViewModels
     {
         public GameViewModel(WriteableBitmap img)
         {
-            GridViewModel = new GridViewModel(img.PixelWidth, img.PixelHeight);
+            // Invert width and height cause of bmp?
+            GridViewModel = new GridViewModel(img.PixelHeight, img.PixelWidth);
 
             // Get every pixel
             for (int x = 0; x < img.PixelWidth; x++)
@@ -21,12 +22,30 @@ namespace PixPuzzle.WP.ViewModels
                 {
                     Color color = img.GetPixel(x, y);
 
-                    GridViewModel.SetPixelData(x, y, new Data.CellColor()
+                    float r, g, b, a;
+
+                    if (color.A < 20)
                     {
-                        A = color.A * 255,
-                        R = color.R * 255,
-                        G = color.G * 255,
-                        B = color.B * 255,
+                        a = 1;
+                        r = 1;
+                        g = 1;
+                        b = 1;
+                    }
+                    else
+                    {
+                        a = 1;
+                        r = color.R / 255f;
+                        g = color.G / 255f;
+                        b = color.B / 255f;
+                    }
+
+                    // invert x and y
+                    GridViewModel.SetPixelData(y, x, new Data.CellColor()
+                    {
+                        A = a,
+                        R = r,
+                        G = g,
+                        B = b,
                     });
                 }
             }
