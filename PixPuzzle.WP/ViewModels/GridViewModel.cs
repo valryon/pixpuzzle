@@ -15,7 +15,10 @@ namespace PixPuzzle.WP.ViewModels
         public GridViewModel(int width, int height)
             : base(width, height, 32)
         {
-
+            CreateGrid((x, y) =>
+            {
+                return new CellViewModel(x, y);
+            });
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

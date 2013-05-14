@@ -8,6 +8,7 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using PixPuzzle.WP.ViewModels;
+using System.Windows.Media.Imaging;
 
 namespace PixPuzzle.WP.Views
 {
@@ -19,7 +20,10 @@ namespace PixPuzzle.WP.Views
         {
             InitializeComponent();
 
-            viewModel = new GameViewModel("chip.png");
+            // Load image
+            var writeableBmp = new WriteableBitmap(0, 0).FromContent("Images/chip.png");
+
+            viewModel = new GameViewModel(writeableBmp);
         }
     }
 }
