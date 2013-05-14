@@ -8,6 +8,35 @@ using System.Windows.Media;
 
 namespace PixPuzzle.WP.ViewModels
 {
+    public class CellLineViewModel : INotifyPropertyChanged
+    {
+        public CellLineViewModel()
+        {
+            Cells = new List<CellViewModel>();
+        }
+
+        public List<CellViewModel> Cells
+        {
+            get;
+            private set;
+        }
+
+        public int CellSize
+        {
+            get;
+            set;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void RaisePropertyChanged(string name)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+        }
+    }
+
+
     public class CellViewModel : Cell, INotifyPropertyChanged
     {
         public CellViewModel(int x, int y)
@@ -67,7 +96,7 @@ namespace PixPuzzle.WP.ViewModels
                 {
                     return Path.ExpectedLength.ToString();
                 }
-                return "";
+                return " ";
             }
         }
 

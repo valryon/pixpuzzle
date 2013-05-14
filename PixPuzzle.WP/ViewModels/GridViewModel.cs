@@ -26,21 +26,26 @@ namespace PixPuzzle.WP.ViewModels
             RaisePropertyChanged("CellViewModels");
         }
 
-        public List<CellViewModel> CellViewModels
+        public List<CellLineViewModel> CellLines
         {
             get
             {
-                List<CellViewModel> cells = new List<CellViewModel>();
+                List<CellLineViewModel> cellsViewModel = new List<CellLineViewModel>();
 
                 foreach (Cell[] cellsLine in Cells)
                 {
+                    CellLineViewModel lineViewModel = new CellLineViewModel();
+                    lineViewModel.CellSize = CellSize;
+
                     foreach (Cell c in cellsLine)
                     {
-                        cells.Add((CellViewModel)c);
+                        lineViewModel.Cells.Add((CellViewModel)c);
                     }
+
+                    cellsViewModel.Add(lineViewModel);
                 }
 
-                return cells;
+                return cellsViewModel;
             }
         }
 

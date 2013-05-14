@@ -3,18 +3,35 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ViewModels="clr-namespace:PixPuzzle.WP.ViewModels"  x:Class="PixPuzzle.WP.Views.GridView"
-    mc:Ignorable="d"
-    d:DesignHeight="480" d:DesignWidth="480">
+    xmlns:ViewModels="clr-namespace:PixPuzzle.WP.ViewModels"  x:Class="PixPuzzle.WP.Views.GridView">
 
     <Grid x:Name="LayoutRoot" Background="{StaticResource PhoneChromeBrush}">
         <ScrollViewer>
-            <ListBox ItemsSource="{Binding CellViewModels}"  >
+            <ListBox ItemsSource="{Binding CellLines}"  
+                   ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                   ScrollViewer.VerticalScrollBarVisibility="Visible"
+                     >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding Text}" />
-                        </StackPanel>
+                        <ListBox ItemsSource="{Binding Cells}" 
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                 >
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="White" BorderThickness="1">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Text}"  Width="32" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
