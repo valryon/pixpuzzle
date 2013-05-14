@@ -24,6 +24,8 @@ namespace PixPuzzle.WP.Views
             var writeableBmp = new WriteableBitmap(0, 0).FromContent("Images/chip.png");
 
             viewModel = new GameViewModel(writeableBmp);
+
+            gridView.SetGrid(viewModel.GridViewModel);
         }
     }
 }

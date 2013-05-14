@@ -11,6 +11,6 @@
     d:DesignHeight="480" d:DesignWidth="480">
     
     <Grid x:Name="LayoutRoot" Background="{StaticResource PhoneChromeBrush}">
-        <Views:GridView />
+        <Views:GridView x:Name="gridView" />
     </Grid>
 </UserControl>

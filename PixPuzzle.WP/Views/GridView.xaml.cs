@@ -16,16 +16,16 @@ namespace PixPuzzle.WP.Views
         private GridViewModel viewModel;
 
         public GridView()
-            : this(16,16)
-        {
-
-        }
-
-        public GridView(int width, int height)
         {
             InitializeComponent();
 
-            viewModel = new GridViewModel(width, height);
+            viewModel = new GridViewModel(12, 12);
+            DataContext = viewModel;
+        }
+
+        public void SetGrid(GridViewModel viewModel)
+        {
+            this.viewModel = viewModel;
             DataContext = viewModel;
         }
     }

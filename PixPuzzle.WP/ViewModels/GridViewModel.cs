@@ -21,28 +21,35 @@ namespace PixPuzzle.WP.ViewModels
             });
         }
 
+        public void UpdateGrid()
+        {
+            RaisePropertyChanged("CellViewModels");
+        }
+
+        public List<CellViewModel> CellViewModels
+        {
+            get
+            {
+                List<CellViewModel> cells = new List<CellViewModel>();
+
+                foreach (Cell[] cellsLine in Cells)
+                {
+                    foreach (Cell c in cellsLine)
+                    {
+                        cells.Add((CellViewModel)c);
+                    }
+                }
+
+                return cells;
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void RaisePropertyChanged(string name)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
-        }
-    }
-
-
-    public class GridCellsAsListConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            // TODO
-            return new List<CellViewModel>();
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            // TODO
-            return new List<CellViewModel>();
         }
     }
 }

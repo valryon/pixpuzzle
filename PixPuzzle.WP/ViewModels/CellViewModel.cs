@@ -13,7 +13,6 @@ namespace PixPuzzle.WP.ViewModels
         public CellViewModel(int x, int y)
             : base(x,y)
         {
-            Text = "*";
         }
 
         public override void BuildView()
@@ -60,17 +59,15 @@ namespace PixPuzzle.WP.ViewModels
             }
         }
 
-        private string text;
         public string Text
         {
             get
             {
-                return text;
-            }
-            set
-            {
-                text = value;
-                RaisePropertyChanged("Text");
+                if (IsPathStartOrEnd)
+                {
+                    return Path.ExpectedLength.ToString();
+                }
+                return "";
             }
         }
 

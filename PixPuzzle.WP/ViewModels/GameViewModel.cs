@@ -12,7 +12,7 @@ namespace PixPuzzle.WP.ViewModels
     {
         public GameViewModel(WriteableBitmap img)
         {
-            GridViewModel gridViewModel = new GridViewModel(img.PixelWidth, img.PixelHeight);
+            GridViewModel = new GridViewModel(img.PixelWidth, img.PixelHeight);
 
             // Get every pixel
             for (int x = 0; x < img.PixelWidth; x++)
@@ -21,7 +21,7 @@ namespace PixPuzzle.WP.ViewModels
                 {
                     Color color = img.GetPixel(x, y);
 
-                    gridViewModel.SetPixelData(x, y, new Data.CellColor()
+                    GridViewModel.SetPixelData(x, y, new Data.CellColor()
                     {
                         A = color.A * 255,
                         R = color.R * 255,
@@ -30,10 +30,16 @@ namespace PixPuzzle.WP.ViewModels
                     });
                 }
             }
-            
 
+            GridViewModel.SetupGrid();
+            GridViewModel.UpdateGrid();
         }
 
+        public GridViewModel GridViewModel
+        {
+            get;
+            set;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
