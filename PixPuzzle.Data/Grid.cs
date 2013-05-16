@@ -7,16 +7,12 @@ namespace PixPuzzle.Data
 	{
 		// Constants
 		public const int MaximumPathLength = 9;
-
 		// Events
 		public event Action GridCompleted;
-
 		// Grid
 		protected Cell[][] Cells;
-
 		// Path data
 		protected Cell FirstPathCell, LastSelectedCell;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PixPuzzle.Data.Grid"/> class.
 		/// </summary>
@@ -30,14 +26,14 @@ namespace PixPuzzle.Data
 			Width = imageWidth;
 			Height = imageHeight;
 		}
-
 		#region Grid creation
 
 		/// <summary>
 		/// Create a grid and initialize with default values
 		/// </summary>
 		/// <param name="createCell">Create cell.</param>
-		public void CreateGrid() {
+		public void CreateGrid ()
+		{
 
 			// Create the grid
 			Cells = new Cell[Width][];
@@ -48,12 +44,11 @@ namespace PixPuzzle.Data
 
 				for (int y=0; y<Height; y++) {
 
-					Cell c = new Cell(x, y);
+					Cell c = new Cell (x, y);
 					Cells [x] [y] = c;
 				}
 			}
 		}
-
 		/// <summary>
 		/// Define what's in the given cell
 		/// </summary>
@@ -119,7 +114,7 @@ namespace PixPuzzle.Data
 
 				// Get the neighbors
 				// -- We use a 4-directional algorithms
-                List<CellPoint> availableDirections = new List<CellPoint>() {
+				List<CellPoint> availableDirections = new List<CellPoint> () {
 					new CellPoint(-1,0),
 					new CellPoint(1,0),
 					new CellPoint(0,-1),
@@ -131,7 +126,7 @@ namespace PixPuzzle.Data
 
 					int index = random.Next (availableDirections.Count);
 
-                    CellPoint p = availableDirections[index];
+					CellPoint p = availableDirections [index];
 					availableDirections.Remove (p);
 
 					Cell nextCell = GetCell (currentCell.X + p.X, currentCell.Y + p.Y);
@@ -177,13 +172,15 @@ namespace PixPuzzle.Data
 
 		#region View
 
+		/// <summary>
+		/// Request the grid to be updated, especially some cells that may have been modified
+		/// </summary>
+		/// <param name="cellsToUpdate">Cells to update.</param>
 		public abstract void UpdateView (List<Cell> cellsToUpdate);
 
 		#endregion
 
-
-
-			#region Grid tools
+		#region Grid tools
 
 		/// <summary>
 		/// Get the cell from grid indices
@@ -200,7 +197,6 @@ namespace PixPuzzle.Data
 
 			return null;
 		}
-
 			#endregion
 
 			#region Path creation behavior
@@ -232,8 +228,7 @@ namespace PixPuzzle.Data
 						FirstPathCell = cell.Path.FirstCell;
 
 						cell.SelectCell ();
-						if(LastSelectedCell != null) 
-						{
+						if (LastSelectedCell != null) {
 							LastSelectedCell.UnselectCell (false);
 						}
 						LastSelectedCell = cell;
@@ -249,7 +244,6 @@ namespace PixPuzzle.Data
 
 			return false;
 		}
-
 		/// <summary>
 		/// Creates the path.
 		/// </summary>
@@ -277,7 +271,7 @@ namespace PixPuzzle.Data
 						cell.Path = FirstPathCell.Path;
 
 						// Update the modified cells
-						UpdateView(cell.Path.Cells);
+						UpdateView (cell.Path.Cells);
 
 						Console.WriteLine ("Adding cell to the path.");
 						Console.WriteLine ("Current path length: "+cell.Path.Length);
@@ -305,10 +299,10 @@ namespace PixPuzzle.Data
 							// Fusion!
 							Console.WriteLine ("Fusion!");
 							FirstPathCell.Path.Fusion (cell.Path);
-							cell.Path  = FirstPathCell.Path;
+							cell.Path = FirstPathCell.Path;
 
 							// Update the modified cells
-							UpdateView(FirstPathCell.Path.Cells);
+							UpdateView (FirstPathCell.Path.Cells);
 
 							// End the creation, the path is complete
 							Console.WriteLine ("Path complete!");
@@ -326,9 +320,9 @@ namespace PixPuzzle.Data
 						List<Cell> removedCells = FirstPathCell.Path.RemoveCellAfter (cell);
 
 						// Update the modified cells
-						UpdateView(cell.Path.Cells);
+						UpdateView (cell.Path.Cells);
 						// And the removed ones
-						UpdateView(removedCells);
+						UpdateView (removedCells);
 					} else {
 						// I don't know what's we're doing.
 						// ABANDON ALL THE WORK
@@ -402,7 +396,7 @@ namespace PixPuzzle.Data
 					List<Cell> removedCells = cell.Path.DeleteItself ();
 					Console.WriteLine ("Deleting the path");
 
-					UpdateView(removedCells);
+					UpdateView (removedCells);
 				}
 			}
 		}
@@ -412,17 +406,18 @@ namespace PixPuzzle.Data
 			get;
 			private set; 
 		}
+
 		public int Width { 
 			get;
 			private set; 
 		}
+
 		public int Height { 
 			get;
 			private set; 
 		}
 
-		public bool IsCreatingPath
-		{
+		public bool IsCreatingPath {
 			get {
 				return FirstPathCell != null;
 			}
