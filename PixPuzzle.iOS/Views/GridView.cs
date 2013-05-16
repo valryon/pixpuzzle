@@ -46,7 +46,10 @@ namespace PixPuzzle
 
 				Cell cell = getCellFromViewCoordinates (touchLocation);
 
+				Cell[] cellToRefresh = cell.Path.Cells.ToArray ();
 				parent.RemovePath (cell);
+
+				OrderRefresh (cellToRefresh);
 			}
 		}
 
@@ -68,7 +71,8 @@ namespace PixPuzzle
 					this.BringSubviewToFront (((CellView)cell).View);
 				}
 
-				SetNeedsDisplay ();
+				Cell[] cellToRefresh = cell.Path.Cells.ToArray ();
+				OrderRefresh (cellToRefresh);
 			}
 			base.TouchesBegan (touches, evt);
 		}
@@ -88,7 +92,8 @@ namespace PixPuzzle
 
 					parent.CreatePath (cell);
 
-					SetNeedsDisplay ();
+					Cell[] cellToRefresh = cell.Path.Cells.ToArray ();
+					OrderRefresh (cellToRefresh);
 				}
 			}
 			base.TouchesMoved (touches, evt);
@@ -97,8 +102,6 @@ namespace PixPuzzle
 		public override void TouchesEnded (MonoTouch.Foundation.NSSet touches, UIEvent evt)
 		{
 			parent.EndPathCreation (false);
-
-			SetNeedsDisplay ();
 
 			base.TouchesEnded (touches, evt);
 		}
@@ -111,11 +114,23 @@ namespace PixPuzzle
 		}
 		#region Drawing
 
+		public void OrderRefresh (Cell[] cellsToRefresh)
+		{
+			foreach (Cell cell in cellsToRefresh) {
+				int borderStartX = GridLocationX + (BorderWidth / 2);
+				int borderStartY = GridLocationY + (BorderWidth / 2);
+
+				int x = borderStartX + cell.X * parent.CellSize;
+				int y = borderStartY + cell.Y * parent.CellSize;
+
+				SetNeedsDisplayInRect (new RectangleF(x,y,parent.CellSize,parent.CellSize));
+			}
+		}
+
 		private const int BorderWidth = 4;
 		private const int GridLocationX = 0;
 		private const int GridLocationY = 0;
 		private UIColor defaultBackgroundColor;
-
 
 		public void InitializeViewForDrawing (int x, int y)
 		{
@@ -125,7 +140,7 @@ namespace PixPuzzle
 			                            , (parent.CellSize * parent.Height) + GridLocationY + BorderWidth
 			);
 
-			defaultBackgroundColor= UIColor.FromRGB (230, 230, 230);
+			defaultBackgroundColor = UIColor.FromRGB (230, 230, 230);
 			this.BackgroundColor = defaultBackgroundColor;
 		}
 
@@ -200,7 +215,7 @@ namespace PixPuzzle
 						UIColor colorUnderText = defaultBackgroundColor;
 
 						// Path is valid?
-						if(isValid) {
+						if (isValid) {
 							// Change background color
 							colorUnderText = UIColor.Blue;
 							context.SetFillColor (colorUnderText.CGColor);
@@ -217,7 +232,7 @@ namespace PixPuzzle
 							colorUnderText = cell.Path.Color.UIColor;
 
 							showText = true;
-							textValue = cell.Path.ExpectedLength.ToString();
+							textValue = cell.Path.ExpectedLength.ToString ();
 							context.SelectFont ("Helvetica Neue", 16.0f, CGTextEncoding.MacRoman);
 
 							// Draw a circle of the color
@@ -309,7 +324,7 @@ namespace PixPuzzle
 									pathRect.Bottom + pathRect.Height / 3,
 									pathRect.Right,
 									pathRect.Bottom
-									);
+								);
 							} else if (previousDirectionY > 0) {
 								context.MoveTo (pathRect.Left, pathRect.Top);
 								context.AddCurveToPoint (
@@ -319,7 +334,7 @@ namespace PixPuzzle
 									pathRect.Top - pathRect.Height / 3,
 									pathRect.Right,
 									pathRect.Top
-									);
+								);
 							}
 
 							context.FillPath ();
@@ -330,7 +345,7 @@ namespace PixPuzzle
 								// Text properties
 								showText = true;
 								colorUnderText = UIColor.LightGray;
-								textValue = cell.Path.Length.ToString();
+								textValue = cell.Path.Length.ToString ();
 								context.SelectFont ("Helvetica Neue", 12.0f, CGTextEncoding.MacRoman);
 
 								// Draw a gray circle!
@@ -373,7 +388,7 @@ namespace PixPuzzle
 					context.SetLineWidth (1.0f);
 
 					// Square for borders
-					context.StrokeRect(cellRect); 
+					context.StrokeRect (cellRect); 
 				}
 			}
 
