@@ -131,6 +131,7 @@ namespace PixPuzzle
 		private const int GridLocationX = 0;
 		private const int GridLocationY = 0;
 		private UIColor defaultBackgroundColor;
+		private bool drawGridEntirely;
 
 		public void InitializeViewForDrawing (int x, int y)
 		{
@@ -142,44 +143,65 @@ namespace PixPuzzle
 
 			defaultBackgroundColor = UIColor.FromRGB (230, 230, 230);
 			this.BackgroundColor = defaultBackgroundColor;
+
+			drawGridEntirely = true;
 		}
+
 
 		public override void Draw (RectangleF rect)
 		{
 			base.Draw (rect);
 
-			CGContext mainContext = UIGraphics.GetCurrentContext ();
-
-			// We use layers so we can draw cells by cells without overriding a previous drawing
-			// We must use layer's context and not the main context 
-			CGLayer backgroundLayer = CGLayer.Create (mainContext, new SizeF(Frame.Width,Frame.Height));
-			CGLayer pathLayer = CGLayer.Create (mainContext, new SizeF(Frame.Width,Frame.Height));
-			CGLayer textLayer = CGLayer.Create (mainContext, new SizeF(Frame.Width,Frame.Height));
+			CGContext context = UIGraphics.GetCurrentContext ();
 
 			// Context properties
 			// -- Text
-			textLayer.Context.SetTextDrawingMode (CGTextDrawingMode.Fill);
-			textLayer.Context.TextMatrix = CGAffineTransform.MakeScale (1f, -1f);
+			context.SetTextDrawingMode (CGTextDrawingMode.Fill);
+			context.TextMatrix = CGAffineTransform.MakeScale (1f, -1f);
 
 			// Draw the bounds of the grid
 			// ------------------------------------------------------------
 			int borderStartX = GridLocationX + (BorderWidth / 2);
 			int borderStartY = GridLocationY + (BorderWidth / 2);
-			int borderEndX = borderStartX + (parent.CellSize * parent.Width) + (BorderWidth / 2);
-			int borderEndY = borderStartY + (parent.CellSize * parent.Height) + (BorderWidth / 2);
 
-			backgroundLayer.Context.SetStrokeColorWithColor (UIColor.Blue.CGColor);
-			backgroundLayer.Context.MoveTo (borderStartX, borderStartY); //start at this point
-			backgroundLayer.Context.SetLineWidth (BorderWidth);
+			if (drawGridEntirely) {
 
-			// Draw a square
-			backgroundLayer.Context.AddLineToPoint (borderEndX, borderStartY); 
-			backgroundLayer.Context.AddLineToPoint (borderEndX, borderEndY); 
-			backgroundLayer.Context.AddLineToPoint (borderStartX, borderEndY); 
-			backgroundLayer.Context.AddLineToPoint (borderStartX, borderStartY); 
+				int borderEndX = borderStartX + (parent.CellSize * parent.Width) + (BorderWidth / 2);
+				int borderEndY = borderStartY + (parent.CellSize * parent.Height) + (BorderWidth / 2);
 
-			// Effective draw
-			backgroundLayer.Context.StrokePath ();
+				context.SetStrokeColorWithColor (UIColor.Blue.CGColor);
+				context.MoveTo (borderStartX, borderStartY); //start at this point
+				context.SetLineWidth (BorderWidth);
+
+				// Draw a square
+				context.AddLineToPoint (borderEndX, borderStartY); 
+				context.AddLineToPoint (borderEndX, borderEndY); 
+				context.AddLineToPoint (borderStartX, borderEndY); 
+				context.AddLineToPoint (borderStartX, borderStartY); 
+
+				// Effective draw
+				context.StrokePath ();
+
+				// Draw cells borders
+				// ------------------------------------------------------------
+				context.SetStrokeColorWithColor (UIColor.Black.CGColor);
+				context.SetLineWidth (1.0f);
+				context.MoveTo (borderStartX, borderStartY);
+
+				for (int x=0; x<parent.Width; x++) {
+					int cellBorderX = borderStartX + x * parent.CellSize;
+					context.MoveTo (cellBorderX, borderStartY);
+					context.AddLineToPoint (cellBorderX, borderStartY + parent.Height * parent.CellSize);
+				}
+
+				for (int y=0; y<parent.Height; y++) {
+					int cellBorderY = borderStartY + y * parent.CellSize;
+					context.MoveTo (borderStartX, cellBorderY);
+					context.AddLineToPoint (borderStartX + parent.Width * parent.CellSize, cellBorderY);
+				}
+
+				context.StrokePath ();
+			}
 
 			// Draw each cell
 			// ------------------------------------------------------------
@@ -209,18 +231,6 @@ namespace PixPuzzle
 					bool isValid = (hasPath && cell.Path.IsValid);
 					bool isLastCell = (hasPath && cell.Path.IsLastCell (cell));
 
-					
-					// The common part: the border
-					// ******************************************************************************************
-					// Start point
-					backgroundLayer.Context.MoveTo (cellStartX, cellStartY);
-
-					backgroundLayer.Context.SetStrokeColorWithColor (UIColor.Black.CGColor);
-					backgroundLayer.Context.SetLineWidth (1.0f);
-
-					// Square for borders
-					backgroundLayer.Context.StrokeRect (cellRect); 
-
 					// Game states
 					// ******************************************************************************************
 					if (hasPath) {
@@ -234,13 +244,13 @@ namespace PixPuzzle
 						if (isValid) {
 							// Change background color
 							colorUnderText = UIColor.Blue;
-							backgroundLayer.Context.SetFillColor (colorUnderText.CGColor);
-							backgroundLayer.Context.FillRect (cellRect);
+							context.SetFillColor (colorUnderText.CGColor);
+							context.FillRect (cellRect);
 
 						}
 
 						// Set the context color to the path one
-						pathLayer.Context.SetFillColor (cell.Path.Color.UIColor.CGColor);
+						context.SetFillColor (cell.Path.Color.UIColor.CGColor);
 
 						// Path and end or start
 						if (isStartOrEnd) {
@@ -249,13 +259,13 @@ namespace PixPuzzle
 
 							showText = true;
 							textValue = cell.Path.ExpectedLength.ToString ();
-							textLayer.Context.SelectFont ("Helvetica Neue", 16.0f, CGTextEncoding.MacRoman);
+							context.SelectFont ("Helvetica Neue", 16.0f, CGTextEncoding.MacRoman);
 
 							// Draw a circle of the color
 							// But reduce the circle value
 							int circleReductionValue = 2;
-							backgroundLayer.Context.SetFillColor (cell.Path.Color.UIColor.CGColor);
-							backgroundLayer.Context.FillEllipseInRect (new RectangleF(cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
+							context.SetFillColor (cell.Path.Color.UIColor.CGColor);
+							context.FillEllipseInRect (new RectangleF(cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
 						}
 
 						// Draw the path!
@@ -308,12 +318,12 @@ namespace PixPuzzle
 
 							// Draw in 2 parts:
 							// First a rect
-							pathLayer.Context.FillRect (pathRect);
+							context.FillRect (pathRect);
 
 							// Then an arc to the end
 							if (previousDirectionX < 0) {
-								pathLayer.Context.MoveTo (pathRect.Right, pathRect.Top);
-								pathLayer.Context.AddCurveToPoint (
+								context.MoveTo (pathRect.Right, pathRect.Top);
+								context.AddCurveToPoint (
 									pathRect.Right + pathRect.Width / 3,
 									pathRect.Top + pathRect.Height / 3,
 									pathRect.Right + pathRect.Width / 3,
@@ -322,8 +332,8 @@ namespace PixPuzzle
 									pathRect.Bottom
 								);
 							} else if (previousDirectionX > 0) {
-								pathLayer.Context.MoveTo (pathRect.Left, pathRect.Top);
-								pathLayer.Context.AddCurveToPoint (
+								context.MoveTo (pathRect.Left, pathRect.Top);
+								context.AddCurveToPoint (
 									pathRect.Left - pathRect.Width / 3,
 									pathRect.Top + pathRect.Height / 3,
 									pathRect.Left - pathRect.Width / 3,
@@ -333,8 +343,8 @@ namespace PixPuzzle
 								);
 							}
 							if (previousDirectionY < 0) {
-								pathLayer.Context.MoveTo (pathRect.Left, pathRect.Bottom);
-								pathLayer.Context.AddCurveToPoint (
+								context.MoveTo (pathRect.Left, pathRect.Bottom);
+								context.AddCurveToPoint (
 									pathRect.Left + pathRect.Width / 3,
 									pathRect.Bottom + pathRect.Height / 3,
 									pathRect.Left + 2 * pathRect.Width / 3,
@@ -343,8 +353,8 @@ namespace PixPuzzle
 									pathRect.Bottom
 								);
 							} else if (previousDirectionY > 0) {
-								pathLayer.Context.MoveTo (pathRect.Left, pathRect.Top);
-								pathLayer.Context.AddCurveToPoint (
+								context.MoveTo (pathRect.Left, pathRect.Top);
+								context.AddCurveToPoint (
 									pathRect.Left + pathRect.Width / 3,
 									pathRect.Top - pathRect.Height / 3,
 									pathRect.Left + 2 * pathRect.Width / 3,
@@ -354,7 +364,7 @@ namespace PixPuzzle
 								);
 							}
 
-							pathLayer.Context.FillPath ();
+							context.FillPath ();
 
 							// Last cell of an incomplete path?
 							if ((isLastCell == true) && (isValid == false) && (isStartOrEnd == false)) {
@@ -363,12 +373,12 @@ namespace PixPuzzle
 								showText = true;
 								colorUnderText = UIColor.LightGray;
 								textValue = cell.Path.Length.ToString ();
-								textLayer.Context.SelectFont ("Helvetica Neue", 12.0f, CGTextEncoding.MacRoman);
+								context.SelectFont ("Helvetica Neue", 12.0f, CGTextEncoding.MacRoman);
 
 								// Draw a gray circle!
 								int circleReductionValue = parent.CellSize / 8;
-								pathLayer.Context.SetFillColor (colorUnderText.CGColor);
-								pathLayer.Context.FillEllipseInRect (new RectangleF(cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
+								context.SetFillColor (colorUnderText.CGColor);
+								context.FillEllipseInRect (new RectangleF(cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
 							}
 						}
 
@@ -385,13 +395,13 @@ namespace PixPuzzle
 								textColor = UIColor.White;
 							}
 
-							textLayer.Context.SetFillColor (textColor.CGColor);
+							context.SetFillColor (textColor.CGColor);
 
 							// Draw the text properly
 
 							// Careful with the coordinates!!!
 							// Remember it's a real mess because it's inverted
-							textLayer.Context.ShowTextAtPoint (cellStartX+ parent.CellSize/3, cellStartY + 2 * parent.CellSize / 3, textValue);
+							context.ShowTextAtPoint (cellStartX+ parent.CellSize/3, cellStartY + 2 * parent.CellSize / 3, textValue);
 						}
 
 					} // if cell has path
@@ -399,11 +409,7 @@ namespace PixPuzzle
 				}
 			}
 
-			mainContext.DrawLayer (backgroundLayer, rect);
-			mainContext.DrawLayer (pathLayer, rect);
-			mainContext.DrawLayer (textLayer, rect);
-
-			mainContext.Dispose ();
+			context.Dispose ();
 		}
 		#endregion
 	}
