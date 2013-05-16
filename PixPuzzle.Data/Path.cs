@@ -140,7 +140,7 @@ namespace PixPuzzle.Data
 
 			int index = Cells.IndexOf (cell);
 
-			if(index - 1 > 0) {
+			if(index - 1 >= 0) {
 				return Cells [index - 1];
 			}
 			return null;

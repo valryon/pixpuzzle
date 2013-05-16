@@ -81,8 +81,6 @@ namespace PixPuzzle
 				// -- Previous cell
 				Cell previousCell = Path.PreviousCell(this);
 				if (previousCell != null) {
-					int previousDirectionX = -1;
-					int previousDirectioY = -1;
 
 				} else {
 
@@ -91,8 +89,6 @@ namespace PixPuzzle
 				// Next cell
 				Cell nextCell= Path.NextCell(this);
 				if (nextCell != null) {
-					int nextDirectioX= -1;
-					int nextDirectioY= -1;
 
 				} else {
 					// No next cell?

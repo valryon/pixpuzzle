@@ -208,18 +208,18 @@ namespace PixPuzzle
 
 					// Selected state
 					// ******************************************************************************************
-					if (isSelected) {
-						context.SetStrokeColorWithColor (UIColor.Blue.CGColor);
-
-						// Fill with blue
-						context.MoveTo (cellStartX, cellStartY);
-						context.AddLineToPoint (cellEndX, cellStartY); 
-						context.AddLineToPoint (cellEndX, cellEndY); 
-						context.AddLineToPoint (cellStartX, cellEndY); 
-						context.AddLineToPoint (cellStartX, cellStartY); 
-
-						context.FillPath ();
-					}
+//					if (isSelected) {
+//						context.SetStrokeColorWithColor (UIColor.Blue.CGColor);
+//
+//						// Fill with blue
+//						context.MoveTo (cellStartX, cellStartY);
+//						context.AddLineToPoint (cellEndX, cellStartY); 
+//						context.AddLineToPoint (cellEndX, cellEndY); 
+//						context.AddLineToPoint (cellStartX, cellEndY); 
+//						context.AddLineToPoint (cellStartX, cellStartY); 
+//
+//						context.FillPath ();
+//					}
 
 					// Game states
 					// ******************************************************************************************
@@ -241,6 +241,57 @@ namespace PixPuzzle
 						}
 
 						// Draw the path!
+						// For this each cell of the path draw the cell just before them
+						Cell previousCell = cell.Path.PreviousCell (cell);
+						if (previousCell != null) {
+							// Get the direction of the previous cell
+							int previousDirectionX = previousCell.X - cell.X;
+							int previousDirectionY = previousCell.Y - cell.Y;
+
+							// If x or y is set then y or x has to be 0
+
+							// Draw an ellipse between the two cells
+							// This code is brutal
+							int pathStartX;
+							int pathStartY;
+							int pathWidth ;
+							int pathHeight;
+
+							if (previousDirectionX != 0) 
+							{
+								// Get the middle X of the previous cell
+								pathStartX = cellStartX + (previousDirectionX * parent.CellSize / 2);
+
+								// Center Y in the current cell
+								pathStartY = cellStartY + Math.Abs (previousDirectionX * parent.CellSize / 4);
+
+								// Horizontal path
+								pathWidth = parent.CellSize;
+								pathHeight = parent.CellSize / 2;
+							}
+							else 
+							{
+								// Center X in the current cell
+								pathStartX = cellStartX + Math.Abs (previousDirectionY * parent.CellSize / 4);
+
+								// Get the middle Y of the previous cell
+								pathStartY = cellStartY + (previousDirectionY * parent.CellSize / 2);
+
+								// Vertical path
+								pathWidth = parent.CellSize / 2;
+								pathHeight = parent.CellSize;
+							}
+
+							RectangleF pathRect = new RectangleF (
+								pathStartX,
+								pathStartY,
+								pathWidth,
+								pathHeight
+							);
+
+							context.FillEllipseInRect (pathRect);
+
+						}
 
 						if (showText) {
 
@@ -252,7 +303,7 @@ namespace PixPuzzle
 
 							// Careful with the coordinates!!!
 							// Remember it's a real mess because it's inverted
-							context.ShowTextAtPoint (cellStartX+ parent.CellSize/3 , cellStartY + 2*parent.CellSize/3, text);
+							context.ShowTextAtPoint (cellStartX+ parent.CellSize/3, cellStartY + 2 * parent.CellSize / 3, text);
 						}
 
 					}
@@ -269,7 +320,6 @@ namespace PixPuzzle
 
 			context.Dispose ();
 		}
-
 		#endregion
 	}
 	/// <summary>
