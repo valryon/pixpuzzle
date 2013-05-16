@@ -305,6 +305,7 @@ namespace PixPuzzle.Data
 							// Fusion!
 							Console.WriteLine ("Fusion!");
 							FirstPathCell.Path.Fusion (cell.Path);
+							cell.Path  = FirstPathCell.Path;
 
 							// Update the modified cells
 							UpdateView(FirstPathCell.Path.Cells);

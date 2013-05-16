@@ -45,11 +45,7 @@ namespace PixPuzzle
 				PointF touchLocation = sender.LocationInView (this);
 
 				Cell cell = getCellFromViewCoordinates (touchLocation);
-
-				Cell[] cellToRefresh = cell.Path.Cells.ToArray ();
 				parent.RemovePath (cell);
-
-				OrderRefresh (cellToRefresh);
 			}
 		}
 
@@ -84,9 +80,6 @@ namespace PixPuzzle
 					Cell cell = getCellFromViewCoordinates (fingerLocation);
 
 					parent.CreatePath (cell);
-
-					Cell[] cellToRefresh = cell.Path.Cells.ToArray ();
-					OrderRefresh (cellToRefresh);
 				}
 			}
 			base.TouchesMoved (touches, evt);
@@ -109,18 +102,25 @@ namespace PixPuzzle
 
 		public void OrderRefresh (Cell[] cellsToRefresh)
 		{
-			RectangleF zoneToRefresh = RectangleF.Empty;
+			int borderStartX = GridLocationX + (BorderWidth / 2);
+			int borderStartY = GridLocationY + (BorderWidth / 2);
+
+			Rectangle zoneToRefresh = Rectangle.Empty;
 
 			foreach (Cell cell in cellsToRefresh) {
-				int borderStartX = GridLocationX + (BorderWidth / 2);
-				int borderStartY = GridLocationY + (BorderWidth / 2);
 
 				int x = borderStartX + cell.X * parent.CellSize;
 				int y = borderStartY + cell.Y * parent.CellSize;
 
-				RectangleF cellRect = new RectangleF (x, y, parent.CellSize, parent.CellSize);
-				if (zoneToRefresh.Contains (cellRect) == false || zoneToRefresh.IntersectsWith (cellRect) == false) {
-					zoneToRefresh = cellRect.UnionWith (zoneToRefresh);
+				Rectangle cellRect = new Rectangle (x, y, parent.CellSize, parent.CellSize);
+
+				if (zoneToRefresh == Rectangle.Empty) {
+					zoneToRefresh = cellRect;
+				} else {
+					if (zoneToRefresh.Contains (cellRect) == false || zoneToRefresh.IntersectsWith (cellRect) == false) {
+
+						zoneToRefresh = Rectangle.Union (cellRect, zoneToRefresh);
+					}
 				}
 			}
 
