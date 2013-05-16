@@ -46,14 +46,12 @@ namespace PixPuzzle.Data
 		public void AddCell (Cell cell)
 		{
 			Cells.Add (cell);
-
-			UpdateCells ();
 		}
 		/// <summary>
 		/// Removes all the cells that are after the given one
 		/// </summary>
 		/// <param name="cell">Cell.</param>
-		public void RemoveCellAfter (Cell cell)
+		public List<Cell> RemoveCellAfter (Cell cell)
 		{
 			int index = Cells.IndexOf (cell);
 
@@ -67,21 +65,24 @@ namespace PixPuzzle.Data
 				Cells.Remove (cellToRemove);
 
 				cellToRemove.Path = null;
-				cellToRemove.UpdateView ();
 			}
 
-			UpdateCells ();
+			return cellsToRemove;
 		}
 		/// <summary>
 		/// Delete the path, make it disappear
 		/// </summary>
-		public void DeleteItself ()
+		public List<Cell> DeleteItself ()
 		{
+			List<Cell>  removedCells = new List<Cell> ();
+
 			// Prevent 1 path to be deleted
 			if (Cells.Count <= 1)
-				return;
+				return removedCells;
 
 			foreach (var c in Cells) {
+
+				removedCells.Add (c);
 
 				if (c.IsPathStartOrEnd == false) {
 					c.Path = null;
@@ -89,23 +90,13 @@ namespace PixPuzzle.Data
 					// Do not lose information for the start and end
 					c.Path = new Path (c, ExpectedLength);
 				}
-
-				c.UpdateView ();
 			}
 
 			Cells.Clear ();
-		}
-		/// <summary>
-		/// Update all the cells 
-		/// </summary>
-		public void UpdateCells ()
-		{
-			foreach (var c in Cells) {
 
-				// Update existing cells
-				c.UpdateView ();
-			}
+			return removedCells;
 		}
+
 		/// <summary>
 		/// Place in the chain
 		/// </summary>

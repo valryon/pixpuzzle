@@ -5,7 +5,7 @@ namespace PixPuzzle.Data
 	/// <summary>
 	/// One cell of the path puzzle
 	/// </summary>
-	public abstract class Cell 
+	public class Cell 
 	{
 		public Cell (int x, int y)
 		{
@@ -24,8 +24,6 @@ namespace PixPuzzle.Data
 		public void DefineBaseColor (CellColor color)
 		{
 			Color = color;
-
-			UpdateView ();
 		}
 
 		/// <summary>
@@ -38,23 +36,7 @@ namespace PixPuzzle.Data
 
 			// The cell is the beginning or the end of a path
 			Path = new Path(this, pathLength);
-
-			UpdateView ();
 		}
-
-		#region View
-
-		/// <summary>
-		/// Create the view
-		/// </summary>
-		public abstract void BuildView();
-
-		/// <summary>
-		/// Updates the view of the cell
-		/// </summary>
-		public abstract void UpdateView ();
-
-		#endregion
 
 		#region Update cell events
 

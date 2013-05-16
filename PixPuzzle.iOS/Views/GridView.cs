@@ -65,14 +65,7 @@ namespace PixPuzzle
 
 				Cell cell = getCellFromViewCoordinates (fingerLocation);
 
-				bool pathStarted = parent.StartPathCreation (cell);
-
-				if (pathStarted) {
-					this.BringSubviewToFront (((CellView)cell).View);
-				}
-
-				Cell[] cellToRefresh = cell.Path.Cells.ToArray ();
-				OrderRefresh (cellToRefresh);
+				parent.StartPathCreation (cell);
 			}
 			base.TouchesBegan (touches, evt);
 		}
@@ -116,6 +109,8 @@ namespace PixPuzzle
 
 		public void OrderRefresh (Cell[] cellsToRefresh)
 		{
+			RectangleF zoneToRefresh = RectangleF.Empty;
+
 			foreach (Cell cell in cellsToRefresh) {
 				int borderStartX = GridLocationX + (BorderWidth / 2);
 				int borderStartY = GridLocationY + (BorderWidth / 2);
@@ -123,8 +118,13 @@ namespace PixPuzzle
 				int x = borderStartX + cell.X * parent.CellSize;
 				int y = borderStartY + cell.Y * parent.CellSize;
 
-				SetNeedsDisplayInRect (new RectangleF(x,y,parent.CellSize,parent.CellSize));
+				RectangleF cellRect = new RectangleF (x, y, parent.CellSize, parent.CellSize);
+				if (zoneToRefresh.Contains (cellRect) == false || zoneToRefresh.IntersectsWith (cellRect) == false) {
+					zoneToRefresh = cellRect.UnionWith (zoneToRefresh);
+				}
 			}
+
+			SetNeedsDisplayInRect (zoneToRefresh);
 		}
 
 		private const int BorderWidth = 4;
@@ -399,7 +399,7 @@ namespace PixPuzzle
 	/// <summary>
 	/// Grid iOS view.
 	/// </summary>
-	public class GridView : Grid<CellView>
+	public class GridView : Grid
 	{
 		// Constants
 		public const int CellSizeIphone = 32;
@@ -412,16 +412,12 @@ namespace PixPuzzle
 			View = new GridViewInternal (this, new RectangleF (0, 0, width * CellSize, height * CellSize));
 
 			// Create the grid and cells views
-			CreateGrid ((x,y) => {
-				CellView cell = new CellView(x,y, new RectangleF (x * CellSize, y * CellSize, CellSize, CellSize));
+			CreateGrid ();
+		}
 
-				cell.BuildView();
-
-//				View.AddSubview(cell.View);
-
-				return cell;
-			});
-
+		public override void UpdateView (List<Cell> cellsToUpdate)
+		{
+			View.OrderRefresh (cellsToUpdate.ToArray());
 		}
 
 		internal GridViewInternal View {

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace PixPuzzle.Data
 {
-	public abstract class Grid<TCell> 
-		where TCell : Cell
+	public abstract class Grid
 	{
 		// Constants
 		public const int MaximumPathLength = 9;
@@ -13,7 +12,7 @@ namespace PixPuzzle.Data
 		public event Action GridCompleted;
 
 		// Grid
-		protected TCell[][] Cells;
+		protected Cell[][] Cells;
 
 		// Path data
 		protected Cell FirstPathCell, LastSelectedCell;
@@ -38,18 +37,18 @@ namespace PixPuzzle.Data
 		/// Create a grid and initialize with default values
 		/// </summary>
 		/// <param name="createCell">Create cell.</param>
-		public void CreateGrid(Func<int,int, TCell> createCell) {
+		public void CreateGrid() {
 
 			// Create the grid
-			Cells = new TCell[Width][];
+			Cells = new Cell[Width][];
 
 			for (int x=0; x<Width; x++) {
 
-				Cells [x] = new TCell[Height];
+				Cells [x] = new Cell[Height];
 
 				for (int y=0; y<Height; y++) {
 
-					TCell c = createCell(x, y);
+					Cell c = new Cell(x, y);
 					Cells [x] [y] = c;
 				}
 			}
@@ -176,6 +175,14 @@ namespace PixPuzzle.Data
 		}
 			#endregion
 
+		#region View
+
+		public abstract void UpdateView (List<Cell> cellsToUpdate);
+
+		#endregion
+
+
+
 			#region Grid tools
 
 		/// <summary>
@@ -269,7 +276,8 @@ namespace PixPuzzle.Data
 						FirstPathCell.Path.AddCell (cell);
 						cell.Path = FirstPathCell.Path;
 
-						cell.Path.UpdateCells ();
+						// Update the modified cells
+						UpdateView(cell.Path.Cells);
 
 						Console.WriteLine ("Adding cell to the path.");
 						Console.WriteLine ("Current path length: "+cell.Path.Length);
@@ -297,9 +305,9 @@ namespace PixPuzzle.Data
 							// Fusion!
 							Console.WriteLine ("Fusion!");
 							FirstPathCell.Path.Fusion (cell.Path);
-							cell.Path  = FirstPathCell.Path;
 
-							cell.Path.UpdateCells();
+							// Update the modified cells
+							UpdateView(FirstPathCell.Path.Cells);
 
 							// End the creation, the path is complete
 							Console.WriteLine ("Path complete!");
@@ -314,7 +322,12 @@ namespace PixPuzzle.Data
 						// Remove all the cells past the one we jut reached
 						// The current cell will NOT be removed
 						Console.WriteLine ("Removing cell after "+ cell);
-						FirstPathCell.Path.RemoveCellAfter (cell);
+						List<Cell> removedCells = FirstPathCell.Path.RemoveCellAfter (cell);
+
+						// Update the modified cells
+						UpdateView(cell.Path.Cells);
+						// And the removed ones
+						UpdateView(removedCells);
 					} else {
 						// I don't know what's we're doing.
 						// ABANDON ALL THE WORK
@@ -385,8 +398,10 @@ namespace PixPuzzle.Data
 		{
 			if (cell != null) {
 				if (cell.Path != null) {
-					cell.Path.DeleteItself ();
+					List<Cell> removedCells = cell.Path.DeleteItself ();
 					Console.WriteLine ("Deleting the path");
+
+					UpdateView(removedCells);
 				}
 			}
 		}

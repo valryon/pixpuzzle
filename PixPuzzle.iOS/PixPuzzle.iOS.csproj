@@ -103,7 +103,6 @@
     <Compile Include="Tools\Image\Bitmap.cs" />
     <Compile Include="Tools\Image\Color.cs" />
     <Compile Include="Tools\Image\ColorConverter.cs" />
-    <Compile Include="Views\CellView.cs" />
     <Compile Include="Views\GridView.cs" />
     <Compile Include="Controllers\GameViewController.cs" />
     <Compile Include="Controllers\GameViewController.designer.cs">
