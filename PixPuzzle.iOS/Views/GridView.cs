@@ -164,16 +164,14 @@ namespace PixPuzzle
 				for (int y=0; y<parent.Height; y++) {
 
 					int cellStartX = borderStartX + (x * parent.CellSize);
-					int cellEndX = cellStartX + parent.CellSize;
 					int cellStartY = borderStartY + (y * parent.CellSize);
-					int cellEndY = cellStartY + parent.CellSize;
 
 					RectangleF cellRect = new RectangleF (cellStartX, cellStartY, parent.CellSize, parent.CellSize);
 
 					// The optimization for not redrawing every cell each display
 					// ******************************************************************************************
 					// Are we in the draw rect?!
-					if (rect.Contains (cellRect) == false) {
+					if (rect.Contains (cellRect) == false || rect.IntersectsWith (cellRect) == false) {
 						continue;
 					}
 
@@ -334,6 +332,7 @@ namespace PixPuzzle
 						if (showText) {
 
 							// Get the reverse color of the background
+
 							context.SetFillColor (UIColor.Black.CGColor);
 
 							// Draw the text properly
