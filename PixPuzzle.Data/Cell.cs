@@ -61,16 +61,26 @@ namespace PixPuzzle.Data
 		/// <summary>
 		/// Cell has been selected (touched)
 		/// </summary>
-		public abstract void SelectCell ();
+		public virtual void SelectCell () {
+			IsSelected = true;
+		}
 
 		/// <summary>
 		/// Touch released
 		/// </summary>
-		public abstract void UnselectCell (bool success);
+		public virtual void UnselectCell (bool success) {
+			IsSelected = false;
+		}
 
 		#endregion
 
 		#region Properties
+
+		public bool IsSelected {
+			get;
+			private set;
+
+		}
 
 		/// <summary>
 		/// Tells if we are on a cell that is the start or the end of a complete path

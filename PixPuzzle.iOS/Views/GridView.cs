@@ -4,6 +4,9 @@ using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using PixPuzzle.Data;
+using MonoTouch.CoreGraphics;
+using MonoTouch.CoreText;
+using MonoTouch.Foundation;
 
 namespace PixPuzzle
 {
@@ -11,7 +14,7 @@ namespace PixPuzzle
 	{
 		private GridView parent;
 
-		public GridViewInternal(GridView parent, RectangleF frame) 
+		public GridViewInternal (GridView parent, RectangleF frame) 
 			: base(frame)
 		{
 			this.parent = parent;
@@ -22,7 +25,6 @@ namespace PixPuzzle
 			tapGesture.NumberOfTapsRequired = 2;
 			this.AddGestureRecognizer (tapGesture);
 		}
-
 		#region Grid tools
 
 		private Cell getCellFromViewCoordinates (PointF viewLocation)
@@ -56,6 +58,8 @@ namespace PixPuzzle
 
 				PointF fingerLocation = touch.LocationInView (this);
 
+				Console.WriteLine (fingerLocation);
+
 				Cell cell = getCellFromViewCoordinates (fingerLocation);
 
 				bool pathStarted = parent.StartPathCreation (cell);
@@ -63,6 +67,8 @@ namespace PixPuzzle
 				if (pathStarted) {
 					this.BringSubviewToFront (((CellView)cell).View);
 				}
+
+				SetNeedsDisplay ();
 			}
 			base.TouchesBegan (touches, evt);
 		}
@@ -81,6 +87,8 @@ namespace PixPuzzle
 					Cell cell = getCellFromViewCoordinates (fingerLocation);
 
 					parent.CreatePath (cell);
+
+					SetNeedsDisplay ();
 				}
 			}
 			base.TouchesMoved (touches, evt);
@@ -89,6 +97,8 @@ namespace PixPuzzle
 		public override void TouchesEnded (MonoTouch.Foundation.NSSet touches, UIEvent evt)
 		{
 			parent.EndPathCreation (false);
+
+			SetNeedsDisplay ();
 
 			base.TouchesEnded (touches, evt);
 		}
@@ -99,8 +109,140 @@ namespace PixPuzzle
 			parent = null;
 			base.Dispose (disposing);
 		}
-	}
+		#region Drawing
 
+		private const int BorderWidth = 4;
+		private const int GridLocationX = 0;
+		private const int GridLocationY = 0;
+
+		public void InitializeViewForDrawing (int x, int y)
+		{
+			// Find the real final size and location of the frame
+			this.Frame = new RectangleF (x, y
+			                            , (parent.CellSize * parent.Width) + GridLocationX + BorderWidth
+			                            , (parent.CellSize * parent.Height) + GridLocationY + BorderWidth
+			);
+
+			this.BackgroundColor = UIColor.FromRGB (230, 230, 230);
+		}
+
+		public override void Draw (RectangleF rect)
+		{
+			Console.WriteLine ("draw");
+			base.Draw (rect);
+
+			CGContext context = UIGraphics.GetCurrentContext ();
+
+			// Context properties
+			// -- Text
+			context.SetTextDrawingMode (CGTextDrawingMode.FillStroke);
+			context.SelectFont ("Helvetica Neue", 16.0f, CGTextEncoding.MacRoman);
+			context.TextMatrix = CGAffineTransform.MakeScale (1f, -1f);
+
+			// Draw the bounds of the grid
+			// ------------------------------------------------------------
+			int borderStartX = GridLocationX + (BorderWidth / 2);
+			int borderStartY = GridLocationY + (BorderWidth / 2);
+			int borderEndX = borderStartX + (parent.CellSize * parent.Width) + (BorderWidth / 2);
+			int borderEndY = borderStartY + (parent.CellSize * parent.Height) + (BorderWidth / 2);
+
+			context.SetStrokeColorWithColor (UIColor.Blue.CGColor);
+			context.MoveTo (borderStartX, borderStartY); //start at this point
+			context.SetLineWidth (BorderWidth);
+
+			// Draw a square
+			context.AddLineToPoint (borderEndX, borderStartY); 
+			context.AddLineToPoint (borderEndX, borderEndY); 
+			context.AddLineToPoint (borderStartX, borderEndY); 
+			context.AddLineToPoint (borderStartX, borderStartY); 
+
+			// Effective draw
+			context.StrokePath ();
+
+			// Draw each cell
+			// ------------------------------------------------------------
+			for (int x=0; x<parent.Width; x++) {
+				for (int y=0; y<parent.Height; y++) {
+
+					int cellStartX = borderStartX + (x * parent.CellSize);
+					int cellEndX = cellStartX + parent.CellSize;
+					int cellStartY = borderStartY + (y * parent.CellSize);
+					int cellEndY = cellStartY + parent.CellSize;
+
+					// The optimization for not redrawing every cell each display
+					// ******************************************************************************************
+					// Are we in the draw rect?!
+					if (rect.Contains (new RectangleF(cellStartX,cellStartY, parent.CellSize,parent.CellSize)) == false) {
+						continue;
+					}
+
+					// Get properties
+					// ******************************************************************************************
+					Cell cell = parent.GetCell (x, y);
+					if (cell == null)
+						continue;
+
+					// Get properties
+					bool hasPath = (cell.Path != null);
+					bool isSelected = cell.IsSelected;
+					bool isStartOrEnd = cell.IsPathStartOrEnd;
+					bool isValid = (hasPath && cell.Path.IsValid);
+
+
+					// The common part: the border
+					// ******************************************************************************************
+					// Start point
+					context.MoveTo (cellStartX, cellStartY);
+
+					context.SetStrokeColorWithColor (UIColor.Black.CGColor);
+					context.SetLineWidth (1.0f);
+
+					// Square for borders
+					context.AddLineToPoint (cellEndX, cellStartY); 
+					context.AddLineToPoint (cellEndX, cellEndY); 
+					context.AddLineToPoint (cellStartX, cellEndY); 
+					context.AddLineToPoint (cellStartX, cellStartY); 
+
+					// Effective draw
+					context.StrokePath ();
+
+					// Selected state
+					// ******************************************************************************************
+					if (isSelected) {
+						context.SetStrokeColorWithColor (UIColor.Blue.CGColor);
+
+						// Square for borders
+						context.AddLineToPoint (cellEndX, cellStartY); 
+						context.AddLineToPoint (cellEndX, cellEndY); 
+						context.AddLineToPoint (cellStartX, cellEndY); 
+						context.AddLineToPoint (cellStartX, cellStartY); 
+
+						context.FillPath ();
+					}
+
+					// Draw text
+					// ******************************************************************************************
+
+					// The text
+					if (cell.Path != null) {
+						context.TextPosition = new PointF (cellStartX, cellStartY);
+						context.ShowTextAtPoint (cellStartX - (parent.CellSize/1.5f), cellStartY - (parent.CellSize / 3), cell.Path.ExpectedLength + "");
+					}
+				}
+			}
+
+
+			// and now draw the Path!
+			context.StrokePath ();
+		}
+
+		public override void DrawRect (RectangleF area, UIViewPrintFormatter formatter)
+		{
+			Console.WriteLine ("draw rect");
+			base.DrawRect (area, formatter);
+		}
+		#endregion
+	}
 	/// <summary>
 	/// Grid iOS view.
 	/// </summary>
@@ -114,7 +256,7 @@ namespace PixPuzzle
 			: base(width, height, AppDelegate.UserInterfaceIdiomIsPhone ? CellSizeIphone : CellSizeIpad)
 		{
 			// Create the view 
-			View = new GridViewInternal(this, new RectangleF (0, 0, width * CellSize, height * CellSize));
+			View = new GridViewInternal (this, new RectangleF (0, 0, width * CellSize, height * CellSize));
 
 			// Create the grid and cells views
 			CreateGrid ((x,y) => {
@@ -122,15 +264,16 @@ namespace PixPuzzle
 
 				cell.BuildView();
 
-				View.AddSubview(cell.View);
+//				View.AddSubview(cell.View);
 
 				return cell;
 			});
+
 		}
 
-		public UIView View
-		{
-			get;set;
+		internal GridViewInternal View {
+			get;
+			set;
 		}
 	}
 }

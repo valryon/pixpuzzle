@@ -14,7 +14,6 @@ namespace PixPuzzle.Data
 
 		// Grid
 		protected TCell[][] Cells;
-		protected int Width, Height;
 
 		// Path data
 		protected Cell FirstPathCell, LastSelectedCell;
@@ -224,6 +223,10 @@ namespace PixPuzzle.Data
 						FirstPathCell = cell.Path.FirstCell;
 
 						cell.SelectCell ();
+						if(LastSelectedCell != null) 
+						{
+							LastSelectedCell.UnselectCell (false);
+						}
 						LastSelectedCell = cell;
 
 						Console.WriteLine ("Starting a new path.");
@@ -388,6 +391,14 @@ namespace PixPuzzle.Data
 		#endregion
 
 		public int CellSize { 
+			get;
+			private set; 
+		}
+		public int Width { 
+			get;
+			private set; 
+		}
+		public int Height { 
 			get;
 			private set; 
 		}

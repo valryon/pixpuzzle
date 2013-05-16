@@ -45,7 +45,11 @@ namespace PixPuzzle
 			UIScrollView scrollView = new UIScrollView (new RectangleF(0,0,UIScreen.MainScreen.Bounds.Height,UIScreen.MainScreen.Bounds.Width));
 			scrollView.ScrollEnabled = true;
 			scrollView.BackgroundColor = UIColor.Gray;
-			scrollView.ContentSize = new SizeF (grid.View.Frame.Width, grid.View.Frame.Height);
+
+			// Margin
+			float contentX = 32;
+			float contentY = 32;
+			scrollView.ContentSize = new SizeF (grid.View.Frame.Width + (contentX*2), grid.View.Frame.Height + (contentY*2));
 
 			// Scrolling with two fingers
 			foreach (UIGestureRecognizer gestureRecognizer in scrollView.GestureRecognizers) {     
@@ -91,9 +95,13 @@ namespace PixPuzzle
 
 			// Launch the setup process
 			grid.SetupGrid ();
+
+			// Prepare the drawing, place the grid where it should be
+			grid.View.InitializeViewForDrawing ((int)contentX, (int)contentY);
 		}
 
-		private void gridCompleted() {
+		private void gridCompleted ()
+		{
 			UIAlertView alert = new UIAlertView (
 				"Game Over",
 				"You did it!",
