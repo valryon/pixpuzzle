@@ -207,6 +207,9 @@ namespace PixPuzzle.Data
 		{
 			if (cell != null) {
 
+				// Debug
+				Console.WriteLine ("**Cell X:"+cell.X + " Y:"+cell.Y);
+
 				if (cell.Path != null) {
 
 					// Check if the cell has a valid path object.
@@ -216,8 +219,7 @@ namespace PixPuzzle.Data
 					bool isPathLastCell = cell.Path.IsLastCell (cell);
 
 					// Debug
-					Console.WriteLine ("**Cell X:"+cell.X + " cell:"+cell.Y);
-					Console.WriteLine ("**Path state - closed:"+isPathClosed + " isPathLastCell:"+isPathLastCell);
+					Console.WriteLine ("**Path val:"+cell.Path.ExpectedLength+" closed:"+isPathClosed + " isPathLastCell:"+isPathLastCell);
 
 					if (isPathClosed == false && isPathLastCell) {
 						FirstPathCell = cell.Path.FirstCell;

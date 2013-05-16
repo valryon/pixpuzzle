@@ -112,6 +112,8 @@ namespace PixPuzzle
 
 		public override void SelectCell ()
 		{
+			base.SelectCell ();
+
 			View.Transform = CGAffineTransform.MakeScale (0.85f, 0.85f);
 			
 			UIView.Animate (0.5f,
@@ -122,6 +124,8 @@ namespace PixPuzzle
 
 		public override void UnselectCell (bool success)
 		{
+			base.UnselectCell (success);
+
 			if (success) {
 				View.Transform = CGAffineTransform.MakeScale (1.25f, 1.25f);
 				

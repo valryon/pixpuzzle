@@ -211,7 +211,8 @@ namespace PixPuzzle
 					if (isSelected) {
 						context.SetStrokeColorWithColor (UIColor.Blue.CGColor);
 
-						// Square for borders
+						// Fill with blue
+						context.MoveTo (cellStartX, cellStartY);
 						context.AddLineToPoint (cellEndX, cellStartY); 
 						context.AddLineToPoint (cellEndX, cellEndY); 
 						context.AddLineToPoint (cellStartX, cellEndY); 
@@ -225,22 +226,19 @@ namespace PixPuzzle
 
 					// The text
 					if (cell.Path != null) {
-						context.TextPosition = new PointF (cellStartX, cellStartY);
-						context.ShowTextAtPoint (cellStartX - (parent.CellSize/1.5f), cellStartY - (parent.CellSize / 3), cell.Path.ExpectedLength + "");
+
+						string text = cell.Path.ExpectedLength.ToString ();
+
+						// Careful with the coordinates!!!
+						// Remember it's a real mess because it's inverted
+						context.ShowTextAtPoint (cellStartX+ parent.CellSize/3 , cellStartY + 2*parent.CellSize/3, text);
 					}
 				}
 			}
 
-
-			// and now draw the Path!
-			context.StrokePath ();
+			context.Dispose ();
 		}
 
-		public override void DrawRect (RectangleF area, UIViewPrintFormatter formatter)
-		{
-			Console.WriteLine ("draw rect");
-			base.DrawRect (area, formatter);
-		}
 		#endregion
 	}
 	/// <summary>
