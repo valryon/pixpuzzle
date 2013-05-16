@@ -147,7 +147,6 @@ namespace PixPuzzle
 			drawGridEntirely = true;
 		}
 
-
 		public override void Draw (RectangleF rect)
 		{
 			base.Draw (rect);
@@ -241,15 +240,16 @@ namespace PixPuzzle
 						UIColor colorUnderText = defaultBackgroundColor;
 
 						// Path is valid?
-						if (isValid) {
-							// Change background color
-							colorUnderText = UIColor.Blue;
-							context.SetFillColor (colorUnderText.CGColor);
-							context.FillRect (cellRect);
-
-						}
+//						if (isValid) {
+//							// Change background color
+//							colorUnderText = UIColor.Blue;
+//							context.SetFillColor (colorUnderText.CGColor);
+//							context.FillRect (cellRect);
+//
+//						}
 
 						// Set the context color to the path one
+						context.SetStrokeColor (UIColor.Black.CGColor);
 						context.SetFillColor (cell.Path.Color.UIColor.CGColor);
 
 						// Path and end or start
@@ -263,9 +263,15 @@ namespace PixPuzzle
 
 							// Draw a circle of the color
 							// But reduce the circle value
-							int circleReductionValue = 2;
+							int circleReductionValue = parent.CellSize / 10;
 							context.SetFillColor (cell.Path.Color.UIColor.CGColor);
-							context.FillEllipseInRect (new RectangleF(cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
+
+							RectangleF cellValueRect = new RectangleF (cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize - 2 * circleReductionValue, parent.CellSize - 2 * circleReductionValue);
+							if (isValid == false) {
+								context.FillEllipseInRect (cellValueRect);
+							} else {
+								context.FillRect (cellValueRect);
+							}
 						}
 
 						// Draw the path!
@@ -287,26 +293,29 @@ namespace PixPuzzle
 							int pathHeight;
 
 							if (previousDirectionX != 0) {
-								// Get the middle X of the previous cell
-								pathStartX = cellStartX + (previousDirectionX * parent.CellSize / 2);
-
-								// Center Y in the current cell
-								pathStartY = cellStartY + Math.Abs (previousDirectionX * parent.CellSize / 4);
 
 								// Horizontal path
 								pathWidth = parent.CellSize;
 								pathHeight = parent.CellSize / 2;
 
+								// Get the middle X of the previous cell
+								pathStartX = cellStartX + (previousDirectionX * pathWidth / 2);
+
+								// Center Y in the current cell
+								pathStartY = cellStartY + ((parent.CellSize - pathHeight) / 2);
+
 							} else {
-								// Center X in the current cell
-								pathStartX = cellStartX + Math.Abs (previousDirectionY * parent.CellSize / 4);
-
-								// Get the middle Y of the previous cell
-								pathStartY = cellStartY + (previousDirectionY * parent.CellSize / 2);
-
+								
 								// Vertical path
 								pathWidth = parent.CellSize / 2;
 								pathHeight = parent.CellSize;
+
+								// Center X in the current cell
+								pathStartX = cellStartX + ((parent.CellSize - pathWidth) / 2);
+
+								// Get the middle Y of the previous cell
+								pathStartY = cellStartY + (previousDirectionY * pathHeight / 2);
+
 							}
 
 							RectangleF pathRect = new RectangleF (
@@ -365,6 +374,7 @@ namespace PixPuzzle
 							}
 
 							context.FillPath ();
+
 
 							// Last cell of an incomplete path?
 							if ((isLastCell == true) && (isValid == false) && (isStartOrEnd == false)) {
