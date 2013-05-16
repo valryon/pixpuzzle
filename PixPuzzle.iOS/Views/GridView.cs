@@ -146,15 +146,20 @@ namespace PixPuzzle
 
 		public override void Draw (RectangleF rect)
 		{
-			Console.WriteLine ("draw");
 			base.Draw (rect);
 
-			CGContext context = UIGraphics.GetCurrentContext ();
+			CGContext mainContext = UIGraphics.GetCurrentContext ();
+
+			// We use layers so we can draw cells by cells without overriding a previous drawing
+			// We must use layer's context and not the main context 
+			CGLayer backgroundLayer = CGLayer.Create (mainContext, new SizeF(Frame.Width,Frame.Height));
+			CGLayer pathLayer = CGLayer.Create (mainContext, new SizeF(Frame.Width,Frame.Height));
+			CGLayer textLayer = CGLayer.Create (mainContext, new SizeF(Frame.Width,Frame.Height));
 
 			// Context properties
 			// -- Text
-			context.SetTextDrawingMode (CGTextDrawingMode.Fill);
-			context.TextMatrix = CGAffineTransform.MakeScale (1f, -1f);
+			textLayer.Context.SetTextDrawingMode (CGTextDrawingMode.Fill);
+			textLayer.Context.TextMatrix = CGAffineTransform.MakeScale (1f, -1f);
 
 			// Draw the bounds of the grid
 			// ------------------------------------------------------------
@@ -163,18 +168,18 @@ namespace PixPuzzle
 			int borderEndX = borderStartX + (parent.CellSize * parent.Width) + (BorderWidth / 2);
 			int borderEndY = borderStartY + (parent.CellSize * parent.Height) + (BorderWidth / 2);
 
-			context.SetStrokeColorWithColor (UIColor.Blue.CGColor);
-			context.MoveTo (borderStartX, borderStartY); //start at this point
-			context.SetLineWidth (BorderWidth);
+			backgroundLayer.Context.SetStrokeColorWithColor (UIColor.Blue.CGColor);
+			backgroundLayer.Context.MoveTo (borderStartX, borderStartY); //start at this point
+			backgroundLayer.Context.SetLineWidth (BorderWidth);
 
 			// Draw a square
-			context.AddLineToPoint (borderEndX, borderStartY); 
-			context.AddLineToPoint (borderEndX, borderEndY); 
-			context.AddLineToPoint (borderStartX, borderEndY); 
-			context.AddLineToPoint (borderStartX, borderStartY); 
+			backgroundLayer.Context.AddLineToPoint (borderEndX, borderStartY); 
+			backgroundLayer.Context.AddLineToPoint (borderEndX, borderEndY); 
+			backgroundLayer.Context.AddLineToPoint (borderStartX, borderEndY); 
+			backgroundLayer.Context.AddLineToPoint (borderStartX, borderStartY); 
 
 			// Effective draw
-			context.StrokePath ();
+			backgroundLayer.Context.StrokePath ();
 
 			// Draw each cell
 			// ------------------------------------------------------------
@@ -199,11 +204,22 @@ namespace PixPuzzle
 					if (cell == null)
 						continue;
 
-					// Get properties
 					bool hasPath = (cell.Path != null);
 					bool isStartOrEnd = cell.IsPathStartOrEnd;
 					bool isValid = (hasPath && cell.Path.IsValid);
 					bool isLastCell = (hasPath && cell.Path.IsLastCell (cell));
+
+					
+					// The common part: the border
+					// ******************************************************************************************
+					// Start point
+					backgroundLayer.Context.MoveTo (cellStartX, cellStartY);
+
+					backgroundLayer.Context.SetStrokeColorWithColor (UIColor.Black.CGColor);
+					backgroundLayer.Context.SetLineWidth (1.0f);
+
+					// Square for borders
+					backgroundLayer.Context.StrokeRect (cellRect); 
 
 					// Game states
 					// ******************************************************************************************
@@ -218,13 +234,13 @@ namespace PixPuzzle
 						if (isValid) {
 							// Change background color
 							colorUnderText = UIColor.Blue;
-							context.SetFillColor (colorUnderText.CGColor);
-							context.FillRect (cellRect);
+							backgroundLayer.Context.SetFillColor (colorUnderText.CGColor);
+							backgroundLayer.Context.FillRect (cellRect);
 
 						}
 
 						// Set the context color to the path one
-						context.SetFillColor (cell.Path.Color.UIColor.CGColor);
+						pathLayer.Context.SetFillColor (cell.Path.Color.UIColor.CGColor);
 
 						// Path and end or start
 						if (isStartOrEnd) {
@@ -233,12 +249,13 @@ namespace PixPuzzle
 
 							showText = true;
 							textValue = cell.Path.ExpectedLength.ToString ();
-							context.SelectFont ("Helvetica Neue", 16.0f, CGTextEncoding.MacRoman);
+							textLayer.Context.SelectFont ("Helvetica Neue", 16.0f, CGTextEncoding.MacRoman);
 
 							// Draw a circle of the color
 							// But reduce the circle value
 							int circleReductionValue = 2;
-							context.FillEllipseInRect (new RectangleF(cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
+							backgroundLayer.Context.SetFillColor (cell.Path.Color.UIColor.CGColor);
+							backgroundLayer.Context.FillEllipseInRect (new RectangleF(cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
 						}
 
 						// Draw the path!
@@ -291,12 +308,12 @@ namespace PixPuzzle
 
 							// Draw in 2 parts:
 							// First a rect
-							context.FillRect (pathRect);
+							pathLayer.Context.FillRect (pathRect);
 
 							// Then an arc to the end
 							if (previousDirectionX < 0) {
-								context.MoveTo (pathRect.Right, pathRect.Top);
-								context.AddCurveToPoint (
+								pathLayer.Context.MoveTo (pathRect.Right, pathRect.Top);
+								pathLayer.Context.AddCurveToPoint (
 									pathRect.Right + pathRect.Width / 3,
 									pathRect.Top + pathRect.Height / 3,
 									pathRect.Right + pathRect.Width / 3,
@@ -305,8 +322,8 @@ namespace PixPuzzle
 									pathRect.Bottom
 								);
 							} else if (previousDirectionX > 0) {
-								context.MoveTo (pathRect.Left, pathRect.Top);
-								context.AddCurveToPoint (
+								pathLayer.Context.MoveTo (pathRect.Left, pathRect.Top);
+								pathLayer.Context.AddCurveToPoint (
 									pathRect.Left - pathRect.Width / 3,
 									pathRect.Top + pathRect.Height / 3,
 									pathRect.Left - pathRect.Width / 3,
@@ -316,8 +333,8 @@ namespace PixPuzzle
 								);
 							}
 							if (previousDirectionY < 0) {
-								context.MoveTo (pathRect.Left, pathRect.Bottom);
-								context.AddCurveToPoint (
+								pathLayer.Context.MoveTo (pathRect.Left, pathRect.Bottom);
+								pathLayer.Context.AddCurveToPoint (
 									pathRect.Left + pathRect.Width / 3,
 									pathRect.Bottom + pathRect.Height / 3,
 									pathRect.Left + 2 * pathRect.Width / 3,
@@ -326,8 +343,8 @@ namespace PixPuzzle
 									pathRect.Bottom
 								);
 							} else if (previousDirectionY > 0) {
-								context.MoveTo (pathRect.Left, pathRect.Top);
-								context.AddCurveToPoint (
+								pathLayer.Context.MoveTo (pathRect.Left, pathRect.Top);
+								pathLayer.Context.AddCurveToPoint (
 									pathRect.Left + pathRect.Width / 3,
 									pathRect.Top - pathRect.Height / 3,
 									pathRect.Left + 2 * pathRect.Width / 3,
@@ -337,7 +354,7 @@ namespace PixPuzzle
 								);
 							}
 
-							context.FillPath ();
+							pathLayer.Context.FillPath ();
 
 							// Last cell of an incomplete path?
 							if ((isLastCell == true) && (isValid == false) && (isStartOrEnd == false)) {
@@ -346,12 +363,12 @@ namespace PixPuzzle
 								showText = true;
 								colorUnderText = UIColor.LightGray;
 								textValue = cell.Path.Length.ToString ();
-								context.SelectFont ("Helvetica Neue", 12.0f, CGTextEncoding.MacRoman);
+								textLayer.Context.SelectFont ("Helvetica Neue", 12.0f, CGTextEncoding.MacRoman);
 
 								// Draw a gray circle!
 								int circleReductionValue = parent.CellSize / 8;
-								context.SetFillColor (colorUnderText.CGColor);
-								context.FillEllipseInRect (new RectangleF(cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
+								pathLayer.Context.SetFillColor (colorUnderText.CGColor);
+								pathLayer.Context.FillEllipseInRect (new RectangleF(cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
 							}
 						}
 
@@ -368,31 +385,25 @@ namespace PixPuzzle
 								textColor = UIColor.White;
 							}
 
-							context.SetFillColor (textColor.CGColor);
+							textLayer.Context.SetFillColor (textColor.CGColor);
 
 							// Draw the text properly
 
 							// Careful with the coordinates!!!
 							// Remember it's a real mess because it's inverted
-							context.ShowTextAtPoint (cellStartX+ parent.CellSize/3, cellStartY + 2 * parent.CellSize / 3, textValue);
+							textLayer.Context.ShowTextAtPoint (cellStartX+ parent.CellSize/3, cellStartY + 2 * parent.CellSize / 3, textValue);
 						}
 
 					} // if cell has path
 
-					// The common part: the border
-					// ******************************************************************************************
-					// Start point
-					context.MoveTo (cellStartX, cellStartY);
-
-					context.SetStrokeColorWithColor (UIColor.Black.CGColor);
-					context.SetLineWidth (1.0f);
-
-					// Square for borders
-					context.StrokeRect (cellRect); 
 				}
 			}
 
-			context.Dispose ();
+			mainContext.DrawLayer (backgroundLayer, rect);
+			mainContext.DrawLayer (pathLayer, rect);
+			mainContext.DrawLayer (textLayer, rect);
+
+			mainContext.Dispose ();
 		}
 		#endregion
 	}
