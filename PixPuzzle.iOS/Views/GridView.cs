@@ -114,6 +114,8 @@ namespace PixPuzzle
 		private const int BorderWidth = 4;
 		private const int GridLocationX = 0;
 		private const int GridLocationY = 0;
+		private UIColor defaultBackgroundColor;
+
 
 		public void InitializeViewForDrawing (int x, int y)
 		{
@@ -123,7 +125,8 @@ namespace PixPuzzle
 			                            , (parent.CellSize * parent.Height) + GridLocationY + BorderWidth
 			);
 
-			this.BackgroundColor = UIColor.FromRGB (230, 230, 230);
+			defaultBackgroundColor= UIColor.FromRGB (230, 230, 230);
+			this.BackgroundColor = defaultBackgroundColor;
 		}
 
 		public override void Draw (RectangleF rect)
@@ -135,7 +138,7 @@ namespace PixPuzzle
 
 			// Context properties
 			// -- Text
-			context.SetTextDrawingMode (CGTextDrawingMode.FillStroke);
+			context.SetTextDrawingMode (CGTextDrawingMode.Fill);
 			context.TextMatrix = CGAffineTransform.MakeScale (1f, -1f);
 
 			// Draw the bounds of the grid
@@ -191,21 +194,27 @@ namespace PixPuzzle
 					// ******************************************************************************************
 					if (hasPath) {
 
+						// Maybe we will draw some text
+						bool showText = false;
+						string textValue = string.Empty;
+						UIColor colorUnderText = defaultBackgroundColor;
+
 						// Path is valid?
 						if(isValid) {
-
 							// Change background color
-							context.SetFillColor (UIColor.Blue.CGColor);
+							colorUnderText = UIColor.Blue;
+							context.SetFillColor (colorUnderText.CGColor);
 							context.FillRect (cellRect);
 
 						}
-						context.SetFillColor (cell.Path.Color.UIColor.CGColor);
 
-						bool showText = false;
-						string textValue = string.Empty;
+						// Set the context color to the path one
+						context.SetFillColor (cell.Path.Color.UIColor.CGColor);
 
 						// Path and end or start
 						if (isStartOrEnd) {
+
+							colorUnderText = cell.Path.Color.UIColor;
 
 							showText = true;
 							textValue = cell.Path.ExpectedLength.ToString();
@@ -318,22 +327,33 @@ namespace PixPuzzle
 							// Last cell of an incomplete path?
 							if ((isLastCell == true) && (isValid == false) && (isStartOrEnd == false)) {
 
-								// Draw a gray circle!
-								int circleReductionValue = parent.CellSize / 8;
-								context.SetFillColor (UIColor.LightGray.CGColor);
-								context.FillEllipseInRect (new RectangleF(cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
-
+								// Text properties
 								showText = true;
+								colorUnderText = UIColor.LightGray;
 								textValue = cell.Path.Length.ToString();
 								context.SelectFont ("Helvetica Neue", 12.0f, CGTextEncoding.MacRoman);
+
+								// Draw a gray circle!
+								int circleReductionValue = parent.CellSize / 8;
+								context.SetFillColor (colorUnderText.CGColor);
+								context.FillEllipseInRect (new RectangleF(cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
 							}
 						}
 
 						if (showText) {
 
 							// Get the reverse color of the background
+							float sumOfComponents = 0;
+							float r, g, b, a;
+							colorUnderText.GetRGBA (out r, out g, out b, out a);
+							sumOfComponents = r + g + b;
 
-							context.SetFillColor (UIColor.Black.CGColor);
+							UIColor textColor = UIColor.Black;
+							if (sumOfComponents < 0.5f) {
+								textColor = UIColor.White;
+							}
+
+							context.SetFillColor (textColor.CGColor);
 
 							// Draw the text properly
 
