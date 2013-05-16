@@ -221,17 +221,48 @@ namespace PixPuzzle
 						context.FillPath ();
 					}
 
+					// Game states
+					// ******************************************************************************************
+					if (hasPath) {
+
+						context.SetFillColor (cell.Color.UIColor.CGColor);
+
+						bool showText = false;
+
+						// Path and end or start
+						if (isStartOrEnd) {
+
+							showText = true;
+
+							// Draw a circle of the color
+							// But reduce the circle value
+							int circleReductionValue = 2;
+							context.FillEllipseInRect (new RectangleF(cellStartX + circleReductionValue, cellStartY + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
+						}
+
+						// Draw the path!
+
+						if (showText) {
+
+							// Get the reverse color of the background
+							context.SetFillColor (UIColor.Black.CGColor);
+
+							// Draw the text properly
+							string text = cell.Path.ExpectedLength.ToString ();
+
+							// Careful with the coordinates!!!
+							// Remember it's a real mess because it's inverted
+							context.ShowTextAtPoint (cellStartX+ parent.CellSize/3 , cellStartY + 2*parent.CellSize/3, text);
+						}
+
+					}
 					// Draw text
 					// ******************************************************************************************
 
 					// The text
 					if (cell.Path != null) {
 
-						string text = cell.Path.ExpectedLength.ToString ();
 
-						// Careful with the coordinates!!!
-						// Remember it's a real mess because it's inverted
-						context.ShowTextAtPoint (cellStartX+ parent.CellSize/3 , cellStartY + 2*parent.CellSize/3, text);
 					}
 				}
 			}
