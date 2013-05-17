@@ -91,19 +91,10 @@ namespace PixPuzzle
 			int elementByLine = 6;
 			int elementOnCurrentLine = 0;
 
-			foreach (var puzzle in Directory.GetFiles(GameViewController.ImageDirectory)) {
-				// Load the image
-				UIImage image = UIImage.FromFile (puzzle);
-
-				UIButton levelButton = new UIButton (new RectangleF(x,y,width, height));
-				levelButton.SetImage (image, UIControlState.Normal);
-				levelButton.BackgroundColor = UIColor.White;
-				levelButton.Layer.BorderColor = UIColor.Blue.CGColor;
-				levelButton.Layer.BorderWidth = 3f;
-				levelButton.TouchUpInside += (object sender, EventArgs e) => {
-					launchLevel(puzzle);
-				};
-
+			foreach (var puzzle in Directory.GetFiles(GameViewController.ImageDirectory)) 
+			{
+				UIButton levelButton = CreateLevelButton(x,y,width, height, puzzle);
+			
 				x += baseX + width;
 
 				elementOnCurrentLine++;
@@ -123,6 +114,23 @@ namespace PixPuzzle
 
 			scrolLContentSize.Height += baseY;
 			scroll.ContentSize = new SizeF (scrolLContentSize.Width, scrolLContentSize.Height);
+		}
+
+		UIButton CreateLevelButton (int x, int y, int width, int height, string puzzle)
+		{
+			// Load the image
+			UIImage image = UIImage.FromFile (puzzle);
+			UIButton levelButton = new UIButton (new RectangleF (x, y, width, height));
+			levelButton.SetImage (image, UIControlState.Normal);
+			levelButton.BackgroundColor = UIColor.White;
+			levelButton.Layer.BorderColor = UIColor.Blue.CGColor;
+			levelButton.Layer.BorderWidth = 3f;
+			levelButton.TouchUpInside += (object sender, EventArgs e) =>  {
+				string puzzleFilename = puzzle;
+				launchLevel (puzzleFilename);
+			};
+
+			return levelButton;
 		}
 
 		private void showButtonPanel ()
