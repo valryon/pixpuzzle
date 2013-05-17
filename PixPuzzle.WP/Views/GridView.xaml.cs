@@ -21,6 +21,10 @@ namespace PixPuzzle.WP.Views
 
             viewModel = new GridViewModel(12, 12);
             DataContext = viewModel;
+
+            content.Content = new TextBlock() {
+                Text ="pOUET"
+            };
         }
 
         public void SetGrid(GridViewModel viewModel)

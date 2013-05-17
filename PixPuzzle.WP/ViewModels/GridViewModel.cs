@@ -10,43 +10,21 @@ using System.Windows.Data;
 
 namespace PixPuzzle.WP.ViewModels
 {
-    public class GridViewModel : Grid<CellViewModel>, INotifyPropertyChanged
+    public class GridViewModel : Grid, INotifyPropertyChanged
     {
         public GridViewModel(int width, int height)
             : base(width, height, 32)
         {
-            CreateGrid((x, y) =>
-            {
-                return new CellViewModel(x, y);
-            });
+            CreateGrid();
         }
 
-        public void UpdateGrid()
+        public override void UpdateView(List<Cell> cellsToUpdate)
         {
-            RaisePropertyChanged("CellViewModels");
-        }
-
-        public List<CellLineViewModel> CellLines
-        {
-            get
+            if (cellsToUpdate == null)
             {
-                List<CellLineViewModel> cellsViewModel = new List<CellLineViewModel>();
 
-                foreach (Cell[] cellsLine in Cells)
-                {
-                    CellLineViewModel lineViewModel = new CellLineViewModel();
-                    lineViewModel.CellSize = CellSize;
-
-                    foreach (Cell c in cellsLine)
-                    {
-                        lineViewModel.Cells.Add((CellViewModel)c);
-                    }
-
-                    cellsViewModel.Add(lineViewModel);
-                }
-
-                return cellsViewModel;
             }
+            // TODO
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

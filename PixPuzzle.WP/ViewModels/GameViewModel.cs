@@ -51,7 +51,7 @@ namespace PixPuzzle.WP.ViewModels
             }
 
             GridViewModel.SetupGrid();
-            GridViewModel.UpdateGrid();
+            GridViewModel.UpdateView(null);
         }
 
         public GridViewModel GridViewModel

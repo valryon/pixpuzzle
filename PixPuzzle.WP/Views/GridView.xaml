@@ -5,36 +5,5 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ViewModels="clr-namespace:PixPuzzle.WP.ViewModels"  x:Class="PixPuzzle.WP.Views.GridView">
 
-    <Grid x:Name="LayoutRoot" Background="{StaticResource PhoneChromeBrush}">
-        <ScrollViewer>
-            <ListBox ItemsSource="{Binding CellLines}"  
-                   ScrollViewer.HorizontalScrollBarVisibility="Visible"
-                   ScrollViewer.VerticalScrollBarVisibility="Visible"
-                     >
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <ListBox ItemsSource="{Binding Cells}" 
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                 >
-                            <ListBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"  />
-                                </ItemsPanelTemplate>
-                            </ListBox.ItemsPanel>
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Border BorderBrush="White" BorderThickness="1">
-                                        <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Center" >
-                                            <TextBlock Text="{Binding Text}" Height="32" Width="32" Foreground="{Binding TextColor}" TextAlignment="Center" />
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </ScrollViewer>
-    </Grid>
+    <ContentPresenter x:Name="content" />
 </UserControl>
