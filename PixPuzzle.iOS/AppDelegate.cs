@@ -32,13 +32,31 @@ namespace PixPuzzle
 			// create a new window instance based on the screen size
 			window = new UIWindow (UIScreen.MainScreen.Bounds);
 			
-			// If you have defined a root view controller, set it here:
-			window.RootViewController = new GameViewController();
-			
-			// make the window visible
-			window.MakeKeyAndVisible ();
+			ShowMenu ();
 			
 			return true;
+		}
+
+		public void ShowMenu() 
+		{
+			if (window.RootViewController != null) {
+				window.RootViewController.View.RemoveFromSuperview ();
+				window.RootViewController.Dispose ();
+			}
+
+			window.RootViewController = new MainViewController();
+			window.MakeKeyAndVisible ();
+		}
+
+		public void ShowPuzzle(string selectedPuzzleFilename) 
+		{
+			if (window.RootViewController != null) {
+				window.RootViewController.View.RemoveFromSuperview ();
+				window.RootViewController.Dispose ();
+			}
+
+			window.RootViewController = new GameViewController(selectedPuzzleFilename);
+			window.MakeKeyAndVisible ();
 		}
 	}
 }

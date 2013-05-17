@@ -9,11 +9,14 @@ namespace PixPuzzle
 {
 	public partial class GameViewController : UIViewController
 	{
+		public static string ImageDirectory = "puzzles/";
 		private GridView grid;
+		private string selectedPuzzleFile;
 
-		public GameViewController ()
+		public GameViewController (string selectedPuzzleFile)
 			: base (null, null)
 		{
+			this.selectedPuzzleFile = selectedPuzzleFile;
 		}
 
 		public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations ()
@@ -34,8 +37,7 @@ namespace PixPuzzle
 			base.ViewDidLoad ();
 			
 			// Load the image
-			UIImage image = UIImage.FromFile ("chip.png");
-//			UIImage image = UIImage.FromFile ("kirby.jpg");
+			UIImage image = UIImage.FromFile (selectedPuzzleFile);
 			Bitmap bitmap = new Bitmap (image);
 
 			grid = new GridView ((int)image.Size.Width, (int)image.Size.Height);
@@ -108,6 +110,10 @@ namespace PixPuzzle
 				null,
 				"OK");
 
+			alert.Dismissed += (object sender, UIButtonEventArgs e) => {
+				var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
+				appDelegate.ShowMenu();
+			};
 			alert.Show ();
 		}
 	}

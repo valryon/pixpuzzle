@@ -93,6 +93,7 @@
     <Folder Include="Tools\" />
     <Folder Include="Tools\Image\" />
     <Folder Include="Controllers\" />
+    <Folder Include="Resources\puzzles\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -108,17 +109,36 @@
     <Compile Include="Controllers\GameViewController.designer.cs">
       <DependentUpon>GameViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\MainViewController.cs" />
+    <Compile Include="Controllers\MainViewController.designer.cs">
+      <DependentUpon>MainViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <BundleResource Include="Resources\mario.png" />
-    <BundleResource Include="Resources\kirby.jpg" />
-    <BundleResource Include="Resources\chip.png" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PixPuzzle.Data\PixPuzzle.Data.iOS.csproj">
       <Project>{ED6064DE-D146-4C60-BE69-D264D12BBEF3}</Project>
       <Name>PixPuzzle.Data.iOS</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="..\Puzzles\5.png">
+      <Link>Resources\puzzles\5.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\4.png">
+      <Link>Resources\puzzles\4.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\3.png">
+      <Link>Resources\puzzles\3.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\2.png">
+      <Link>Resources\puzzles\2.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\1.png">
+      <Link>Resources\puzzles\1.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\0.png">
+      <Link>Resources\puzzles\0.png</Link>
+    </BundleResource>
   </ItemGroup>
 </Project>
