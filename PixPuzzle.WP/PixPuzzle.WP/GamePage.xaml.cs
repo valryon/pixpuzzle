@@ -1,25 +1,84 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using PixPuzzle.Data;
+using System.Windows.Navigation;
+using System.Windows.Media.Imaging;
 
 namespace PixPuzzle.WP
 {
+    /// <summary>
+    /// The grid is made of XNA
+    /// </summary>
+    public class GridXna : Grid, IDisposable
+    {
+        private const int defaultCellSize = 32;
+
+        private GamePage parent;
+
+        public GridXna(GamePage parent, int width, int height)
+            : base(width, height, defaultCellSize)
+        {
+            this.parent = parent;
+        }
+
+        public void LoadContent(ContentManager content)
+        {
+
+        }
+
+        public override void UpdateView(System.Collections.Generic.List<Cell> cellsToUpdate)
+        {
+
+        }
+
+        public void Update(GameTimerEventArgs gameTime)
+        {
+
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            // Draw the grid
+            spriteBatch.Begin();
+
+            // Background
+            int borderWidth = 12;
+            spriteBatch.Draw(parent.BlankTexture, new Rectangle(0, 0, Width * CellSize + 2 * borderWidth, Height * CellSize + 2 * borderWidth), Color.CornflowerBlue);
+
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    Cell cell = GetCell(x, y);
+
+                    if (cell == null) continue;
+
+                    Rectangle cellRect = new Rectangle(borderWidth + x * CellSize, borderWidth + y * CellSize, CellSize, CellSize);
+                    spriteBatch.Draw(parent.BlankTexture, cellRect, cell.Color.ToXnaColor());
+                    spriteBatch.DrawString(parent.Font, "*", new Vector2(cellRect.Center.X, cellRect.Center.Y), Color.Black);
+                }
+            }
+
+            spriteBatch.End();
+        }
+
+        public void Dispose()
+        {
+            parent = null;
+        }
+    }
+
     public partial class GamePage : PhoneApplicationPage
     {
-        ContentManager contentManager;
-        GameTimer timer;
-        SpriteBatch spriteBatch;
+        private ContentManager contentManager;
+        private GameTimer timer;
+        private SpriteBatch spriteBatch;
+
+        private GridXna grid;
 
         public GamePage()
         {
@@ -35,6 +94,74 @@ namespace PixPuzzle.WP
             timer.Draw += OnDraw;
         }
 
+        private void loadContent(string image)
+        {
+            // Create an empty texture
+            BlankTexture = new Texture2D(SharedGraphicsDeviceManager.Current.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            Color[] color = new Color[1] { Color.White };
+            BlankTexture.SetData(color);
+
+            // Load font
+            Font = contentManager.Load<SpriteFont>("font");
+
+            // Read image
+            Texture2D puzzleImage = contentManager.Load<Texture2D>(image);
+
+            // Width and height
+            int imageWidth = puzzleImage.Width;
+            int imageHeight = puzzleImage.Height;
+
+            // Colors pixel by pixel
+            Color[] colors1D = new Color[puzzleImage.Width * puzzleImage.Height];
+            puzzleImage.GetData(colors1D);
+            Color[,] colors2D = new Color[puzzleImage.Width, puzzleImage.Height];
+            for (int x = 0; x < puzzleImage.Width; x++)
+            {
+                for (int y = 0; y < puzzleImage.Height; y++)
+                {
+                    colors2D[x, y] = colors1D[x + y * puzzleImage.Width];
+                }
+            }
+
+            grid = new GridXna(this, imageWidth, imageHeight);
+            grid.CreateGrid();
+            grid.LoadContent(contentManager);
+
+            for (int x = 0; x < imageWidth; x++)
+            {
+                for (int y = 0; y < imageHeight; y++)
+                {
+                    CellColor c;
+
+                    //if (colors2D[x, y].A < 20)
+                    if (colors2D[x, y].A > 25f)
+                    {
+                        c = new CellColor()
+                        {
+                            A = colors2D[x, y].A / 255f,
+                            R = colors2D[x, y].R / 255f,
+                            G = colors2D[x, y].G / 255f,
+                            B = colors2D[x, y].B / 255f
+                        };
+                    }
+                    else
+                    {
+                        c = new CellColor()
+                        {
+                            A = 1f,
+                            R = 1f,
+                            G = 1f,
+                            B = 1f
+                        };
+                    }
+
+                    grid.SetPixelData(x, y, c);
+                }
+            }
+
+            grid.SetupGrid();
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             // Set the sharing mode of the graphics device to turn on XNA rendering
@@ -43,7 +170,7 @@ namespace PixPuzzle.WP
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(SharedGraphicsDeviceManager.Current.GraphicsDevice);
 
-            // TODO: use this.content to load your game content here
+            loadContent("0");
 
             // Start the timer
             timer.Start();
@@ -68,7 +195,7 @@ namespace PixPuzzle.WP
         /// </summary>
         private void OnUpdate(object sender, GameTimerEventArgs e)
         {
-            // TODO: Add your update logic here
+            grid.Update(e);
         }
 
         /// <summary>
@@ -76,9 +203,21 @@ namespace PixPuzzle.WP
         /// </summary>
         private void OnDraw(object sender, GameTimerEventArgs e)
         {
-            SharedGraphicsDeviceManager.Current.GraphicsDevice.Clear(Color.CornflowerBlue);
+            SharedGraphicsDeviceManager.Current.GraphicsDevice.Clear(Color.Black);
 
-            // TODO: Add your drawing code here
+            grid.Draw(spriteBatch);
+        }
+
+        public SpriteFont Font
+        {
+            get;
+            private set;
+        }
+
+        public Texture2D BlankTexture
+        {
+            get;
+            private set;
         }
     }
 }

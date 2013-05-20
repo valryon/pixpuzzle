@@ -39,6 +39,7 @@ namespace PixPuzzle.Data
 			}
 		}
 #endif
+
 		public override string ToString ()
 		{
 			return string.Format ("R:{0} G:{0} B:{0} A:{0}", (int)(R * 255), (int)(G * 255), (int)(B * 255), (int)(A * 100));
