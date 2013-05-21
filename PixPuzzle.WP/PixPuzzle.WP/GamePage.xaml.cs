@@ -45,6 +45,8 @@ namespace PixPuzzle.WP
                                  );
 
             camera.Position = new Vector2(gridRect.Center.X, gridRect.Center.Y);
+
+            TouchPanel.EnabledGestures = GestureType.DoubleTap | GestureType.Pinch;
         }
 
         public void OrderRefresh(Rectangle zoneToRefresh)
@@ -61,6 +63,11 @@ namespace PixPuzzle.WP
         {
             camera.Update();
 
+            handleInputs();
+        }
+
+        private void handleInputs()
+        {
             // Inputs
             previousInputState = inputState;
             inputState = TouchPanel.GetState();
@@ -69,6 +76,24 @@ namespace PixPuzzle.WP
             if (inputState.Count > 0)
             {
                 isTouching = true;
+
+                // Gesttres
+                while (TouchPanel.IsGestureAvailable)
+                {
+                    var gesture = TouchPanel.ReadGesture();
+
+                    // Delete path
+                    if (gesture.GestureType == GestureType.DoubleTap)
+                    {
+                        Cell cell = getCellFromScreenPosition(gesture.Position);
+
+                        RemovePath(cell);
+                    }
+                    else if (gesture.GestureType == GestureType.Pinch)
+                    {
+                        // TODO zoom
+                    }
+                }
 
                 if (previousInputState.Count > 0)
                 {
@@ -84,11 +109,7 @@ namespace PixPuzzle.WP
                     {
                         TouchLocation touch = inputState[0];
 
-                        Vector2 gridLocation = camera.ToWorldLocation(touch.Position);
-                        int x = (int)(gridLocation.X / (float)CellSize);
-			            int y = (int)(gridLocation.Y / (float)CellSize);
-
-                        Cell cell = GetCell(x, y);
+                        Cell cell = getCellFromScreenPosition(touch.Position);
 
                         if (IsCreatingPath == false)
                         {
@@ -110,6 +131,17 @@ namespace PixPuzzle.WP
                 }
 
             }
+        }
+
+        private Cell getCellFromScreenPosition(Vector2 screenposition)
+        {
+            Vector2 gridLocation = camera.ToWorldLocation(screenposition);
+            int x = (int)(gridLocation.X / (float)CellSize);
+            int y = (int)(gridLocation.Y / (float)CellSize);
+
+            Cell cell = GetCell(x, y);
+
+            return cell;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -265,6 +297,7 @@ namespace PixPuzzle.WP
             }
 
             grid = new GridXna(this, imageWidth, imageHeight);
+            grid.GridCompleted += grid_GridCompleted;
             grid.CreateGrid(0, 0, grid);
             grid.LoadContent(contentManager);
 
@@ -301,6 +334,11 @@ namespace PixPuzzle.WP
             }
 
             grid.SetupGrid();
+        }
+
+        void grid_GridCompleted()
+        {
+            MessageBox.Show("Bravo, tu as fini le puzzle ! Tu peux tuer l'appli maintenant, il n'y a rien après.", "Game Over", MessageBoxButton.OK);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
