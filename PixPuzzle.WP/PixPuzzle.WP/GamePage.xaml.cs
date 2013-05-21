@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using PixPuzzle.Data;
 using System.Windows.Navigation;
 using System.Windows.Media.Imaging;
+using PixPuzzle.Data.WP;
 
 namespace PixPuzzle.WP
 {
@@ -17,6 +18,7 @@ namespace PixPuzzle.WP
     {
         private const int defaultCellSize = 32;
 
+        private Camera2D camera;
         private GamePage parent;
         private SpriteBatch spriteBatch;
         private Rectangle gridRect;
@@ -25,6 +27,8 @@ namespace PixPuzzle.WP
             : base(width, height, defaultCellSize)
         {
             this.parent = parent;
+
+            this.camera = new Camera2D(SharedGraphicsDeviceManager.Current.GraphicsDevice.Viewport);
         }
 
         public void InitializeViewForDrawing()
@@ -33,6 +37,8 @@ namespace PixPuzzle.WP
                                  , (CellSize * Width) + GridLocation.X + BorderWidth
                                  , (CellSize * Height) + GridLocation.Y + BorderWidth
                                  );
+
+            camera.Position = new Vector2(gridRect.Center.X, gridRect.Center.Y);
         }
 
         public void OrderRefresh(Rectangle zoneToRefresh)
@@ -47,7 +53,7 @@ namespace PixPuzzle.WP
 
         public void Update(GameTimerEventArgs gameTime)
         {
-
+            camera.Update();
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -60,7 +66,7 @@ namespace PixPuzzle.WP
 
         public void StartDraw()
         {
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, this.camera.Transform);
         }
 
         public bool IsToRefresh(Cell cell, Rectangle cellRect)
