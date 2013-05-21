@@ -12,8 +12,6 @@ namespace PixPuzzle.Data
 		{
 		}
 
-		#region implemented abstract members of Grid
-
 		public override void SetupGrid ()
 		{
 			throw new NotImplementedException ();
@@ -24,7 +22,6 @@ namespace PixPuzzle.Data
 			throw new NotImplementedException ();
 		}
 
-		#endregion
 	}
 }
 

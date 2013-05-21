@@ -53,5 +53,7 @@
     <Compile Include="Grid\PicrossGrid.cs" />
     <Compile Include="Cells\PathCell.cs" />
     <Compile Include="Cells\Cell.cs" />
+    <Compile Include="GameMode.cs" />
+    <Compile Include="Grid\IGrid.cs" />
   </ItemGroup>
 </Project>

@@ -10,13 +10,29 @@ namespace PixPuzzle
 	public partial class GameViewController : UIViewController
 	{
 		public static string ImageDirectory = "puzzles/";
-		private GridView grid;
+		private IGrid grid;
+		private UIView gridUIView;
+		private GameModes mode;
 		private string selectedPuzzleFile;
 
-		public GameViewController (string selectedPuzzleFile)
+		public GameViewController (GameModes mode, string selectedPuzzleFile)
 			: base (null, null)
 		{
+			this.mode = mode;
 			this.selectedPuzzleFile = selectedPuzzleFile;
+
+			// Load the image
+			UIImage image = UIImage.FromFile (selectedPuzzleFile);
+			Bitmap bitmap = new Bitmap (image);
+
+			UIView view = null;
+			if (mode == GameModes.Path) {
+				view = initializePath (image, bitmap);
+			} else if (mode == GameModes.Picross) {
+				view = initializePicross (image, bitmap);
+			}
+
+			gridUIView = view;
 		}
 
 		public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations ()
@@ -35,13 +51,6 @@ namespace PixPuzzle
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
-			
-			// Load the image
-			UIImage image = UIImage.FromFile (selectedPuzzleFile);
-			Bitmap bitmap = new Bitmap (image);
-
-			grid = new GridView ((int)image.Size.Width, (int)image.Size.Height);
-			grid.GridCompleted += gridCompleted;
 
 			// Setup scrollview
 			UIScrollView scrollView = new UIScrollView (new RectangleF(0,0,UIScreen.MainScreen.Bounds.Height,UIScreen.MainScreen.Bounds.Width));
@@ -51,7 +60,7 @@ namespace PixPuzzle
 			// Margin
 			float contentX = 32;
 			float contentY = 32;
-			scrollView.ContentSize = new SizeF (grid.GridViewInternal.Frame.Width + (contentX*2), grid.GridViewInternal.Frame.Height + (contentY*2));
+			scrollView.ContentSize = new SizeF (gridUIView.Frame.Width + (contentX*2), gridUIView.Frame.Height + (contentY * 2));
 
 			// Scrolling with two fingers
 			foreach (UIGestureRecognizer gestureRecognizer in scrollView.GestureRecognizers) {     
@@ -63,8 +72,14 @@ namespace PixPuzzle
 
 			}
 
-			scrollView.AddSubview (grid.GridViewInternal);
+			scrollView.AddSubview (gridUIView);
 			View.AddSubview (scrollView);
+		}
+
+		private UIView initializePath (UIImage image, Bitmap bitmap)
+		{
+			PathGridView pathGrid = new PathGridView ((int)image.Size.Width, (int)image.Size.Height);
+			pathGrid.GridCompleted += gridCompleted;
 
 			// Look at each pixel
 			for (int x=0; x<image.Size.Width; x++) {
@@ -91,30 +106,53 @@ namespace PixPuzzle
 						};
 					}
 
-					grid.SetPixelData (x, y, cellColor);
+					pathGrid.SetPixelData (x, y, cellColor);
 				}	
 			}
-
 			// Launch the setup process
-			grid.SetupGrid ();
+			pathGrid.SetupGrid ();
 
 			// Prepare the drawing, place the grid where it should be
-			grid.View.InitializeViewForDrawing ();
+			pathGrid.View.InitializeViewForDrawing ();
+
+			grid = pathGrid;
+
+			return pathGrid.GridViewInternal;
+		}
+
+		private UIView initializePicross (UIImage image, Bitmap bitmap)
+		{
+
+			PicrossGridView picrossGrid = new PicrossGridView ((int)image.Size.Width, (int)image.Size.Height);
+			picrossGrid.GridCompleted += gridCompleted;
+
+			picrossGrid.SetupGrid ();
+			picrossGrid.View.InitializeViewForDrawing ();
+
+			grid = picrossGrid;
+
+			return picrossGrid.PicrossGridViewInternal;
 		}
 
 		private void gridCompleted ()
 		{
 			UIAlertView alert = new UIAlertView (
 				"Game Over",
-				"You did it!",
+				"You did it! " + selectedPuzzleFile + " " + mode,
 				null,
 				"OK");
 
 			alert.Dismissed += (object sender, UIButtonEventArgs e) => {
 				var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
-				appDelegate.ShowMenu();
+				appDelegate.ShowMenu ();
 			};
 			alert.Show ();
+		}
+
+		public IGrid Grid {
+			get {
+				return grid;
+			}
 		}
 	}
 }

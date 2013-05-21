@@ -148,7 +148,7 @@ namespace PixPuzzle
 		private void launchLevel(string level) 
 		{
 			var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
-			appDelegate.ShowPuzzle (level);
+			appDelegate.ShowPuzzle (PixPuzzle.Data.GameModes.Path,level);
 		}
 	}
 }

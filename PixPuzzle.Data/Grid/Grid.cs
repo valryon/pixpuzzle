@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace PixPuzzle.Data
 {
-	public abstract class Grid<TCell> 
+	public abstract class Grid<TCell> : IGrid
 		where TCell : Cell, new()
 	{
 		/// <summary>

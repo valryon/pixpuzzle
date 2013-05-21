@@ -4,6 +4,7 @@ using System.Linq;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using PixPuzzle.Data;
 
 namespace PixPuzzle
 {
@@ -32,8 +33,9 @@ namespace PixPuzzle
 			// create a new window instance based on the screen size
 			window = new UIWindow (UIScreen.MainScreen.Bounds);
 			
-			ShowMenu ();
-			
+//			ShowMenu ();
+
+			ShowPuzzle (GameModes.Picross, "puzzles/0.png");
 			return true;
 		}
 
@@ -48,14 +50,14 @@ namespace PixPuzzle
 			window.MakeKeyAndVisible ();
 		}
 
-		public void ShowPuzzle(string selectedPuzzleFilename) 
+		public void ShowPuzzle(GameModes mode, string selectedPuzzleFilename) 
 		{
 			if (window.RootViewController != null) {
 				window.RootViewController.View.RemoveFromSuperview ();
 				window.RootViewController.Dispose ();
 			}
 
-			window.RootViewController = new GameViewController(selectedPuzzleFilename);
+			window.RootViewController = new GameViewController(mode, selectedPuzzleFilename);
 			window.MakeKeyAndVisible ();
 		}
 	}

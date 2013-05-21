@@ -12,9 +12,9 @@ namespace PixPuzzle
 {
 	internal class GridViewInternal : UIView, IGridView
 	{
-		private GridView parent;
+		private PathGridView parent;
 
-		public GridViewInternal (GridView parent, RectangleF frame) 
+		public GridViewInternal (PathGridView parent, RectangleF frame) 
 			: base(frame)
 		{
 			this.parent = parent;
@@ -317,13 +317,13 @@ namespace PixPuzzle
 	/// <summary>
 	/// Grid iOS view.
 	/// </summary>
-	public class GridView : PathGrid
+	public class PathGridView : PathGrid
 	{
 		// Constants
 		public const int CellSizeIphone = 32;
 		public const int CellSizeIpad = 48;
 
-		public GridView (int width, int height)
+		public PathGridView (int width, int height)
 			: base(width, height, AppDelegate.UserInterfaceIdiomIsPhone ? CellSizeIphone : CellSizeIpad)
 		{
 			// Create the view 

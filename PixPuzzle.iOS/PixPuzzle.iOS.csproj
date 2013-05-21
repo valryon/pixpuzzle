@@ -104,7 +104,6 @@
     <Compile Include="Tools\Image\Bitmap.cs" />
     <Compile Include="Tools\Image\Color.cs" />
     <Compile Include="Tools\Image\ColorConverter.cs" />
-    <Compile Include="Views\GridView.cs" />
     <Compile Include="Controllers\GameViewController.cs" />
     <Compile Include="Controllers\GameViewController.designer.cs">
       <DependentUpon>GameViewController.cs</DependentUpon>
@@ -113,6 +112,8 @@
     <Compile Include="Controllers\MainViewController.designer.cs">
       <DependentUpon>MainViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\PathGridView.cs" />
+    <Compile Include="Views\PicrossGridView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
