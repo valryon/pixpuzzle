@@ -76,6 +76,7 @@
     <Compile Include="AppServiceProvider.cs" />
     <Compile Include="Tools\Camera2D.cs" />
     <Compile Include="Tools\CellColorEx.cs" />
+    <Compile Include="Views\PathGridXna.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

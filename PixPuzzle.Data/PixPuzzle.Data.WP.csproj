@@ -48,13 +48,18 @@
     <Reference Include="mscorlib.extensions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cell.cs" />
-    <Compile Include="CellColor.cs" />
-    <Compile Include="CellPoint.cs" />
-    <Compile Include="Grid.cs" />
-    <Compile Include="IGridView.cs" />
-    <Compile Include="Path.cs" />
+    <Compile Include="Cells\Cell.cs" />
+    <Compile Include="Cells\Path.cs" />
+    <Compile Include="Cells\PathCell.cs" />
+    <Compile Include="GameMode.cs" />
+    <Compile Include="Grid\Grid.cs" />
+    <Compile Include="Grid\IGrid.cs" />
+    <Compile Include="Grid\PathGrid.cs" />
+    <Compile Include="Grid\PicrossGrid.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\CellColor.cs" />
+    <Compile Include="Tools\CellPoint.cs" />
+    <Compile Include="Views\IGridView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
