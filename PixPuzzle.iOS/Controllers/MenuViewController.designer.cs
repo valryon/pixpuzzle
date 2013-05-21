@@ -9,7 +9,7 @@ using MonoTouch.Foundation;
 namespace PixPuzzle
 {
 	[Register ("MainViewController")]
-	partial class MainViewController
+	partial class MenuViewController
 	{
 		void ReleaseDesignerOutlets ()
 		{

@@ -46,7 +46,7 @@ namespace PixPuzzle
 				window.RootViewController.Dispose ();
 			}
 
-			window.RootViewController = new MainViewController();
+			window.RootViewController = new MenuViewController();
 			window.MakeKeyAndVisible ();
 		}
 

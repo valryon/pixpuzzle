@@ -108,12 +108,12 @@
     <Compile Include="Controllers\GameViewController.designer.cs">
       <DependentUpon>GameViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\MainViewController.cs" />
-    <Compile Include="Controllers\MainViewController.designer.cs">
-      <DependentUpon>MainViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\PathGridView.cs" />
     <Compile Include="Views\PicrossGridView.cs" />
+    <Compile Include="Controllers\MenuViewController.cs" />
+    <Compile Include="Controllers\MenuViewController.designer.cs">
+      <DependentUpon>MenuViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
