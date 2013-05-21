@@ -11,6 +11,20 @@ namespace PixPuzzle.Data
 			: base(imageWidth, imageHeight, cellSize)
 		{
 		}
+
+		#region implemented abstract members of Grid
+
+		public override void SetupGrid ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override void DrawPuzzle ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion
 	}
 }
 

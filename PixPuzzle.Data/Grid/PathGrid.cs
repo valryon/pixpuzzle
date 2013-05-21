@@ -47,7 +47,7 @@ namespace PixPuzzle.Data
 			/// <summary>
 			/// Prepare the grid
 			/// </summary>
-		public void SetupGrid ()
+		public override void SetupGrid ()
 		{
 			// Look at each cell and create series
 			for (int x=0; x<Width; x++) {
@@ -154,43 +154,10 @@ namespace PixPuzzle.Data
 		}
 			#endregion
 
-		#region View
-
-		/// <summary>
-		/// Request the grid to be updated, especially some cells that may have been modified
-		/// </summary>
-		/// <param name="cellsToUpdate">Cells to update.</param>
-		public void UpdateView (PathCell[] cellsToRefresh)
-		{
-			Rectangle zoneToRefresh = Rectangle.Empty;
-
-			foreach (PathCell cell in cellsToRefresh) {
-
-				int x = BorderStartLocation.X + cell.X * CellSize;
-				int y = BorderStartLocation.Y + cell.Y * CellSize;
-
-				Rectangle cellRect = new Rectangle (x, y, CellSize, CellSize);
-
-				if (zoneToRefresh == Rectangle.Empty) {
-					zoneToRefresh = cellRect;
-				} else {
-#if IOS
-					if (zoneToRefresh.Contains (cellRect) == false || zoneToRefresh.IntersectsWith (cellRect) == false) {
-#elif WINDOWS_PHONE
-                    if (zoneToRefresh.Contains (cellRect) == false || zoneToRefresh.Intersects (cellRect) == false) {
-#endif
-						zoneToRefresh = Rectangle.Union (cellRect, zoneToRefresh);
-					}
-				}
-			}
-
-			// Trigger the refresh if necessary
-			View.OrderRefresh (zoneToRefresh);
-		}
 		/// <summary>
 		/// Common draw function for multiplatform rendering
 		/// </summary>
-		public void DrawPuzzle ()
+		public override void DrawPuzzle ()
 		{
 			// Initialize the drawing context
 			View.StartDraw ();
@@ -305,26 +272,6 @@ namespace PixPuzzle.Data
 			// End the drawing
 			View.EndDraw ();
 		}
-		#endregion
-
-		#region Grid tools
-
-		/// <summary>
-		/// Get the cell from grid indices
-		/// </summary>
-		/// <returns>The cell.</returns>
-		/// <param name="x">The x coordinate.</param>
-		/// <param name="y">The y coordinate.</param>
-		public PathCell GetCell (int x, int y)
-		{
-			if ((x >= 0 && x < Width) && (y >= 0 && y < Height)) {
-				// Get the cell
-				return Cells [x] [y];
-			}
-
-			return null;
-		}
-		#endregion
 
 		#region Path creation behavior
 
