@@ -1,20 +1,18 @@
 using System;
 using System.Collections.Generic;
+
 #if IOS
 using System.Drawing;
+
 #elif WINDOWS_PHONE
 using Microsoft.Xna.Framework;
-#endif
 
+#endif
 namespace PixPuzzle.Data
 {
-	public abstract class Grid
+	public abstract class PathGrid : Grid
 	{
 		public const int MaximumPathLength = 9;
-		/// <summary>
-		/// Occurs when grid is completed.
-		/// </summary>
-		public event Action GridCompleted;
 		/// <summary>
 		/// The grid
 		/// </summary>
@@ -23,14 +21,13 @@ namespace PixPuzzle.Data
 		/// Path data
 		/// </summary>
 		protected Cell FirstPathCell, LastSelectedCell;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PixPuzzle.Data.Grid"/> class.
 		/// </summary>
 		/// <param name="imageWidth">Image width.</param>
 		/// <param name="imageHeight">Image height.</param>
 		/// <param name="cellSize">Cell size.</param>
-		public Grid (int imageWidth, int imageHeight, int cellSize)
+		public PathGrid (int imageWidth, int imageHeight, int cellSize)
 				: base()
 		{
 			CellSize = cellSize;
@@ -573,45 +570,10 @@ namespace PixPuzzle.Data
 		}
 		#endregion
 
-		public IGridView View {
-			get;
-			protected set;
-		}
-
-		public int CellSize { 
-			get;
-			private set; 
-		}
-
-		public int Width { 
-			get;
-			private set; 
-		}
-
-		public int Height { 
-			get;
-			private set; 
-		}
-
 		public bool IsCreatingPath {
 			get {
 				return FirstPathCell != null;
 			}
-		}
-
-		public int BorderWidth { 
-			get;
-			protected set; 
-		}
-
-		public Point GridLocation { 
-			get;
-            protected set; 
-		}
-
-		public Point BorderStartLocation { 
-			get;
-            protected set; 
 		}
 	}
 }

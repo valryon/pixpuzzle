@@ -317,7 +317,7 @@ namespace PixPuzzle
 	/// <summary>
 	/// Grid iOS view.
 	/// </summary>
-	public class GridView : Grid
+	public class GridView : PathGrid
 	{
 		// Constants
 		public const int CellSizeIphone = 32;

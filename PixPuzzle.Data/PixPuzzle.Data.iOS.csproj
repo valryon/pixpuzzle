@@ -37,14 +37,19 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+    <Folder Include="Grid\" />
+    <Folder Include="Views\" />
+    <Folder Include="Cells\" />
+    <Folder Include="Tools\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="Grid.cs" />
-    <Compile Include="Cell.cs" />
-    <Compile Include="CellColor.cs" />
-    <Compile Include="Path.cs" />
-    <Compile Include="CellPoint.cs" />
-    <Compile Include="IGridView.cs" />
+    <Compile Include="Grid\PathGrid.cs" />
+    <Compile Include="Grid\Grid.cs" />
+    <Compile Include="Tools\CellColor.cs" />
+    <Compile Include="Tools\CellPoint.cs" />
+    <Compile Include="Views\IGridView.cs" />
+    <Compile Include="Cells\Cell.cs" />
+    <Compile Include="Cells\Path.cs" />
   </ItemGroup>
 </Project>
