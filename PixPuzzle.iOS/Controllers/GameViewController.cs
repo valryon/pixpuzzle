@@ -149,6 +149,10 @@ namespace PixPuzzle
 			alert.Show ();
 		}
 
+		/// <summary>
+		/// We store the grid object even if we're not using it so it is not garbage collected by mistake
+		/// </summary>
+		/// <value>The grid.</value>
 		public IGrid Grid {
 			get {
 				return grid;
