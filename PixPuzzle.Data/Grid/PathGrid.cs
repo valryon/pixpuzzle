@@ -8,14 +8,17 @@ using Microsoft.Xna.Framework;
 
 namespace PixPuzzle.Data
 {
-	public abstract class PathGrid : Grid
+	/// <summary>
+	/// Pathpix-like grid
+	/// </summary>
+	public abstract class PathGrid : Grid<PathCell>
 	{
 		public const int MaximumPathLength = 9;
 
 		/// <summary>
 		/// Path data
 		/// </summary>
-		protected Cell FirstPathCell, LastSelectedCell;
+		protected PathCell FirstPathCell, LastSelectedCell;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PixPuzzle.Data.Grid"/> class.
@@ -39,7 +42,7 @@ namespace PixPuzzle.Data
 		public void SetPixelData (int x, int y, CellColor color)
 		{
 			// Tell the cell we now have data
-			Cells [x] [y].DefineBaseColor (color);
+			Cells [x] [y].Color = color;
 		}
 			/// <summary>
 			/// Prepare the grid
@@ -55,7 +58,7 @@ namespace PixPuzzle.Data
 					if (cell.IsMarked == false) {
 
 						// The cell become the first of a serie
-						Cell firstCell = cell;
+						PathCell firstCell = cell;
 
 						// Find its unmarked neighbors and the last cell of the serie
 						/* Cell lastCell =*/
@@ -71,15 +74,15 @@ namespace PixPuzzle.Data
 			/// <param name="x">The x coordinate.</param>
 			/// <param name="y">The y coordinate.</param>
 			/// <param name="firstCell">First cell.</param>
-		private Cell createPath (Cell firstCell)
+		private PathCell createPath (PathCell firstCell)
 		{
 			Random random = new Random (182); // Predictable seed
-			Cell lastCell = firstCell;
+			PathCell lastCell = firstCell;
 
 			// Start from the first cell
 			int count = 0;
 
-			Stack<Cell> cellToExplore = new Stack<Cell> ();
+			Stack<PathCell> cellToExplore = new Stack<PathCell> ();
 			cellToExplore.Push (firstCell);
 
 			// Try to move in another direction
@@ -87,7 +90,7 @@ namespace PixPuzzle.Data
 			while (cellToExplore.Count > 0) {
 
 				// Get the first cell to explore
-				Cell currentCell = cellToExplore.Pop ();
+				PathCell currentCell = cellToExplore.Pop ();
 				count++;
 
 				// Mark this cell
@@ -110,7 +113,7 @@ namespace PixPuzzle.Data
 					CellPoint p = availableDirections [index];
 					availableDirections.Remove (p);
 
-					Cell nextCell = GetCell (currentCell.X + p.X, currentCell.Y + p.Y);
+					PathCell nextCell = GetCell (currentCell.X + p.X, currentCell.Y + p.Y);
 					if (nextCell != null && nextCell.IsMarked == false && nextCell.Color.Equals (firstCell.Color)) {
 						cellToExplore.Push (nextCell);
 					} else {
@@ -157,11 +160,11 @@ namespace PixPuzzle.Data
 		/// Request the grid to be updated, especially some cells that may have been modified
 		/// </summary>
 		/// <param name="cellsToUpdate">Cells to update.</param>
-		public void UpdateView (Cell[] cellsToRefresh)
+		public void UpdateView (PathCell[] cellsToRefresh)
 		{
 			Rectangle zoneToRefresh = Rectangle.Empty;
 
-			foreach (Cell cell in cellsToRefresh) {
+			foreach (PathCell cell in cellsToRefresh) {
 
 				int x = BorderStartLocation.X + cell.X * CellSize;
 				int y = BorderStartLocation.Y + cell.Y * CellSize;
@@ -200,7 +203,7 @@ namespace PixPuzzle.Data
 			for (int x=0; x<Width; x++) {
 				for (int y=0; y<Height; y++) {
 
-					Cell cell = GetCell (x, y);
+					PathCell cell = GetCell (x, y);
 
 					// Doesn't exists?
 					if (cell == null)
@@ -230,7 +233,7 @@ namespace PixPuzzle.Data
 					if (hasPath) {
 						// Get the path!
 						// For this each cell of the path draw the cell just before them
-						Cell previousCell = cell.Path.PreviousCell (cell);
+						PathCell previousCell = cell.Path.PreviousCell (cell);
 						if (previousCell != null) {
 
 							// Get the direction of the previous cell
@@ -312,7 +315,7 @@ namespace PixPuzzle.Data
 		/// <returns>The cell.</returns>
 		/// <param name="x">The x coordinate.</param>
 		/// <param name="y">The y coordinate.</param>
-		public Cell GetCell (int x, int y)
+		public PathCell GetCell (int x, int y)
 		{
 			if ((x >= 0 && x < Width) && (y >= 0 && y < Height)) {
 				// Get the cell
@@ -330,7 +333,7 @@ namespace PixPuzzle.Data
 		/// </summary>
 		/// <returns><c>true</c>, if path creation was started, <c>false</c> otherwise.</returns>
 		/// <param name="cell">Cell.</param>
-		public bool StartPathCreation (Cell cell)
+		public bool StartPathCreation (PathCell cell)
 		{
 			if (cell != null) {
 
@@ -351,10 +354,10 @@ namespace PixPuzzle.Data
 					if (isPathClosed == false && isPathLastCell) {
 						FirstPathCell = cell.Path.FirstCell;
 
-						cell.SelectCell ();
-						if (LastSelectedCell != null) {
-							LastSelectedCell.UnselectCell (false);
-						}
+//						cell.SelectCell ();
+//						if (LastSelectedCell != null) {
+//							LastSelectedCell.UnselectCell (false);
+//						}
 						LastSelectedCell = cell;
 
 						Console.WriteLine ("Starting a new path.");
@@ -372,7 +375,7 @@ namespace PixPuzzle.Data
 		/// Creates the path.
 		/// </summary>
 		/// <param name="cell">Cell.</param>
-		public void CreatePath (Cell cell)
+		public void CreatePath (PathCell cell)
 		{
 			// The path length must be respected
 			bool lengthOk = (FirstPathCell.Path.Length < FirstPathCell.Path.ExpectedLength);
@@ -384,7 +387,7 @@ namespace PixPuzzle.Data
 			// We're in the grid and we moved (not the same cell)
 			if (cell != null && cell != LastSelectedCell) {
 
-				cell.SelectCell ();
+//				cell.SelectCell ();
 
 				if (cell.Path == null) {
 					// The cell is available for path
@@ -441,11 +444,11 @@ namespace PixPuzzle.Data
 						// Remove all the cells past the one we jut reached
 						// The current cell will NOT be removed
 						Console.WriteLine ("Removing cell after "+ cell);
-						List<Cell> removedCells = FirstPathCell.Path.RemoveCellAfter (cell);
+						List<PathCell> removedCells = FirstPathCell.Path.RemoveCellAfter (cell);
 
 						// Update the modified cells
 						// And the removed ones
-						List<Cell> cellsToUpdate = new List<Cell> ();
+						List<PathCell> cellsToUpdate = new List<PathCell> ();
 						cellsToUpdate.AddRange (cell.Path.Cells);
 						cellsToUpdate.AddRange (removedCells);
 
@@ -501,7 +504,7 @@ namespace PixPuzzle.Data
 				}
 
 				// Unselect cell
-				LastSelectedCell.UnselectCell (success);
+//				LastSelectedCell.UnselectCell (success);
 				LastSelectedCell = null;
 				FirstPathCell = null;
 			}
@@ -514,11 +517,11 @@ namespace PixPuzzle.Data
 			OnGridCompleted ();
 		}
 
-		public void RemovePath (Cell cell)
+		public void RemovePath (PathCell cell)
 		{
 			if (cell != null) {
 				if (cell.Path != null) {
-					List<Cell> removedCells = cell.Path.DeleteItself ();
+					List<PathCell> removedCells = cell.Path.DeleteItself ();
 					Console.WriteLine ("Deleting the path");
 
 					UpdateView (removedCells.ToArray());

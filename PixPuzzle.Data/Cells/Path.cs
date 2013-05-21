@@ -12,7 +12,7 @@ namespace PixPuzzle.Data
 		/// The path, an ordered list of cells
 		/// </summary>
 		/// <value>The path cells.</value>
-		public List<Cell> Cells { get; private set; }
+		public List<PathCell> Cells { get; private set; }
 		/// <summary>
 		/// The color is determined by the first cell
 		/// </summary>
@@ -28,12 +28,12 @@ namespace PixPuzzle.Data
 		/// </summary>
 		/// <param name="firstCell">First cell.</param>
 		/// <param name="expectedLength">Expected length.</param>
-		public Path (Cell firstCell, int expectedLength)
+		public Path (PathCell firstCell, int expectedLength)
 		{
 			if (firstCell == null) {
 				throw new ArgumentException ();
 			}
-			Cells = new List<Cell> ();
+			Cells = new List<PathCell> ();
 			Cells.Add (firstCell);
 			Color = firstCell.Color;
 
@@ -43,7 +43,7 @@ namespace PixPuzzle.Data
 		/// Add a cell to the path
 		/// </summary>
 		/// <param name="cell">Cell.</param>
-		public void AddCell (Cell cell)
+		public void AddCell (PathCell cell)
 		{
 			Cells.Add (cell);
 		}
@@ -51,11 +51,11 @@ namespace PixPuzzle.Data
 		/// Removes all the cells that are after the given one
 		/// </summary>
 		/// <param name="cell">Cell.</param>
-		public List<Cell> RemoveCellAfter (Cell cell)
+		public List<PathCell> RemoveCellAfter (PathCell cell)
 		{
 			int index = Cells.IndexOf (cell);
 
-			List<Cell> cellsToRemove = new List<Cell> ();
+			List<PathCell> cellsToRemove = new List<PathCell> ();
 
 			for (int i=index+1; i < Cells.Count; i++) {
 				cellsToRemove.Add (Cells[i]);
@@ -72,9 +72,9 @@ namespace PixPuzzle.Data
 		/// <summary>
 		/// Delete the path, make it disappear
 		/// </summary>
-		public List<Cell> DeleteItself ()
+		public List<PathCell> DeleteItself ()
 		{
-			List<Cell>  removedCells = new List<Cell> ();
+			List<PathCell>  removedCells = new List<PathCell> ();
 
 			// Prevent 1 path to be deleted
 			if (Cells.Count <= 1)
@@ -102,7 +102,7 @@ namespace PixPuzzle.Data
 		/// </summary>
 		/// <returns>The of.</returns>
 		/// <param name="cell">Cell.</param>
-		public int IndexOf (Cell cell)
+		public int IndexOf (PathCell cell)
 		{
 			return Cells.IndexOf (cell);
 		}
@@ -115,7 +115,7 @@ namespace PixPuzzle.Data
 			// The otherPath is the loser
 			// We transfer its data
 			// Then we kill it
-			foreach (Cell cell in otherPath.Cells) {
+			foreach (PathCell cell in otherPath.Cells) {
 				if (Cells.Contains (cell) == false) {
 					AddCell (cell);
 				}
@@ -124,7 +124,7 @@ namespace PixPuzzle.Data
 			otherPath.Cells.Clear ();
 		}
 
-		public Cell PreviousCell (Cell cell)
+		public PathCell PreviousCell (PathCell cell)
 		{
 			if (Cells.Contains (cell) == false)
 				return null;
@@ -137,7 +137,7 @@ namespace PixPuzzle.Data
 			return null;
 		}
 
-		public Cell NextCell (Cell cell)
+		public PathCell NextCell (PathCell cell)
 		{
 			if (Cells.Contains (cell) == false)
 				return null;
@@ -155,7 +155,7 @@ namespace PixPuzzle.Data
 		/// </summary>
 		/// <returns><c>true</c> if this instance is last cell the specified cell; otherwise, <c>false</c>.</returns>
 		/// <param name="cell">Cell.</param>
-		public bool IsLastCell (Cell cell)
+		public bool IsLastCell (PathCell cell)
 		{
 			if (Cells.Count == 0)
 				return false;
@@ -166,7 +166,7 @@ namespace PixPuzzle.Data
 		/// Path first cell
 		/// </summary>
 		/// <value>The first cell.</value>
-		public Cell FirstCell {
+		public PathCell FirstCell {
 			get {
 				if (Cells.Count == 0)
 					return null;
@@ -203,8 +203,8 @@ namespace PixPuzzle.Data
 					return false;
 				}
 
-				Cell firstCell = Cells [0];
-				Cell lastCell = Cells [Cells.Count - 1];
+				PathCell firstCell = Cells [0];
+				PathCell lastCell = Cells [Cells.Count - 1];
 
 				// Only one cell, more tricky, can be valid
 				if (firstCell == lastCell) {

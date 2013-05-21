@@ -49,7 +49,9 @@
     <Compile Include="Tools\CellColor.cs" />
     <Compile Include="Tools\CellPoint.cs" />
     <Compile Include="Views\IGridView.cs" />
-    <Compile Include="Cells\Cell.cs" />
     <Compile Include="Cells\Path.cs" />
+    <Compile Include="Grid\PicrossGrid.cs" />
+    <Compile Include="Cells\PathCell.cs" />
+    <Compile Include="Cells\Cell.cs" />
   </ItemGroup>
 </Project>

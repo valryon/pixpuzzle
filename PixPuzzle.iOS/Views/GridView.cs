@@ -242,7 +242,7 @@ namespace PixPuzzle
 
 		#region Grid tools
 
-		private Cell getCellFromViewCoordinates (PointF viewLocation)
+		private PathCell getCellFromViewCoordinates (PointF viewLocation)
 		{
 			int x = (int)(viewLocation.X / (float)parent.CellSize);
 			int y = (int)(viewLocation.Y / (float)parent.CellSize);
@@ -259,7 +259,7 @@ namespace PixPuzzle
 
 				PointF touchLocation = sender.LocationInView (this);
 
-				Cell cell = getCellFromViewCoordinates (touchLocation);
+				PathCell cell = getCellFromViewCoordinates (touchLocation);
 				parent.RemovePath (cell);
 			}
 		}
@@ -274,7 +274,7 @@ namespace PixPuzzle
 
 				Console.WriteLine (fingerLocation);
 
-				Cell cell = getCellFromViewCoordinates (fingerLocation);
+				PathCell cell = getCellFromViewCoordinates (fingerLocation);
 
 				parent.StartPathCreation (cell);
 			}
@@ -292,7 +292,7 @@ namespace PixPuzzle
 
 					PointF fingerLocation = touch.LocationInView (this);
 
-					Cell cell = getCellFromViewCoordinates (fingerLocation);
+					PathCell cell = getCellFromViewCoordinates (fingerLocation);
 
 					parent.CreatePath (cell);
 				}

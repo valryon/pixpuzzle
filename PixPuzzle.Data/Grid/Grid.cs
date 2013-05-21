@@ -7,7 +7,8 @@ using Microsoft.Xna.Framework;
 
 namespace PixPuzzle.Data
 {
-	public abstract class Grid
+	public abstract class Grid<TCell> 
+		where TCell : Cell, new()
 	{
 		/// <summary>
 		/// Occurs when grid is completed.
@@ -17,7 +18,7 @@ namespace PixPuzzle.Data
 		/// <summary>
 		/// The grid
 		/// </summary>
-		protected Cell[][] Cells;
+		protected TCell[][] Cells;
 
 		public Grid (int imageWidth, int imageHeight, int cellSize)
 		{
@@ -35,15 +36,17 @@ namespace PixPuzzle.Data
 		public void CreateGrid (int locationX, int locationY, IGridView view)
 		{
 			// Create the grid
-			Cells = new Cell[Width][];
+			Cells = new TCell[Width][];
 
 			for (int x=0; x<Width; x++) {
 
-				Cells [x] = new Cell[Height];
+				Cells [x] = new TCell[Height];
 
 				for (int y=0; y<Height; y++) {
 
-					Cell c = new Cell (x, y);
+					TCell c = new TCell ();
+					c.X = x;
+					c.Y = y;
 					Cells [x] [y] = c;
 				}
 			}
