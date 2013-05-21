@@ -32,10 +32,10 @@ namespace PixPuzzle
 		private Rectangle drawRect;
 		private UIColor defaultBackgroundColor;
 
-		public void InitializeViewForDrawing (int x, int y)
+		public void InitializeViewForDrawing ()
 		{
 			// Find the real final size and location of the frame
-			this.Frame = new RectangleF (x, y
+			this.Frame = new RectangleF (parent.GridLocation.X, parent.GridLocation.Y
 			                             , (parent.CellSize * parent.Width) + parent.GridLocation.X + parent.BorderWidth
 			                             , (parent.CellSize * parent.Height) + parent.GridLocation.Y + parent.BorderWidth
 			                             );

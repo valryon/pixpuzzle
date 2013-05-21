@@ -99,7 +99,7 @@ namespace PixPuzzle
 			grid.SetupGrid ();
 
 			// Prepare the drawing, place the grid where it should be
-			grid.View.InitializeViewForDrawing ((int)contentX, (int)contentY);
+			grid.View.InitializeViewForDrawing ();
 		}
 
 		private void gridCompleted ()
