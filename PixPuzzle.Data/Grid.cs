@@ -601,17 +601,17 @@ namespace PixPuzzle.Data
 
 		public int BorderWidth { 
 			get;
-			private set; 
+			protected set; 
 		}
 
 		public Point GridLocation { 
 			get;
-			private set; 
+            protected set; 
 		}
 
 		public Point BorderStartLocation { 
 			get;
-			private set; 
+            protected set; 
 		}
 	}
 }

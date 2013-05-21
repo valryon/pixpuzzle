@@ -18,7 +18,7 @@ namespace PixPuzzle.WP
     /// </summary>
     public class GridXna : Grid, IGridView, IDisposable
     {
-        private const int defaultCellSize = 48;
+        private const int defaultCellSize = 64;
 
         private Camera2D camera;
         private GamePage parent;
@@ -102,7 +102,7 @@ namespace PixPuzzle.WP
                     {
                         Vector2 movement = inputState[0].Position - previousInputState[0].Position;
 
-                        camera.Position += new Vector2(-movement.X, movement.Y);
+                        camera.Position -= movement;
                     }
                     // Playing
                     else if (inputState.Count == 1)
@@ -168,10 +168,11 @@ namespace PixPuzzle.WP
             spriteBatch.Draw(parent.BlankTexture, gridRect, Color.LightGray);
 
             // Draw the borders of the grid
-            spriteBatch.Draw(parent.BlankTexture, new Rectangle(gridRect.Left, gridRect.Top, gridRect.Width, BorderWidth), Color.Blue);
-            spriteBatch.Draw(parent.BlankTexture, new Rectangle(gridRect.Left, gridRect.Bottom, gridRect.Width, BorderWidth), Color.Blue);
-            spriteBatch.Draw(parent.BlankTexture, new Rectangle(gridRect.Left, gridRect.Top, BorderWidth, gridRect.Height), Color.Blue);
-            spriteBatch.Draw(parent.BlankTexture, new Rectangle(gridRect.Right, gridRect.Top, BorderWidth, gridRect.Height), Color.Blue);
+            Color gridBorderColor = Color.MediumVioletRed;
+            spriteBatch.Draw(parent.BlankTexture, new Rectangle(gridRect.Left, gridRect.Top, gridRect.Width, BorderWidth), gridBorderColor);
+            spriteBatch.Draw(parent.BlankTexture, new Rectangle(gridRect.Left, gridRect.Bottom, gridRect.Width, BorderWidth), gridBorderColor);
+            spriteBatch.Draw(parent.BlankTexture, new Rectangle(gridRect.Left, gridRect.Top, BorderWidth, gridRect.Height), gridBorderColor);
+            spriteBatch.Draw(parent.BlankTexture, new Rectangle(gridRect.Right, gridRect.Top, BorderWidth, gridRect.Height), gridBorderColor);
 
             // Draw cells 
             for (int x = 0; x < Width; x++)
@@ -382,7 +383,7 @@ namespace PixPuzzle.WP
         /// </summary>
         private void OnDraw(object sender, GameTimerEventArgs e)
         {
-            SharedGraphicsDeviceManager.Current.GraphicsDevice.Clear(Color.Black);
+            SharedGraphicsDeviceManager.Current.GraphicsDevice.Clear(Color.LightBlue);
 
             grid.Draw(spriteBatch);
         }
