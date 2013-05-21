@@ -51,7 +51,7 @@ namespace PixPuzzle
 			// Margin
 			float contentX = 32;
 			float contentY = 32;
-			scrollView.ContentSize = new SizeF (grid.View.Frame.Width + (contentX*2), grid.View.Frame.Height + (contentY*2));
+			scrollView.ContentSize = new SizeF (grid.GridViewInternal.Frame.Width + (contentX*2), grid.GridViewInternal.Frame.Height + (contentY*2));
 
 			// Scrolling with two fingers
 			foreach (UIGestureRecognizer gestureRecognizer in scrollView.GestureRecognizers) {     
@@ -63,7 +63,7 @@ namespace PixPuzzle
 
 			}
 
-			scrollView.AddSubview (grid.View);
+			scrollView.AddSubview (grid.GridViewInternal);
 			View.AddSubview (scrollView);
 
 			// Look at each pixel
