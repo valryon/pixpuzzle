@@ -518,7 +518,7 @@ namespace PixPuzzle.Data
 			LastSelectedCell = cell;
 		}
 
-		public void EndPathCreation (bool success)
+		public void EndPathCreation (bool success = false)
 		{
 			// Check the created path
 			if (FirstPathCell != null && LastSelectedCell != null) {

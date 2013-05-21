@@ -219,6 +219,11 @@ namespace PixPuzzle.Data
 		{
 			Cells.Clear ();
 		}
+
+        public override string ToString()
+        {
+            return string.Format("{0}/{1} {2} Valid:{3} Closed:{4}", Length, ExpectedLength, Color, IsValid, IsClosed);
+        }
 	}
 }
 

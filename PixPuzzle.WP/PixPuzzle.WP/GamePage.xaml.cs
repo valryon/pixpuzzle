@@ -8,6 +8,8 @@ using PixPuzzle.Data;
 using System.Windows.Navigation;
 using System.Windows.Media.Imaging;
 using PixPuzzle.Data.WP;
+using Microsoft.Xna.Framework.Input.Touch;
+using Microsoft.Xna.Framework.Input;
 
 namespace PixPuzzle.WP
 {
@@ -16,12 +18,16 @@ namespace PixPuzzle.WP
     /// </summary>
     public class GridXna : Grid, IGridView, IDisposable
     {
-        private const int defaultCellSize = 32;
+        private const int defaultCellSize = 48;
 
         private Camera2D camera;
         private GamePage parent;
         private SpriteBatch spriteBatch;
         private Rectangle gridRect;
+
+        // Inputs
+        private TouchCollection previousInputState, inputState;
+        private bool isTouching;
 
         public GridXna(GamePage parent, int width, int height)
             : base(width, height, defaultCellSize)
@@ -54,6 +60,56 @@ namespace PixPuzzle.WP
         public void Update(GameTimerEventArgs gameTime)
         {
             camera.Update();
+
+            // Inputs
+            previousInputState = inputState;
+            inputState = TouchPanel.GetState();
+
+            // Do things with fingers
+            if (inputState.Count > 0)
+            {
+                isTouching = true;
+
+                if (previousInputState.Count > 0)
+                {
+                    // Moving
+                    if (inputState.Count == 2)
+                    {
+                        Vector2 movement = inputState[0].Position - previousInputState[0].Position;
+
+                        camera.Position += new Vector2(-movement.X, movement.Y);
+                    }
+                    // Playing
+                    else if (inputState.Count == 1)
+                    {
+                        TouchLocation touch = inputState[0];
+
+                        Vector2 gridLocation = camera.ToWorldLocation(touch.Position);
+                        int x = (int)(gridLocation.X / (float)CellSize);
+			            int y = (int)(gridLocation.Y / (float)CellSize);
+
+                        Cell cell = GetCell(x, y);
+
+                        if (IsCreatingPath == false)
+                        {
+                            StartPathCreation(cell);
+                        }
+                        else
+                        {
+                            CreatePath(cell);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (isTouching)
+                {
+                    EndPathCreation();
+                    isTouching = false;
+                }
+
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -71,8 +127,7 @@ namespace PixPuzzle.WP
 
         public bool IsToRefresh(Cell cell, Rectangle cellRect)
         {
-            // Nothing to do in XNA, we redraw everything
-            return true;
+            return camera.VisibilityRect.Intersects(cellRect) || camera.VisibilityRect.Contains(cellRect);
         }
 
         public void DrawGrid()
@@ -118,12 +173,18 @@ namespace PixPuzzle.WP
 
         public void DrawPath(Rectangle pathRect, Microsoft.Xna.Framework.Point direction, CellColor color)
         {
-
+            spriteBatch.Draw(parent.BlankTexture, pathRect, color.ToXnaColor());
         }
 
         public void DrawLastCellIncompletePath(Rectangle rect, string pathValue, CellColor color)
         {
+            Vector2 cellCenter = new Vector2(rect.Center.X, rect.Center.Y);
 
+            int size = CellSize / 4;
+            Rectangle smallRect = new Rectangle((int)cellCenter.X - size, (int)cellCenter.Y - size, 2 * size, 2 * size);
+            spriteBatch.Draw(parent.BlankTexture, smallRect, Color.LightSalmon);
+
+            spriteBatch.DrawString(parent.Font, pathValue, cellCenter - (parent.Font.MeasureString(pathValue) / 2), Color.Black);
         }
 
         public void DrawEndOrStartText(Rectangle location, string text, CellColor color)
@@ -204,7 +265,7 @@ namespace PixPuzzle.WP
             }
 
             grid = new GridXna(this, imageWidth, imageHeight);
-            grid.CreateGrid(0,0, grid);
+            grid.CreateGrid(0, 0, grid);
             grid.LoadContent(contentManager);
 
             for (int x = 0; x < imageWidth; x++)
