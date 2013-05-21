@@ -109,7 +109,7 @@ namespace PixPuzzle
 			for (int x=0; x<parent.Width; x++) {
 				int cellBorderX = borderStartLocation.X + x * parent.CellSize;
 				context.MoveTo (cellBorderX, borderStartLocation.X);
-				context.AddLineToPoint (cellBorderX, borderStartLocation.X + parent.Height * parent.CellSize);
+				context.AddLineToPoint (cellBorderX, borderStartLocation.Y + parent.Height * parent.CellSize);
 			}
 
 			for (int y=0; y<parent.Height; y++) {

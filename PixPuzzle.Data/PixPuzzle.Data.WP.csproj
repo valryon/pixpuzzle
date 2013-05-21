@@ -41,6 +41,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework" />
     <Reference Include="system" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
@@ -51,6 +52,7 @@
     <Compile Include="CellColor.cs" />
     <Compile Include="CellPoint.cs" />
     <Compile Include="Grid.cs" />
+    <Compile Include="IGridView.cs" />
     <Compile Include="Path.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

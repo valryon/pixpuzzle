@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
+#if IOS
 using System.Drawing;
+#elif WINDOWS_PHONE
+using Microsoft.Xna.Framework;
+#endif
 
 namespace PixPuzzle.Data
 {
@@ -68,7 +72,7 @@ namespace PixPuzzle.Data
 			int borderStartY = GridLocation.Y + (BorderWidth / 2);
 			BorderStartLocation = new Point (borderStartX, borderStartY);
 
-			this.View.InitializeViewForDrawing (locationX, locationY);
+			this.View.InitializeViewForDrawing ();
 		}
 		/// <summary>
 		/// Define what's in the given cell
@@ -211,8 +215,11 @@ namespace PixPuzzle.Data
 				if (zoneToRefresh == Rectangle.Empty) {
 					zoneToRefresh = cellRect;
 				} else {
+#if IOS
 					if (zoneToRefresh.Contains (cellRect) == false || zoneToRefresh.IntersectsWith (cellRect) == false) {
-
+#elif WINDOWS_PHONE
+                    if (zoneToRefresh.Contains (cellRect) == false || zoneToRefresh.Intersects (cellRect) == false) {
+#endif
 						zoneToRefresh = Rectangle.Union (cellRect, zoneToRefresh);
 					}
 				}

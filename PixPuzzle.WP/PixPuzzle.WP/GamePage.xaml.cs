@@ -13,11 +13,13 @@ namespace PixPuzzle.WP
     /// <summary>
     /// The grid is made of XNA
     /// </summary>
-    public class GridXna : Grid, IDisposable
+    public class GridXna : Grid, IGridView, IDisposable
     {
         private const int defaultCellSize = 32;
 
         private GamePage parent;
+        private SpriteBatch spriteBatch;
+        private Rectangle gridRect;
 
         public GridXna(GamePage parent, int width, int height)
             : base(width, height, defaultCellSize)
@@ -25,12 +27,20 @@ namespace PixPuzzle.WP
             this.parent = parent;
         }
 
-        public void LoadContent(ContentManager content)
+        public void InitializeViewForDrawing()
         {
-
+            gridRect = new Rectangle(GridLocation.X, GridLocation.Y
+                                 , (CellSize * Width) + GridLocation.X + BorderWidth
+                                 , (CellSize * Height) + GridLocation.Y + BorderWidth
+                                 );
         }
 
-        public override void UpdateView(System.Collections.Generic.List<Cell> cellsToUpdate)
+        public void OrderRefresh(Rectangle zoneToRefresh)
+        {
+            // Nothing to do in XNA, as we draw the grid every frame
+        }
+
+        public void LoadContent(ContentManager content)
         {
 
         }
@@ -42,27 +52,91 @@ namespace PixPuzzle.WP
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            this.spriteBatch = spriteBatch;
+
             // Draw the grid
+            DrawPuzzle();
+        }
+
+        public void StartDraw()
+        {
             spriteBatch.Begin();
+        }
 
+        public bool IsToRefresh(Cell cell, Rectangle cellRect)
+        {
+            // Nothing to do in XNA, we redraw everything
+            return true;
+        }
+
+        public void DrawGrid()
+        {
             // Background
-            int borderWidth = 12;
-            spriteBatch.Draw(parent.BlankTexture, new Rectangle(0, 0, Width * CellSize + 2 * borderWidth, Height * CellSize + 2 * borderWidth), Color.CornflowerBlue);
+            spriteBatch.Draw(parent.BlankTexture, gridRect, Color.LightGray);
 
+            // Draw the borders of the grid
+            spriteBatch.Draw(parent.BlankTexture, new Rectangle(gridRect.Left, gridRect.Top, gridRect.Width, BorderWidth), Color.Blue);
+            spriteBatch.Draw(parent.BlankTexture, new Rectangle(gridRect.Left, gridRect.Bottom, gridRect.Width, BorderWidth), Color.Blue);
+            spriteBatch.Draw(parent.BlankTexture, new Rectangle(gridRect.Left, gridRect.Top, BorderWidth, gridRect.Height), Color.Blue);
+            spriteBatch.Draw(parent.BlankTexture, new Rectangle(gridRect.Right, gridRect.Top, BorderWidth, gridRect.Height), Color.Blue);
+
+            // Draw cells 
             for (int x = 0; x < Width; x++)
             {
-                for (int y = 0; y < Height; y++)
-                {
-                    Cell cell = GetCell(x, y);
+                int cellBorderX = BorderStartLocation.X + x * CellSize;
 
-                    if (cell == null) continue;
+                Rectangle dRect = new Rectangle(cellBorderX, BorderStartLocation.Y, BorderWidth, BorderStartLocation.Y + Height * CellSize);
 
-                    Rectangle cellRect = new Rectangle(borderWidth + x * CellSize, borderWidth + y * CellSize, CellSize, CellSize);
-                    spriteBatch.Draw(parent.BlankTexture, cellRect, cell.Color.ToXnaColor());
-                    spriteBatch.DrawString(parent.Font, "*", new Vector2(cellRect.Center.X, cellRect.Center.Y), Color.Black);
-                }
+                spriteBatch.Draw(parent.BlankTexture, dRect, Color.Black);
             }
 
+            for (int y = 0; y < Height; y++)
+            {
+                int cellBorderY = BorderStartLocation.Y + y * CellSize;
+
+                Rectangle dRect = new Rectangle(BorderStartLocation.X, cellBorderY, BorderStartLocation.X + Width * CellSize, BorderWidth);
+
+                spriteBatch.Draw(parent.BlankTexture, dRect, Color.Black);
+            }
+        }
+
+        public void DrawCellBase(Rectangle rectangle, bool isValid, bool isPathEndOrStart, CellColor cellColor)
+        {
+            if (isValid)
+            {
+                spriteBatch.Draw(parent.BlankTexture, rectangle, Color.Blue);
+            }
+            rectangle.Inflate(-CellSize / 8, -CellSize / 8);
+            spriteBatch.Draw(parent.BlankTexture, rectangle, cellColor.ToXnaColor());
+        }
+
+        public void DrawPath(Rectangle pathRect, Microsoft.Xna.Framework.Point direction, CellColor color)
+        {
+
+        }
+
+        public void DrawLastCellIncompletePath(Rectangle rect, string pathValue, CellColor color)
+        {
+
+        }
+
+        public void DrawEndOrStartText(Rectangle location, string text, CellColor color)
+        {
+            float rgb = color.B + color.R + color.G;
+
+            Color textColor = Color.Black;
+            Vector2 cellCenter = new Vector2(location.Center.X, location.Center.Y);
+
+            if (rgb < 0.25f)
+            {
+                textColor = Color.White;
+            }
+
+            spriteBatch.DrawString(parent.Font, text, cellCenter - (parent.Font.MeasureString(text) / 2), textColor);
+        }
+
+        public void EndDraw()
+        {
             spriteBatch.End();
         }
 
@@ -124,7 +198,7 @@ namespace PixPuzzle.WP
             }
 
             grid = new GridXna(this, imageWidth, imageHeight);
-            grid.CreateGrid();
+            grid.CreateGrid(0,0, grid);
             grid.LoadContent(contentManager);
 
             for (int x = 0; x < imageWidth; x++)

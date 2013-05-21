@@ -1,5 +1,9 @@
 using System;
+#if IOS
 using System.Drawing;
+#elif WINDOWS_PHONE
+using Microsoft.Xna.Framework;
+#endif
 
 namespace PixPuzzle.Data
 {
@@ -8,7 +12,7 @@ namespace PixPuzzle.Data
 	/// </summary>
 	public interface IGridView
 	{
-		void InitializeViewForDrawing (int x, int y);
+		void InitializeViewForDrawing ();
 
 		void OrderRefresh (Rectangle zoneToRefresh);
 
