@@ -6,7 +6,7 @@ using MonoTouch.CoreGraphics;
 
 namespace PixPuzzle
 {
-	internal class PicrossGridViewInternal : UIView, IGridView<PicrossCell>
+	internal class PicrossGridViewInternal : UIView, IPicrossGridView
 	{
 		private PicrossGridView parent;
 		private CGContext context;

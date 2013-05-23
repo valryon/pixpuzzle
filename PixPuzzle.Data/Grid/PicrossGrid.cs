@@ -10,7 +10,7 @@ namespace PixPuzzle.Data
 	/// <summary>
 	/// Picross-like grid.
 	/// </summary>
-	public class PicrossGrid : Grid<PicrossCell, IGridView<PicrossCell>>
+	public class PicrossGrid : Grid<PicrossCell, IPicrossGridView>
 	{
 		public PicrossGrid (int imageWidth, int imageHeight, int cellSize)
 			: base(imageWidth, imageHeight, cellSize)

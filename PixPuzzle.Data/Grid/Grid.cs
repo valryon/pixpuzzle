@@ -1,12 +1,18 @@
 using System;
+
 #if IOS
 using System.Drawing;
+
 #elif WINDOWS_PHONE
 using Microsoft.Xna.Framework;
-#endif
 
+#endif
 namespace PixPuzzle.Data
 {
+	/// <summary>
+	/// The base of the puzzle game: the grid, containing cell.
+	/// The generic typing provides a way to store custom cell and the way it should be displayed.
+	/// </summary>
 	public abstract class Grid<TCell, TView> : IGrid
 		where TCell : Cell, new()
 		where TView : IGridView<TCell>
@@ -15,7 +21,6 @@ namespace PixPuzzle.Data
 		/// Occurs when grid is completed.
 		/// </summary>
 		public event Action GridCompleted;
-
 		/// <summary>
 		/// The grid
 		/// </summary>
@@ -27,7 +32,6 @@ namespace PixPuzzle.Data
 			Width = imageWidth;
 			Height = imageHeight;
 		}
-
 		#region Grid creation
 
 		/// <summary>
@@ -69,7 +73,6 @@ namespace PixPuzzle.Data
 		}
 
 		public abstract void SetupGrid ();
-
 		#endregion
 
 		#region View
@@ -96,18 +99,17 @@ namespace PixPuzzle.Data
 					if (zoneToRefresh.Contains (cellRect) == false || zoneToRefresh.IntersectsWith (cellRect) == false) {
 						#elif WINDOWS_PHONE
 						if (zoneToRefresh.Contains (cellRect) == false || zoneToRefresh.Intersects (cellRect) == false) {
-							#endif
-							zoneToRefresh = Rectangle.Union (cellRect, zoneToRefresh);
-						}
+						#endif
+						zoneToRefresh = Rectangle.Union (cellRect, zoneToRefresh);
 					}
 				}
-
-				// Trigger the refresh if necessary
-				View.OrderRefresh (zoneToRefresh);
 			}
 
-		public abstract void DrawPuzzle ();
+			// Trigger the refresh if necessary
+			View.OrderRefresh (zoneToRefresh);
+		}
 
+		public abstract void DrawPuzzle ();
 		#endregion
 
 		#region Grid tools
@@ -129,12 +131,16 @@ namespace PixPuzzle.Data
 		}
 		#endregion
 
-		protected void OnGridCompleted() {
+		protected void OnGridCompleted ()
+		{
 			if (GridCompleted != null) {
 				GridCompleted ();
 			}
 		}
-
+		/// <summary>
+		/// View instance through a cross platform interface
+		/// </summary>
+		/// <value>The view.</value>
 		public TView View {
 			get;
 			protected set;

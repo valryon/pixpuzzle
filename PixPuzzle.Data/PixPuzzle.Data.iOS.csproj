@@ -57,5 +57,6 @@
     <Compile Include="Grid\IGrid.cs" />
     <Compile Include="Cells\PicrossCell.cs" />
     <Compile Include="Views\IPathGridView.cs" />
+    <Compile Include="Views\IPicrossGridView.cs" />
   </ItemGroup>
 </Project>
