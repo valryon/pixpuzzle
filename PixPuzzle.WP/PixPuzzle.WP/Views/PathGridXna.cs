@@ -14,7 +14,7 @@ namespace PixPuzzle.WP.Views
     /// <summary>
     /// The grid is made of XNA
     /// </summary>
-    public class PathGridXna : PathGrid, IGridView, IDisposable
+    public class PathGridXna : PathGrid, IPathGridView, IDisposable
     {
         private const int defaultCellSize = 64;
 
@@ -155,7 +155,7 @@ namespace PixPuzzle.WP.Views
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, this.camera.Transform);
         }
 
-        public bool IsToRefresh(Cell cell, Rectangle cellRect)
+        public bool IsToRefresh(PathCell cell, Rectangle cellRect)
         {
             return camera.VisibilityRect.Intersects(cellRect) || camera.VisibilityRect.Contains(cellRect);
         }
@@ -192,22 +192,22 @@ namespace PixPuzzle.WP.Views
             }
         }
 
-        public void DrawCellBase(Rectangle rectangle, bool isValid, bool isPathEndOrStart, CellColor cellColor)
+        public void DrawCellBase(PathCell cell, Rectangle rectangle)
         {
-            if (isValid)
+            if (cell.Path != null && cell.Path.IsValid)
             {
                 spriteBatch.Draw(parent.BlankTexture, rectangle, Color.Blue);
             }
             rectangle.Inflate(-CellSize / 8, -CellSize / 8);
-            spriteBatch.Draw(parent.BlankTexture, rectangle, cellColor.ToXnaColor());
+            spriteBatch.Draw(parent.BlankTexture, rectangle, cell.Color.ToXnaColor());
         }
 
-        public void DrawPath(Rectangle pathRect, Microsoft.Xna.Framework.Point direction, CellColor color)
+        public void DrawPath(PathCell cell, Rectangle pathRect, Microsoft.Xna.Framework.Point direction, CellColor color)
         {
             spriteBatch.Draw(parent.BlankTexture, pathRect, color.ToXnaColor());
         }
 
-        public void DrawLastCellIncompletePath(Rectangle rect, string pathValue, CellColor color)
+        public void DrawLastCellIncompletePath(PathCell cell, Rectangle rect, string pathValue, CellColor color)
         {
             Vector2 cellCenter = new Vector2(rect.Center.X, rect.Center.Y);
 
@@ -218,7 +218,7 @@ namespace PixPuzzle.WP.Views
             spriteBatch.DrawString(parent.Font, pathValue, cellCenter - (parent.Font.MeasureString(pathValue) / 2), Color.Black);
         }
 
-        public void DrawEndOrStartText(Rectangle location, string text, CellColor color)
+        public void DrawCellText(PathCell cell, Rectangle location, string text, CellColor color)
         {
             float rgb = color.B + color.R + color.G;
 

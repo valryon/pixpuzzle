@@ -51,6 +51,7 @@
     <Compile Include="Cells\Cell.cs" />
     <Compile Include="Cells\Path.cs" />
     <Compile Include="Cells\PathCell.cs" />
+    <Compile Include="Cells\PicrossCell.cs" />
     <Compile Include="GameMode.cs" />
     <Compile Include="Grid\Grid.cs" />
     <Compile Include="Grid\IGrid.cs" />
@@ -60,6 +61,8 @@
     <Compile Include="Tools\CellColor.cs" />
     <Compile Include="Tools\CellPoint.cs" />
     <Compile Include="Views\IGridView.cs" />
+    <Compile Include="Views\IPathGridView.cs" />
+    <Compile Include="Views\IPicrossGridView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
