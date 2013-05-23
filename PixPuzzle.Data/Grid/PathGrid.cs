@@ -11,7 +11,7 @@ namespace PixPuzzle.Data
 	/// <summary>
 	/// Pathpix-like grid
 	/// </summary>
-	public abstract class PathGrid : Grid<PathCell>
+	public abstract class PathGrid : Grid<PathCell, IPathGridView>
 	{
 		public const int MaximumPathLength = 9;
 
@@ -193,7 +193,7 @@ namespace PixPuzzle.Data
 
 					// Draw what's necessary
 					if (isValid || isStartOrEnd) {
-						View.DrawCellBase (cellRect, isValid, isStartOrEnd, cell.Color);
+						View.DrawCellBase (cell, cellRect);
 					}
 
 					// Draw paths
@@ -250,12 +250,12 @@ namespace PixPuzzle.Data
 							);
 
 
-							View.DrawPath (pathRect, new Point (previousDirectionX, previousDirectionY), cell.Path.Color);
+							View.DrawPath (cell, pathRect, new Point (previousDirectionX, previousDirectionY), cell.Path.Color);
 
 							// Text!
 							// -- Last cell of an incomplete path?
 							if ((isLastCell == true) && (isValid == false) && (isStartOrEnd == false)) {
-								View.DrawLastCellIncompletePath (cellRect, cell.Path.Length.ToString (), cell.Path.Color);
+								View.DrawLastCellIncompletePath (cell, cellRect, cell.Path.Length.ToString (), cell.Path.Color);
 							}
 						}
 
@@ -264,7 +264,7 @@ namespace PixPuzzle.Data
 					// Text for node value at ends/Starts
 					if (isStartOrEnd) {
 						// Draw the text
-						View.DrawEndOrStartText (cellRect, cell.Path.ExpectedLength.ToString (), cell.Path.Color);
+						View.DrawCellText (cell, cellRect, cell.Path.ExpectedLength.ToString (), cell.Path.Color);
 					}
 				} // y
 			} // x

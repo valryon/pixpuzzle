@@ -10,7 +10,8 @@ namespace PixPuzzle.Data
 	/// <summary>
 	/// Common methods for grid views
 	/// </summary>
-	public interface IGridView
+	public interface IGridView<TCell>
+		where TCell : Cell
 	{
 		void InitializeViewForDrawing ();
 
@@ -18,17 +19,13 @@ namespace PixPuzzle.Data
 
 		void StartDraw ();
 
-		bool IsToRefresh (Cell cell, Rectangle cellRect);
+		bool IsToRefresh (TCell cell, Rectangle cellRect);
 
 		void DrawGrid ();
 
-		void DrawCellBase (Rectangle rectangle, bool isValid, bool isPathEndOrStart, CellColor cellColor);
+		void DrawCellBase (TCell cell,Rectangle rectangle);
 
-		void DrawPath (Rectangle pathRect, Point direction, CellColor color);
-
-		void DrawLastCellIncompletePath (Rectangle rect, string pathValue, CellColor color);
-
-		void DrawEndOrStartText (Rectangle location, string text, CellColor color);
+		void DrawCellText (TCell cell, Rectangle location, string text, CellColor color);
 
 		void EndDraw ();
 	}

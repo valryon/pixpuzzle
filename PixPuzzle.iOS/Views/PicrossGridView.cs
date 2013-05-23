@@ -2,12 +2,15 @@ using System;
 using PixPuzzle.Data;
 using MonoTouch.UIKit;
 using System.Drawing;
+using MonoTouch.CoreGraphics;
 
 namespace PixPuzzle
 {
-	internal class PicrossGridViewInternal : UIView, IGridView
+	internal class PicrossGridViewInternal : UIView, IGridView<PicrossCell>
 	{
 		private PicrossGridView parent;
+		private CGContext context;
+		private Rectangle drawRect;
 
 		public PicrossGridViewInternal (PicrossGridView parent, RectangleF frame) 
 			: base(frame)
@@ -27,41 +30,92 @@ namespace PixPuzzle
 
 		public void OrderRefresh (Rectangle zoneToRefresh)
 		{
+			// iOS Specific
+			SetNeedsDisplayInRect (zoneToRefresh);
+		}
+
+		public override void Draw (RectangleF rect)
+		{
+			base.Draw (rect);
+
+			// Save the rect
+			this.drawRect = new Rectangle ((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
+
+			// Order the big draw
+			parent.DrawPuzzle ();
 		}
 
 		public void StartDraw ()
 		{
+			// Context properties
+			this.context = UIGraphics.GetCurrentContext ();
+
+			// -- Text
+			context.SetTextDrawingMode (CGTextDrawingMode.Fill);
+			context.TextMatrix = CGAffineTransform.MakeScale (1f, -1f);
 		}
 
-		public bool IsToRefresh (Cell cell, Rectangle cellRect)
+		public bool IsToRefresh (PicrossCell cell, Rectangle cellRect)
 		{
-			return false;
+			return true;
 		}
 
 		public void DrawGrid ()
 		{
+			Point borderStartLocation = parent.BorderStartLocation;
+			int borderWidth = parent.BorderWidth;
+
+			// Draw the borders of the grid
+			// ------------------------------------------------------------
+			int borderEndX = borderStartLocation.X + (parent.CellSize * parent.Width) + (borderWidth / 2);
+			int borderEndY = borderStartLocation.Y + (parent.CellSize * parent.Height) + (borderWidth / 2);
+
+			context.SetStrokeColorWithColor (UIColor.Blue.CGColor);
+			context.MoveTo (borderStartLocation.X, borderStartLocation.Y); //start at this point
+			context.SetLineWidth (borderWidth);
+
+			// Draw a square
+			context.AddLineToPoint (borderEndX, borderStartLocation.Y); 
+			context.AddLineToPoint (borderEndX, borderEndY); 
+			context.AddLineToPoint (borderStartLocation.X, borderEndY); 
+			context.AddLineToPoint (borderStartLocation.X, borderStartLocation.Y); 
+
+			// Effective draw
+			context.StrokePath ();
+
+			// Draw cells 
+			// ------------------------------------------------------------
+			context.SetStrokeColorWithColor (UIColor.Black.CGColor);
+			context.SetLineWidth (1.0f);
+			context.MoveTo (borderStartLocation.X, borderStartLocation.X);
+
+			for (int x=0; x<parent.Width; x++) {
+				int cellBorderX = borderStartLocation.X + x * parent.CellSize;
+				context.MoveTo (cellBorderX, borderStartLocation.X);
+				context.AddLineToPoint (cellBorderX, borderStartLocation.Y + parent.Height * parent.CellSize);
+			}
+
+			for (int y=0; y<parent.Height; y++) {
+				int cellBorderY = borderStartLocation.X + y * parent.CellSize;
+				context.MoveTo (borderStartLocation.X, cellBorderY);
+				context.AddLineToPoint (borderStartLocation.X + parent.Width * parent.CellSize, cellBorderY);
+			}
+
+			context.StrokePath ();
 		}
 
-		public void DrawCellBase (Rectangle rectangle, bool isValid, bool isPathEndOrStart, CellColor cellColor)
+		public void DrawCellBase (PicrossCell cell, Rectangle rectangle)
 		{
 		}
 
-		public void DrawPath (Rectangle pathRect, Point direction, CellColor color)
-		{
-		}
-
-		public void DrawLastCellIncompletePath (Rectangle rect, string pathValue, CellColor color)
-		{
-		}
-
-		public void DrawEndOrStartText (Rectangle location, string text, CellColor color)
+		public void DrawCellText (PicrossCell cell,Rectangle location, string text, CellColor color)
 		{
 		}
 
 		public void EndDraw ()
 		{
 		}
-		#endregion
+		#endregion	
 	}
 
 	public class PicrossGridView : PicrossGrid

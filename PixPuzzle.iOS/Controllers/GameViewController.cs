@@ -126,6 +126,26 @@ namespace PixPuzzle
 			PicrossGridView picrossGrid = new PicrossGridView ((int)image.Size.Width, (int)image.Size.Height);
 			picrossGrid.GridCompleted += gridCompleted;
 
+			// Look at each pixel
+			for (int x=0; x<image.Size.Width; x++) {
+				for (int y=0; y<image.Size.Height; y++) {
+
+					// Get the pixel color
+					Color c = bitmap.GetPixel (x, y);
+
+					bool isFilled = false;
+
+					float rgb = 0f;
+					rgb += c.R / 255f + c.G / 255f + c.B / 255f;
+
+					isFilled = (rgb < 0.25f);
+
+					if (isFilled) {
+						picrossGrid.SetFilledPixel (x, y);
+					}
+				}	
+			}
+
 			picrossGrid.SetupGrid ();
 			picrossGrid.View.InitializeViewForDrawing ();
 
@@ -148,7 +168,6 @@ namespace PixPuzzle
 			};
 			alert.Show ();
 		}
-
 		/// <summary>
 		/// We store the grid object even if we're not using it so it is not garbage collected by mistake
 		/// </summary>

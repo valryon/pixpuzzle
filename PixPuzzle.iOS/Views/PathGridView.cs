@@ -10,11 +10,11 @@ using MonoTouch.Foundation;
 
 namespace PixPuzzle
 {
-	internal class GridViewInternal : UIView, IGridView
+	internal class PathGridViewInternal : UIView, IPathGridView
 	{
 		private PathGridView parent;
 
-		public GridViewInternal (PathGridView parent, RectangleF frame) 
+		public PathGridViewInternal (PathGridView parent, RectangleF frame) 
 			: base(frame)
 		{
 			this.parent = parent;
@@ -72,7 +72,7 @@ namespace PixPuzzle
 
 		}
 
-		public bool IsToRefresh (Cell cell, Rectangle cellRect)
+		public bool IsToRefresh (PathCell cell, Rectangle cellRect)
 		{
 			return drawRect.IntersectsWith (cellRect) || drawRect.Contains (cellRect);
 		}
@@ -121,8 +121,11 @@ namespace PixPuzzle
 			context.StrokePath ();
 		}
 
-		public void DrawCellBase (Rectangle rectangle, bool isValid, bool isPathEndOrStart, CellColor cellColor)
+		public void DrawCellBase (PathCell cell, Rectangle rectangle)
 		{
+			bool isValid = cell.Path != null && cell.Path.IsValid;
+			CellColor cellColor = cell.Color;
+
 			CGColor color = cellColor.UIColor.CGColor;
 			context.SetFillColor (color);
 
@@ -138,7 +141,7 @@ namespace PixPuzzle
 			}
 		}
 
-		public void DrawPath (Rectangle pathRect, Point direction, CellColor color)
+		public void DrawPath (PathCell cell, Rectangle pathRect, Point direction, CellColor color)
 		{
 			context.SetFillColor (color.UIColor.CGColor);
 
@@ -193,7 +196,7 @@ namespace PixPuzzle
 			context.FillPath ();
 		}
 
-		public void DrawLastCellIncompletePath (Rectangle rect, string pathValue, CellColor color)
+		public void DrawLastCellIncompletePath (PathCell cell, Rectangle rect, string pathValue, CellColor color)
 		{
 			UIColor colorUnderText = UIColor.LightGray;
 
@@ -208,7 +211,7 @@ namespace PixPuzzle
 			context.ShowTextAtPoint (rect.X + parent.CellSize/3, rect.Y + 2 * parent.CellSize / 3, pathValue);
 		}
 
-		public void DrawEndOrStartText (Rectangle location, string text, CellColor color)
+		public void DrawCellText (PathCell cell, Rectangle location, string text, CellColor color)
 		{
 			context.SelectFont ("Helvetica Neue", 16.0f, CGTextEncoding.MacRoman);
 
@@ -327,7 +330,7 @@ namespace PixPuzzle
 			: base(width, height, AppDelegate.UserInterfaceIdiomIsPhone ? CellSizeIphone : CellSizeIpad)
 		{
 			// Create the view 
-			GridViewInternal theView = new GridViewInternal (this, new RectangleF (0, 0, width * CellSize, height * CellSize));
+			PathGridViewInternal theView = new PathGridViewInternal (this, new RectangleF (0, 0, width * CellSize, height * CellSize));
 
 			// Create the grid and cells views
 			CreateGrid (0,0, theView);
@@ -335,7 +338,7 @@ namespace PixPuzzle
 			GridViewInternal = theView;
 		}
 
-		internal GridViewInternal GridViewInternal {
+		internal PathGridViewInternal GridViewInternal {
 			get;
 			private set;
 		}

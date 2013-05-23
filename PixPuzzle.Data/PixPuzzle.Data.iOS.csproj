@@ -55,5 +55,7 @@
     <Compile Include="Cells\Cell.cs" />
     <Compile Include="GameMode.cs" />
     <Compile Include="Grid\IGrid.cs" />
+    <Compile Include="Cells\PicrossCell.cs" />
+    <Compile Include="Views\IPathGridView.cs" />
   </ItemGroup>
 </Project>
