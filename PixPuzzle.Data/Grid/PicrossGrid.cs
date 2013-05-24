@@ -79,7 +79,7 @@ namespace PixPuzzle.Data
 			PicrossCell cell = GetCell (x, y);
 
 			if (cell != null) {
-				cell.ShoudBeFilled = true;
+				cell.IsFilled = true;
 			}
 		}
 
@@ -119,8 +119,9 @@ namespace PixPuzzle.Data
 				for (int x=0; x<Width; x++) {
 
 					PicrossCell cell = Cells [x] [y];
+					cell.IsMarked = true;
 
-					if (cell.ShoudBeFilled) {
+					if (cell.IsFilled) {
 						currentCount++;
 					} else {
 						if (currentCount > 0) {
@@ -148,8 +149,9 @@ namespace PixPuzzle.Data
 				for (int y=0; y<Height; y++) {
 
 					PicrossCell cell = Cells [x] [y];
+					cell.IsMarked = true;
 
-					if (cell.ShoudBeFilled) {
+					if (cell.IsFilled) {
 						currentCount++;
 					} else {
 						if (currentCount > 0) {
@@ -203,26 +205,31 @@ namespace PixPuzzle.Data
 		}
 		#region Game
 
-		public bool FillCell (PicrossCell cell, bool isFilled, bool isCrossed)
+		/// <summary>
+		/// Changes the state of the cell.
+		/// </summary>
+		/// <returns><c>true</c>, if cell state was changed, <c>false</c> otherwise.</returns>
+		/// <param name="cell">Cell.</param>
+		/// <param name="state">State.</param>
+		public void ChangeCellState (PicrossCell cell, PicrossCellState state)
 		{
 			if (cell != null && cell != LastSelectedCell) {
 
 				Console.WriteLine ("Cell X:"+cell.X+ " Y:"+cell.Y);
-				Console.WriteLine ("Changing state filled: "+isFilled+ " crossed:"+isCrossed);
+				Console.WriteLine ("Changing state: "+state+ " filled:"+cell.IsFilled);
 
-				cell.IsFilled = isFilled;
-				cell.IsCrossed = isCrossed;
+				// Change cell state
+				cell.State = state;
 
+
+				// Keep track of the cell we just modified
 				LastSelectedCell = cell;
 
+				// Update numbers
+
+				// Tell the view to refresh
 				UpdateView (new PicrossCell[]{ cell });
-
-				Console.WriteLine ("Cell isValid:"+(cell.ShoudBeFilled == cell.IsFilled));
-
-				return cell.ShoudBeFilled == cell.IsFilled;
 			}
-
-			return false;
 		}
 		#endregion
 	}

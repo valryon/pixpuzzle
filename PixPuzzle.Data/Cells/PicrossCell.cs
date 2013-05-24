@@ -2,6 +2,13 @@ using System;
 
 namespace PixPuzzle.Data
 {
+	public enum PicrossCellState
+	{
+		None,
+		Filled,
+		Crossed
+	}
+
     /// <summary>
     /// One cell of the picross puzzle
     /// </summary>
@@ -20,29 +27,34 @@ namespace PixPuzzle.Data
         #region Properties
 
         /// <summary>
-        /// Tells if we are on a cell that must be filled
+        /// Tells if we are on a cell that must be filled to complete the puzzle
         /// </summary>
         /// <value><c>true</c> if this instance is path start or end; otherwise, <c>false</c>.</value>
-        public bool ShoudBeFilled
+        public bool IsFilled
         {
             get;
             set;
         }
 
 		/// <summary>
-		/// Tells if the cell is currently filled
+		/// Gets or sets the state.
 		/// </summary>
-		/// <value><c>true</c> if this instance is filled; otherwise, <c>false</c>.</value>
-		public bool IsFilled
+		/// <value>The state.</value>
+		public PicrossCellState State
 		{
 			get;
 			set;
 		}
 
-		public bool IsCrossed
+		public bool IsValid 
 		{
-			get;
-			set;
+			get {
+				if (IsFilled) {
+					return State == PicrossCellState.Filled;
+				} else {
+					return State != PicrossCellState.Filled;
+				}
+			}
 		}
 
         #endregion

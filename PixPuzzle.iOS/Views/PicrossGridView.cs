@@ -40,7 +40,7 @@ namespace PixPuzzle
 
 				PicrossCell cell = getCellFromViewCoordinates (fingerLocation);
 
-				parent.FillCell (cell, true, false);
+				parent.ChangeCellState (cell, PicrossCellState.Filled);
 			}
 			base.TouchesBegan (touches, evt);
 		}
@@ -56,7 +56,7 @@ namespace PixPuzzle
 
 				PicrossCell cell = getCellFromViewCoordinates (fingerLocation);
 
-				parent.FillCell (cell, true, false);
+				parent.ChangeCellState (cell, PicrossCellState.Filled);
 			}
 			base.TouchesMoved (touches, evt);
 		}
@@ -193,15 +193,17 @@ namespace PixPuzzle
 
 		public void DrawCellBase (PicrossCell cell, Rectangle rectangle)
 		{
-			if (cell.ShoudBeFilled) {
+			// DEBUG
+			if (cell.IsFilled) {
 				CGColor color = UIColor.White.CGColor;
 				context.SetFillColor (color);
 				context.FillRect (rectangle);
-			} else if (cell.IsFilled) {
-				CGColor color = UIColor.Gray.CGColor;
+			}
+			if (cell.State == PicrossCellState.Filled) {
+				CGColor color = UIColor.Black.CGColor;
 				context.SetFillColor (color);
 				context.FillRect (rectangle);
-			} else if (cell.IsCrossed) {
+			} else if (cell.State == PicrossCellState.Crossed) {
 				CGColor color = UIColor.Gray.CGColor;
 				context.SetStrokeColor (color);
 
