@@ -10,7 +10,7 @@ namespace PixPuzzle
 	{
 		private PicrossGridView parent;
 		private CGContext context;
-		private Rectangle drawRect;
+		private RectangleF drawRect, linesNumbersRect, colNumbersRect;
 
 		public PicrossGridViewInternal (PicrossGridView parent, RectangleF frame) 
 			: base(frame)
@@ -94,6 +94,9 @@ namespace PixPuzzle
 			                             , (parent.CellSize * parent.Height) + parent.GridLocation.Y + parent.BorderWidth + yMargin
 			);
 
+			linesNumbersRect = new RectangleF (Frame.X, Frame.Y, xMargin, Frame.Height);
+			colNumbersRect = new RectangleF (Frame.X, Frame.Y, Frame.Width, yMargin);
+
 			this.BackgroundColor = UIColor.FromRGB (230, 230, 230);
 		}
 
@@ -101,6 +104,10 @@ namespace PixPuzzle
 		{
 			// iOS Specific
 			SetNeedsDisplayInRect (zoneToRefresh);
+
+			// Numbers too
+			SetNeedsDisplayInRect (linesNumbersRect);
+			SetNeedsDisplayInRect (colNumbersRect);
 		}
 
 		public override void Draw (RectangleF rect)
@@ -126,7 +133,7 @@ namespace PixPuzzle
 
 		public bool IsToRefresh (PicrossCell cell, Rectangle cellRect)
 		{
-			return true;
+			return drawRect.IntersectsWith (cellRect) || drawRect.Contains (cellRect);
 		}
 
 		public void DrawGrid ()
@@ -220,10 +227,11 @@ namespace PixPuzzle
 				context.FillRect (rectangle);
 			}
 			if (cell.State == PicrossCellState.Filled) {
-				CGColor color = UIColor.Black.CGColor;
+				CGColor color = UIColor.Red.CGColor;
 				context.SetFillColor (color);
 				context.FillRect (rectangle);
-			} else if (cell.State == PicrossCellState.Crossed) {
+			} 
+			else if (cell.State == PicrossCellState.Crossed) {
 				CGColor color = UIColor.Gray.CGColor;
 				context.SetStrokeColor (color);
 

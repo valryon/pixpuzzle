@@ -64,11 +64,10 @@ namespace PixPuzzle.Data
 			this.View = view;
 
 			BorderWidth = 4;
-			GridLocation = new Point (0, 0);
-
 			int borderStartX = GridLocation.X + (BorderWidth / 2);
 			int borderStartY = GridLocation.Y + (BorderWidth / 2);
 			BorderStartLocation = new Point (borderStartX, borderStartY);
+			GridLocation = BorderStartLocation;
 		}
 
 		public virtual void SetupGrid (CellColor[][] pixels) {
@@ -89,8 +88,8 @@ namespace PixPuzzle.Data
 
 			foreach (TCell cell in cellsToRefresh) {
 
-				int x = BorderStartLocation.X + cell.X * CellSize;
-				int y = BorderStartLocation.Y + cell.Y * CellSize;
+				int x = GridLocation.X + cell.X * CellSize;
+				int y = GridLocation.Y + cell.Y * CellSize;
 
 				Rectangle cellRect = new Rectangle (x, y, CellSize, CellSize);
 
