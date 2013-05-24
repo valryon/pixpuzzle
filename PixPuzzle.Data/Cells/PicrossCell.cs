@@ -30,7 +30,7 @@ namespace PixPuzzle.Data
         /// Tells if we are on a cell that must be filled to complete the puzzle
         /// </summary>
         /// <value><c>true</c> if this instance is path start or end; otherwise, <c>false</c>.</value>
-        public bool IsFilled
+        public bool ShouldBeFilled
         {
             get;
             set;
@@ -49,7 +49,7 @@ namespace PixPuzzle.Data
 		public bool IsValid 
 		{
 			get {
-				if (IsFilled) {
+				if (ShouldBeFilled) {
 					return State == PicrossCellState.Filled;
 				} else {
 					return State != PicrossCellState.Filled;

@@ -134,15 +134,25 @@ namespace PixPuzzle
 			// Draw the numbers
 			// ------------------------------------------------------------
 
-			context.SetFillColor (UIColor.Black.CGColor);
 			context.SelectFont ("Helvetica Neue", 18.0f, CGTextEncoding.MacRoman);
 
 			for (int x=0; x<parent.Lines.Length; x++) {
-				for (int n=0; n<parent.Lines[x].Numbers.Count; n++) {
+
+				PicrossSerie serie = parent.Lines [x];
+
+				if (serie.IsValid) {
+					context.SetFillColor (UIColor.Green.CGColor);
+					context.SetStrokeColor(UIColor.Green.CGColor);
+				} else {
+					context.SetFillColor (UIColor.Black.CGColor);
+					context.SetStrokeColor(UIColor.Black.CGColor);
+				}
+
+				for (int n=0; n< serie.Numbers.Count; n++) {
 
 					// We draw numbers from the grid to the frame border
 					// So we must pick them in the opposite order too
-					PicrossSerieNumber number = parent.Lines [x].Numbers [parent.Lines [x].Numbers.Count - (n+1)];
+					PicrossSerieNumber number = serie.Numbers [serie.Numbers.Count - (n+1)];
 
 					// Draw the number
 					Point position = new Point (
@@ -155,17 +165,27 @@ namespace PixPuzzle
 			}
 
 			for (int y=0; y<parent.Columns.Length; y++) {
-				for (int n=0; n<parent.Columns[y].Numbers.Count; n++) {
+
+				PicrossSerie serie = parent.Columns [y];
+
+				for (int n=0; n<serie.Numbers.Count; n++) {
 
 					// We draw numbers from the grid to the frame border
 					// So we must pick them in the opposite order too
-					PicrossSerieNumber number = parent.Columns [y].Numbers [parent.Columns [y].Numbers.Count - (n+1)];
+					PicrossSerieNumber number = serie.Numbers [serie.Numbers.Count - (n+1)];
 
 					// Draw the number
 					Point position = new Point (
 						parent.GridLocation.X + (y * parent.CellSize),
 						parent.GridLocation.Y - (n * parent.CellSize)
 					);
+
+					if (number.Count == number.CurrentCount) {
+						context.SetFillColor (UIColor.Green.CGColor);
+					} else {
+						context.SetFillColor (UIColor.Black.CGColor);
+					}
+
 					context.ShowTextAtPoint (position.X + parent.CellSize / 2, position.Y - parent.CellSize / 2, number.Count.ToString ());
 				}
 			}
@@ -194,7 +214,7 @@ namespace PixPuzzle
 		public void DrawCellBase (PicrossCell cell, Rectangle rectangle)
 		{
 			// DEBUG
-			if (cell.IsFilled) {
+			if (cell.ShouldBeFilled) {
 				CGColor color = UIColor.White.CGColor;
 				context.SetFillColor (color);
 				context.FillRect (rectangle);

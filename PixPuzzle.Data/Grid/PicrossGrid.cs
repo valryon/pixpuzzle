@@ -7,16 +7,13 @@ using System.Drawing;
 #elif WINDOWS_PHONE
 using Microsoft.Xna.Framework;
 
-
-
-
 #endif
 namespace PixPuzzle.Data
 {
 	/// <summary>
 	/// A number from a line/column of the puzzle
 	/// </summary>
-	public struct PicrossSerieNumber
+	public class PicrossSerieNumber
 	{
 		public int Count;
 		public int CurrentCount;
@@ -79,7 +76,7 @@ namespace PixPuzzle.Data
 			PicrossCell cell = GetCell (x, y);
 
 			if (cell != null) {
-				cell.IsFilled = true;
+				cell.ShouldBeFilled = true;
 			}
 		}
 
@@ -109,61 +106,20 @@ namespace PixPuzzle.Data
 			// So we can deduce the grid and get the lines and columns nmbers
 			// -- Lines
 			Lines = new PicrossSerie[Height];
-			int currentCount = 0;
 			for (int y=0; y< Height; y++) {
 
 				Lines [y] = new PicrossSerie ();
 
-				// Look to each cell of the line and deduce the numbers (1, 3, 2 for example)
-				currentCount = 0;
-				for (int x=0; x<Width; x++) {
-
-					PicrossCell cell = Cells [x] [y];
-					cell.IsMarked = true;
-
-					if (cell.IsFilled) {
-						currentCount++;
-					} else {
-						if (currentCount > 0) {
-
-							Lines [y].Numbers.Add (new PicrossSerieNumber() {
-								Count = currentCount
-							});
-
-							currentCount = 0;
-						}
-					}
-				}
-
+				FirstCountLine (y);
 			}
 
 			// - Columns
 			Columns = new PicrossSerie[Width];
-			currentCount = 0;
 			for (int x=0; x<Width; x++) {
 
 				Columns [x] = new PicrossSerie ();
 
-				// Same logic than for lines, obviously
-				currentCount = 0;
-				for (int y=0; y<Height; y++) {
-
-					PicrossCell cell = Cells [x] [y];
-					cell.IsMarked = true;
-
-					if (cell.IsFilled) {
-						currentCount++;
-					} else {
-						if (currentCount > 0) {
-
-							Columns [x].Numbers.Add (new PicrossSerieNumber() {
-								Count = currentCount
-							});
-
-							currentCount = 0;
-						}
-					}
-				}
+				FirstCountCol (x);
 			}
 
 			base.SetupGrid (pixels);
@@ -205,6 +161,112 @@ namespace PixPuzzle.Data
 		}
 		#region Game
 
+		public void FirstCountLine (int y)
+		{
+			// Look to each cell of the line and deduce the numbers (1, 3, 2 for example)
+			int expectedCount = 0;
+			for (int x=0; x<Width; x++) {
+
+				PicrossCell cell = Cells [x] [y];
+				cell.IsMarked = true;
+
+				if (cell.ShouldBeFilled) {
+					expectedCount++;
+				} else {
+					if (expectedCount > 0) {
+
+						Lines [y].Numbers.Add (new PicrossSerieNumber() {
+							Count = expectedCount
+						});
+
+						expectedCount = 0;
+					}
+				}
+			}
+
+			if (Lines [y].Numbers.Count == 0) {
+				Lines [y].Numbers.Add (new PicrossSerieNumber() {
+					Count = 0
+				});
+			}
+		}
+
+		public void FirstCountCol (int x)
+		{
+			int expectedCount = 0;
+			for (int y=0; y<Height; y++) {
+
+				PicrossCell cell = Cells [x] [y];
+				cell.IsMarked = true;
+
+				if (cell.ShouldBeFilled) {
+					expectedCount++;
+				} else {
+					if (expectedCount > 0) {
+
+						Columns [x].Numbers.Add (new PicrossSerieNumber() {
+							Count = expectedCount
+						});
+
+						expectedCount = 0;
+					}
+				}
+			}
+
+			if (Columns [x].Numbers.Count == 0) {
+				Columns [x].Numbers.Add (new PicrossSerieNumber() {
+							Count = 0
+						});
+			}
+		}
+
+		public void CheckLine (int y)
+		{
+			int currentCount = 0;
+			int currentNumber = 0;
+
+			for (int x=0; x<Width; x++) {
+
+				PicrossCell cell = Cells [x] [y];
+
+				if (cell.State == PicrossCellState.Filled) {
+					currentCount++;
+				} else {
+					if (currentCount > 0) {
+
+						var number = Lines [y].Numbers [currentNumber];
+						number.CurrentCount = currentCount;
+
+						currentNumber++;
+						currentCount = 0;
+					}
+				}
+			}
+		}
+
+		public void CheckColumn (int x)
+		{
+			int currentCount = 0;
+			int currentNumber = 0;
+
+			for (int y=0; y<Height; y++) {
+
+				PicrossCell cell = Cells [x] [y];
+
+				if (cell.State == PicrossCellState.Filled) {
+					currentCount++;
+				} else {
+					if (currentCount > 0) {
+
+						var number = Columns [x].Numbers [currentNumber];
+						number.CurrentCount = currentCount;
+
+						currentNumber++;
+						currentCount = 0;
+					}
+				}
+			}
+		}
 		/// <summary>
 		/// Changes the state of the cell.
 		/// </summary>
@@ -216,19 +278,23 @@ namespace PixPuzzle.Data
 			if (cell != null && cell != LastSelectedCell) {
 
 				Console.WriteLine ("Cell X:"+cell.X+ " Y:"+cell.Y);
-				Console.WriteLine ("Changing state: "+state+ " filled:"+cell.IsFilled);
+				Console.WriteLine ("Changing state: "+state+ " filled:"+cell.ShouldBeFilled);
 
 				// Change cell state
 				cell.State = state;
-
 
 				// Keep track of the cell we just modified
 				LastSelectedCell = cell;
 
 				// Update numbers
+				// Get the line and the column
+				CheckLine (cell.X);
+				CheckColumn (cell.X);
 
 				// Tell the view to refresh
 				UpdateView (new PicrossCell[]{ cell });
+
+				// Check if grid is completed
 			}
 		}
 		#endregion
