@@ -26,6 +26,8 @@ namespace PixPuzzle
 			                             , (parent.CellSize * parent.Width) + parent.GridLocation.X + parent.BorderWidth
 			                             , (parent.CellSize * parent.Height) + parent.GridLocation.Y + parent.BorderWidth
 			                             );
+
+			this.BackgroundColor = UIColor.FromRGB (230, 230, 230);
 		}
 
 		public void OrderRefresh (Rectangle zoneToRefresh)
@@ -106,6 +108,12 @@ namespace PixPuzzle
 
 		public void DrawCellBase (PicrossCell cell, Rectangle rectangle)
 		{
+//			if (cell.IsFilled) {
+			if (cell.ShoudBeFilled) {
+				CGColor color = UIColor.Gray.CGColor;
+				context.SetFillColor (color);
+				context.FillRect (rectangle);
+			}
 		}
 
 		public void DrawCellText (PicrossCell cell,Rectangle location, string text, CellColor color)

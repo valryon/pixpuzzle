@@ -25,14 +25,7 @@ namespace PixPuzzle
 			UIImage image = UIImage.FromFile (selectedPuzzleFile);
 			Bitmap bitmap = new Bitmap (image);
 
-			UIView view = null;
-			if (mode == GameModes.Path) {
-				view = initializePath (image, bitmap);
-			} else if (mode == GameModes.Picross) {
-				view = initializePicross (image, bitmap);
-			}
-
-			gridUIView = view;
+			gridUIView = initializeGrid (image, bitmap, mode);
 		}
 
 		public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations ()
@@ -76,82 +69,50 @@ namespace PixPuzzle
 			View.AddSubview (scrollView);
 		}
 
-		private UIView initializePath (UIImage image, Bitmap bitmap)
-		{
-			PathGridView pathGrid = new PathGridView ((int)image.Size.Width, (int)image.Size.Height);
-			pathGrid.GridCompleted += gridCompleted;
+		private UIView initializeGrid (UIImage image, Bitmap bitmap, GameModes mode) {
+			this.grid = null;
+			UIView view = null;
+
+			if(mode == GameModes.Path) {
+				var pathGrid = new PathGridView ((int)image.Size.Width, (int)image.Size.Height);
+				view = pathGrid.GridViewInternal;
+
+				grid = pathGrid;
+			}
+			else {
+				var picrossGrid = new PicrossGridView ((int)image.Size.Width, (int)image.Size.Height);
+				view = picrossGrid.PicrossGridViewInternal;
+
+				grid = picrossGrid;
+			}
+
+			CellColor[][] pixels = new CellColor[(int)image.Size.Width][];
 
 			// Look at each pixel
 			for (int x=0; x<image.Size.Width; x++) {
+
+				pixels [x] = new CellColor[(int)image.Size.Height];
+
 				for (int y=0; y<image.Size.Height; y++) {
 
 					// Get the pixel color
 					Color c = bitmap.GetPixel (x, y);
 
-					// Cleaning images
-					CellColor cellColor;
-					if (c.A > 20) {
-						cellColor = new CellColor () {
-							A = /*c.A/255f*/ 1f,
-							R = c.R/255f, 
-							G = c.G/255f, 
-							B = c.B/255f
-						};
-					} else {
-						cellColor = new CellColor () {
-							A = 1f,
-							R = 1f, 
-							G = 1f, 
-							B = 1f // White
-						};
-					}
+					// Transform to generic color
+					pixels [x] [y] = new CellColor () {
+						A = c.A/255f,
+						R = c.R/255f, 
+						G = c.G/255f, 
+						B = c.B/255f
+					};
 
-					pathGrid.SetPixelData (x, y, cellColor);
-				}	
-			}
-			// Launch the setup process
-			pathGrid.SetupGrid ();
-
-			// Prepare the drawing, place the grid where it should be
-			pathGrid.View.InitializeViewForDrawing ();
-
-			grid = pathGrid;
-
-			return pathGrid.GridViewInternal;
-		}
-
-		private UIView initializePicross (UIImage image, Bitmap bitmap)
-		{
-
-			PicrossGridView picrossGrid = new PicrossGridView ((int)image.Size.Width, (int)image.Size.Height);
-			picrossGrid.GridCompleted += gridCompleted;
-
-			// Look at each pixel
-			for (int x=0; x<image.Size.Width; x++) {
-				for (int y=0; y<image.Size.Height; y++) {
-
-					// Get the pixel color
-					Color c = bitmap.GetPixel (x, y);
-
-					bool isFilled = false;
-
-					float rgb = 0f;
-					rgb += c.R / 255f + c.G / 255f + c.B / 255f;
-
-					isFilled = (rgb < 0.25f);
-
-					if (isFilled) {
-						picrossGrid.SetFilledPixel (x, y);
-					}
-				}	
+				}
 			}
 
-			picrossGrid.SetupGrid ();
-			picrossGrid.View.InitializeViewForDrawing ();
+			this.grid.GridCompleted += gridCompleted;
+			this.grid.SetupGrid (pixels);
 
-			grid = picrossGrid;
-
-			return picrossGrid.PicrossGridViewInternal;
+			return view;
 		}
 
 		private void gridCompleted ()

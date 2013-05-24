@@ -35,7 +35,7 @@ namespace PixPuzzle
 			
 //			ShowMenu ();
 
-			ShowPuzzle (GameModes.Picross, "puzzles/0.png");
+			ShowPuzzle (GameModes.Picross, "puzzles/1.png");
 			return true;
 		}
 

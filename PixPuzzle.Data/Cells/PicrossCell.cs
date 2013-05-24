@@ -39,6 +39,12 @@ namespace PixPuzzle.Data
 			set;
 		}
 
+		public bool IsCrossed
+		{
+			get;
+			set;
+		}
+
         #endregion
     }
 }

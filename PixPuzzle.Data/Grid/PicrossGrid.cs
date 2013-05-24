@@ -27,9 +27,29 @@ namespace PixPuzzle.Data
 			}
 		}
 
-		public override void SetupGrid ()
+		public override void SetupGrid (CellColor[][] pixels)
 		{
-			// We should have all pixels set up here
+			for (int x=0; x<pixels.Length; x++) {
+				for (int y=0; y<pixels[x].Length; y++) {
+
+					// Get the pixel color
+					CellColor c = pixels [x] [y];
+
+					bool isFilled = false;
+
+					float rgb = 0f;
+					rgb += c.R + c.G + c.B ;
+
+					if (c.A > 0.2f) {
+						isFilled = (rgb < 0.20f);
+					}
+
+					if (isFilled) {
+						SetFilledPixel (x, y);
+					}
+				}	
+			}
+
 			// So we can deduce the grid and get the lines and columns nmbers
 		}
 

@@ -6,6 +6,7 @@ using System.Drawing;
 #elif WINDOWS_PHONE
 using Microsoft.Xna.Framework;
 
+
 #endif
 namespace PixPuzzle.Data
 {
@@ -72,7 +73,7 @@ namespace PixPuzzle.Data
 			this.View.InitializeViewForDrawing ();
 		}
 
-		public abstract void SetupGrid ();
+		public abstract void SetupGrid (CellColor[][] pixels);
 		#endregion
 
 		#region View
