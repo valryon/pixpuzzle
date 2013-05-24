@@ -12,6 +12,8 @@ namespace PixPuzzle.Data
 	/// </summary>
 	public class PicrossGrid : Grid<PicrossCell, IPicrossGridView>
 	{
+		protected PicrossCell LastSelectedCell;
+
 		public PicrossGrid (int imageWidth, int imageHeight, int cellSize)
 			: base(imageWidth, imageHeight, cellSize)
 		{
@@ -88,6 +90,29 @@ namespace PixPuzzle.Data
 			View.EndDraw ();
 		}
 
+		#region Game
+
+		public bool FillCell(PicrossCell cell, bool isFilled, bool isCrossed) {
+			if (cell != null && cell != LastSelectedCell) {
+
+				Console.WriteLine ("Changing state filled: "+isFilled+ " crossed:"+isCrossed);
+
+				cell.IsFilled = isFilled;
+				cell.IsCrossed = isCrossed;
+
+				LastSelectedCell = cell;
+
+				UpdateView (new PicrossCell[]{ cell });
+
+				Console.WriteLine ("Cell isValid:"+(cell.ShoudBeFilled == cell.IsFilled));
+
+				return cell.ShoudBeFilled == cell.IsFilled;
+			}
+
+			return false;
+		}
+
+		#endregion
 	}
 }
 

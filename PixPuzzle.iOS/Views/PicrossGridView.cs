@@ -17,6 +17,57 @@ namespace PixPuzzle
 		{
 			this.parent = parent;
 		}
+		#region Grid tools
+
+		private PicrossCell getCellFromViewCoordinates (PointF viewLocation)
+		{
+			int x = (int)(viewLocation.X / (float)parent.CellSize);
+			int y = (int)(viewLocation.Y / (float)parent.CellSize);
+
+			return parent.GetCell (x, y);
+		}
+		#endregion
+
+		#region Events
+
+		public override void TouchesBegan (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		{
+			// Touch began: find the cell under the finger and register it as a path start
+			if (touches.Count == 1) {
+				UITouch touch = (UITouch)touches.AnyObject;
+
+				PointF fingerLocation = touch.LocationInView (this);
+
+				Console.WriteLine (fingerLocation);
+
+				PicrossCell cell = getCellFromViewCoordinates (fingerLocation);
+
+				parent.FillCell (cell, true, false);
+			}
+			base.TouchesBegan (touches, evt);
+		}
+
+		public override void TouchesMoved (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		{
+			// Create a path under the finger following the grid
+			if (touches.Count == 1) {
+
+				UITouch touch = (UITouch)touches.AnyObject;
+
+				PointF fingerLocation = touch.LocationInView (this);
+
+				PicrossCell cell = getCellFromViewCoordinates (fingerLocation);
+
+				parent.FillCell (cell, true, false);
+			}
+			base.TouchesMoved (touches, evt);
+		}
+
+		public override void TouchesEnded (MonoTouch.Foundation.NSSet touches, UIEvent evt)
+		{
+			base.TouchesEnded (touches, evt);
+		}
+		#endregion
 
 		#region IGridView implementation
 
@@ -25,7 +76,7 @@ namespace PixPuzzle
 			this.Frame = new RectangleF (parent.GridLocation.X, parent.GridLocation.Y
 			                             , (parent.CellSize * parent.Width) + parent.GridLocation.X + parent.BorderWidth
 			                             , (parent.CellSize * parent.Height) + parent.GridLocation.Y + parent.BorderWidth
-			                             );
+			);
 
 			this.BackgroundColor = UIColor.FromRGB (230, 230, 230);
 		}
@@ -108,15 +159,24 @@ namespace PixPuzzle
 
 		public void DrawCellBase (PicrossCell cell, Rectangle rectangle)
 		{
-//			if (cell.IsFilled) {
-			if (cell.ShoudBeFilled) {
+			if (cell.IsFilled) {
 				CGColor color = UIColor.Gray.CGColor;
 				context.SetFillColor (color);
 				context.FillRect (rectangle);
+			} else if (cell.IsCrossed) {
+				CGColor color = UIColor.Gray.CGColor;
+				context.SetStrokeColor (color);
+
+				context.MoveTo (rectangle.Left, rectangle.Top);
+				context.AddLineToPoint (rectangle.Right, rectangle.Bottom);
+				context.MoveTo (rectangle.Right, rectangle.Top);
+				context.AddLineToPoint (rectangle.Left, rectangle.Bottom);
+
+				context.StrokePath ();
 			}
 		}
 
-		public void DrawCellText (PicrossCell cell,Rectangle location, string text, CellColor color)
+		public void DrawCellText (PicrossCell cell, Rectangle location, string text, CellColor color)
 		{
 		}
 
@@ -134,10 +194,10 @@ namespace PixPuzzle
 		public PicrossGridView (int width, int height)
 				: base(width, height, AppDelegate.UserInterfaceIdiomIsPhone ? CellSizeIphone : CellSizeIpad)
 		{
-			PicrossGridViewInternal = new PicrossGridViewInternal(this, 
+			PicrossGridViewInternal = new PicrossGridViewInternal (this, 
 			                                                      new RectangleF (0, 0, width * CellSize, height * CellSize));
 
-			CreateGrid (0,0, PicrossGridViewInternal);
+			CreateGrid (0, 0, PicrossGridViewInternal);
 		}
 
 		internal PicrossGridViewInternal PicrossGridViewInternal {

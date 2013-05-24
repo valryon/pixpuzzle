@@ -82,11 +82,11 @@ namespace PixPuzzle.Data
 		/// Request the grid to be updated, especially some cells that may have been modified
 		/// </summary>
 		/// <param name="cellsToUpdate">Cells to update.</param>
-		public virtual void UpdateView (PathCell[] cellsToRefresh)
+		public virtual void UpdateView (TCell[] cellsToRefresh)
 		{
 			Rectangle zoneToRefresh = Rectangle.Empty;
 
-			foreach (PathCell cell in cellsToRefresh) {
+			foreach (TCell cell in cellsToRefresh) {
 
 				int x = BorderStartLocation.X + cell.X * CellSize;
 				int y = BorderStartLocation.Y + cell.Y * CellSize;
