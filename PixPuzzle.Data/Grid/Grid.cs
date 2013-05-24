@@ -69,11 +69,12 @@ namespace PixPuzzle.Data
 			int borderStartX = GridLocation.X + (BorderWidth / 2);
 			int borderStartY = GridLocation.Y + (BorderWidth / 2);
 			BorderStartLocation = new Point (borderStartX, borderStartY);
+		}
 
+		public virtual void SetupGrid (CellColor[][] pixels) {
 			this.View.InitializeViewForDrawing ();
 		}
 
-		public abstract void SetupGrid (CellColor[][] pixels);
 		#endregion
 
 		#region View
@@ -169,7 +170,7 @@ namespace PixPuzzle.Data
 
 		public Point GridLocation { 
 			get;
-			protected set; 
+			set; 
 		}
 
 		public Point BorderStartLocation { 

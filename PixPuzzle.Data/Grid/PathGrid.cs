@@ -87,6 +87,8 @@ namespace PixPuzzle.Data
 					}
 				}
 			}
+
+			base.SetupGrid (pixels);
 		}
 			/// <summary>
 			/// Create a path from a given cell.

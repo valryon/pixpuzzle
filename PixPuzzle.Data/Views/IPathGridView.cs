@@ -12,6 +12,8 @@ namespace PixPuzzle.Data
 		void DrawPath (PathCell cell,Rectangle pathRect, Point direction, CellColor color);
 
 		void DrawLastCellIncompletePath (PathCell cell,Rectangle rect, string pathValue, CellColor color);
+
+		void DrawCellText (PathCell cell, Rectangle location, string text, CellColor color);
 	}
 }
 

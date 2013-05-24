@@ -25,8 +25,6 @@ namespace PixPuzzle.Data
 
 		void DrawCellBase (TCell cell,Rectangle rectangle);
 
-		void DrawCellText (TCell cell, Rectangle location, string text, CellColor color);
-
 		void EndDraw ();
 	}
 }

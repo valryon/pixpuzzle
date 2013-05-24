@@ -21,8 +21,8 @@ namespace PixPuzzle
 
 		private PicrossCell getCellFromViewCoordinates (PointF viewLocation)
 		{
-			int x = (int)(viewLocation.X / (float)parent.CellSize);
-			int y = (int)(viewLocation.Y / (float)parent.CellSize);
+			int x = (int)((viewLocation.X - parent.GridLocation.X) / (float)parent.CellSize);
+			int y = (int)((viewLocation.Y - parent.GridLocation.Y) / (float)parent.CellSize);
 
 			return parent.GetCell (x, y);
 		}
@@ -37,8 +37,6 @@ namespace PixPuzzle
 				UITouch touch = (UITouch)touches.AnyObject;
 
 				PointF fingerLocation = touch.LocationInView (this);
-
-				Console.WriteLine (fingerLocation);
 
 				PicrossCell cell = getCellFromViewCoordinates (fingerLocation);
 
@@ -73,9 +71,27 @@ namespace PixPuzzle
 
 		public void InitializeViewForDrawing ()
 		{
-			this.Frame = new RectangleF (parent.GridLocation.X, parent.GridLocation.Y
-			                             , (parent.CellSize * parent.Width) + parent.GridLocation.X + parent.BorderWidth
-			                             , (parent.CellSize * parent.Height) + parent.GridLocation.Y + parent.BorderWidth
+			// Get maximum text size
+			int maxLineNumbers = 0;
+
+			foreach (PicrossSerie line in parent.Lines) {
+				maxLineNumbers = Math.Max (line.Numbers.Count, maxLineNumbers);
+			}
+
+			int maxColumnNumbers = 0;
+
+			foreach (PicrossSerie col in parent.Columns) {
+				maxColumnNumbers = Math.Max (col.Numbers.Count, maxColumnNumbers);
+			}
+
+			int xMargin = maxLineNumbers * parent.CellSize;
+			int yMargin = maxColumnNumbers * parent.CellSize;
+
+			parent.GridLocation = new Point (xMargin, yMargin);
+
+			this.Frame = new RectangleF (0, 0
+			                             , (parent.CellSize * parent.Width) + parent.GridLocation.X + parent.BorderWidth + xMargin
+			                             , (parent.CellSize * parent.Height) + parent.GridLocation.Y + parent.BorderWidth + yMargin
 			);
 
 			this.BackgroundColor = UIColor.FromRGB (230, 230, 230);
@@ -115,43 +131,61 @@ namespace PixPuzzle
 
 		public void DrawGrid ()
 		{
-			Point borderStartLocation = parent.BorderStartLocation;
-			int borderWidth = parent.BorderWidth;
-
-			// Draw the borders of the grid
+			// Draw the numbers
 			// ------------------------------------------------------------
-			int borderEndX = borderStartLocation.X + (parent.CellSize * parent.Width) + (borderWidth / 2);
-			int borderEndY = borderStartLocation.Y + (parent.CellSize * parent.Height) + (borderWidth / 2);
 
-			context.SetStrokeColorWithColor (UIColor.Blue.CGColor);
-			context.MoveTo (borderStartLocation.X, borderStartLocation.Y); //start at this point
-			context.SetLineWidth (borderWidth);
+			context.SetFillColor (UIColor.Black.CGColor);
+			context.SelectFont ("Helvetica Neue", 18.0f, CGTextEncoding.MacRoman);
 
-			// Draw a square
-			context.AddLineToPoint (borderEndX, borderStartLocation.Y); 
-			context.AddLineToPoint (borderEndX, borderEndY); 
-			context.AddLineToPoint (borderStartLocation.X, borderEndY); 
-			context.AddLineToPoint (borderStartLocation.X, borderStartLocation.Y); 
+			for (int x=0; x<parent.Lines.Length; x++) {
+				for (int n=0; n<parent.Lines[x].Numbers.Count; n++) {
 
-			// Effective draw
-			context.StrokePath ();
+					// We draw numbers from the grid to the frame border
+					// So we must pick them in the opposite order too
+					PicrossSerieNumber number = parent.Lines [x].Numbers [parent.Lines [x].Numbers.Count - (n+1)];
+
+					// Draw the number
+					Point position = new Point (
+						parent.GridLocation.X - (n * parent.CellSize),
+						parent.GridLocation.Y + (x * parent.CellSize)
+					);
+
+					context.ShowTextAtPoint (position.X - 2 * parent.CellSize/3, position.Y + 2 * parent.CellSize / 3, number.Count.ToString ());
+				}
+			}
+
+			for (int y=0; y<parent.Columns.Length; y++) {
+				for (int n=0; n<parent.Columns[y].Numbers.Count; n++) {
+
+					// We draw numbers from the grid to the frame border
+					// So we must pick them in the opposite order too
+					PicrossSerieNumber number = parent.Columns [y].Numbers [parent.Columns [y].Numbers.Count - (n+1)];
+
+					// Draw the number
+					Point position = new Point (
+						parent.GridLocation.X + (y * parent.CellSize),
+						parent.GridLocation.Y - (n * parent.CellSize)
+					);
+					context.ShowTextAtPoint (position.X + parent.CellSize / 2, position.Y - parent.CellSize / 2, number.Count.ToString ());
+				}
+			}
 
 			// Draw cells 
 			// ------------------------------------------------------------
 			context.SetStrokeColorWithColor (UIColor.Black.CGColor);
 			context.SetLineWidth (1.0f);
-			context.MoveTo (borderStartLocation.X, borderStartLocation.X);
+			context.MoveTo (parent.GridLocation.X, parent.GridLocation.X);
 
 			for (int x=0; x<parent.Width; x++) {
-				int cellBorderX = borderStartLocation.X + x * parent.CellSize;
-				context.MoveTo (cellBorderX, borderStartLocation.X);
-				context.AddLineToPoint (cellBorderX, borderStartLocation.Y + parent.Height * parent.CellSize);
+				int cellBorderX = parent.GridLocation.X + x * parent.CellSize;
+				context.MoveTo (cellBorderX, parent.GridLocation.X);
+				context.AddLineToPoint (cellBorderX, parent.GridLocation.Y + parent.Height * parent.CellSize);
 			}
 
 			for (int y=0; y<parent.Height; y++) {
-				int cellBorderY = borderStartLocation.X + y * parent.CellSize;
-				context.MoveTo (borderStartLocation.X, cellBorderY);
-				context.AddLineToPoint (borderStartLocation.X + parent.Width * parent.CellSize, cellBorderY);
+				int cellBorderY = parent.GridLocation.X + y * parent.CellSize;
+				context.MoveTo (parent.GridLocation.X, cellBorderY);
+				context.AddLineToPoint (parent.GridLocation.X + parent.Width * parent.CellSize, cellBorderY);
 			}
 
 			context.StrokePath ();
@@ -159,7 +193,11 @@ namespace PixPuzzle
 
 		public void DrawCellBase (PicrossCell cell, Rectangle rectangle)
 		{
-			if (cell.IsFilled) {
+			if (cell.ShoudBeFilled) {
+				CGColor color = UIColor.White.CGColor;
+				context.SetFillColor (color);
+				context.FillRect (rectangle);
+			} else if (cell.IsFilled) {
 				CGColor color = UIColor.Gray.CGColor;
 				context.SetFillColor (color);
 				context.FillRect (rectangle);
@@ -174,10 +212,6 @@ namespace PixPuzzle
 
 				context.StrokePath ();
 			}
-		}
-
-		public void DrawCellText (PicrossCell cell, Rectangle location, string text, CellColor color)
-		{
 		}
 
 		public void EndDraw ()
@@ -195,7 +229,7 @@ namespace PixPuzzle
 				: base(width, height, AppDelegate.UserInterfaceIdiomIsPhone ? CellSizeIphone : CellSizeIpad)
 		{
 			PicrossGridViewInternal = new PicrossGridViewInternal (this, 
-			                                                      new RectangleF (0, 0, width * CellSize, height * CellSize));
+			                                                       new RectangleF (0, 0, width * CellSize, height * CellSize));
 
 			CreateGrid (0, 0, PicrossGridViewInternal);
 		}
