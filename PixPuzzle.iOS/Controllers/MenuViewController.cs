@@ -113,6 +113,20 @@ namespace PixPuzzle
 				scroll.AddSubview (levelButton);
 			}
 
+			UIButton pictureButton = new UIButton (new RectangleF (View.Frame.Width / 2 - width, y, width * 2, height / 2));
+			pictureButton.BackgroundColor = UIColor.White;
+			pictureButton.Layer.BorderColor = UIColor.Green.CGColor;
+			pictureButton.Layer.BorderWidth = 3f;
+			pictureButton.SetTitleColor (UIColor.Black, UIControlState.Normal);
+			pictureButton.SetTitle ("Custom photo", UIControlState.Normal);
+			pictureButton.TouchUpInside += (object sender, EventArgs e) =>  {
+				Camera.TakePicture(this, (dico) => {
+
+				});
+			};
+
+			scroll.AddSubview (pictureButton);
+
 			scrolLContentSize.Height += baseY;
 			scroll.ContentSize = new SizeF (scrolLContentSize.Width, scrolLContentSize.Height);
 		}
