@@ -23,8 +23,14 @@ namespace PixPuzzle.Data
 	{
 		public List<PicrossSerieNumber> Numbers { get; private set; }
 
+		public bool IsZero {
+			get;
+			private set;
+		}
+
 		public bool IsValid {
 			get {
+
 				foreach (var number in Numbers) {
 					if (number.IsValid == false)
 						return false;
@@ -39,6 +45,15 @@ namespace PixPuzzle.Data
 			Numbers = new List<PicrossSerieNumber> ();
 		}
 
+		public void SetZero() 
+		{
+			IsZero = true;
+			Numbers.Add (new PicrossSerieNumber() {
+				Value = 0,
+				IsValid = true
+			});
+		}
+
 		/// <summary>
 		/// Compares the expected number pattern to the given one. 
 		/// If it's the same then the serie will be valid.
@@ -47,6 +62,13 @@ namespace PixPuzzle.Data
 		public void CompareToLineData(List<int> currentNumbers) {
 
 			foreach (var number in Numbers) {
+
+				// The 0 case
+				if(number.Value == 0 && currentNumbers.Count == 0) {
+					number.IsValid = true;
+					return;
+				}
+
 				number.IsValid = false;
 			}
 
@@ -202,9 +224,7 @@ namespace PixPuzzle.Data
 			}
 
 			if (Lines [y].Numbers.Count == 0) {
-				Lines [y].Numbers.Add (new PicrossSerieNumber() {
-					Value = 0
-				});
+				Lines [y].SetZero ();
 			}
 		}
 
@@ -231,9 +251,7 @@ namespace PixPuzzle.Data
 			}
 
 			if (Columns [x].Numbers.Count == 0) {
-				Columns [x].Numbers.Add (new PicrossSerieNumber() {
-					Value = 0
-				});
+				Columns [x].SetZero ();
 			}
 		}
 
@@ -318,7 +336,31 @@ namespace PixPuzzle.Data
 				UpdateView (new PicrossCell[]{ cell });
 
 				// Check if grid is completed
+				bool valid = true;
+				foreach (PicrossSerie line in Lines) {
+					valid &= line.IsValid;
+
+					if (valid == false)
+						break;
+				}
+
+				if (valid) {
+					foreach (PicrossSerie col in Columns) {
+						valid &= col.IsValid;
+
+						if (valid == false)
+							break;
+					}
+				}
+
+				if (valid) {
+					OnGridCompleted ();
+				}
 			}
+		}
+
+		public void InputEnded() {
+			LastSelectedCell = null;
 		}
 		#endregion
 	}

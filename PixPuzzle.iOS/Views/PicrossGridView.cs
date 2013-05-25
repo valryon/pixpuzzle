@@ -71,6 +71,8 @@ namespace PixPuzzle
 
 		public override void TouchesEnded (MonoTouch.Foundation.NSSet touches, UIEvent evt)
 		{
+			parent.InputEnded ();
+
 			base.TouchesEnded (touches, evt);
 		}
 		#endregion
