@@ -155,19 +155,19 @@ namespace PixPuzzle
 
 				PicrossSerie serie = parent.Lines [x];
 
-				if (serie.IsValid) {
-					context.SetFillColor (UIColor.Green.CGColor);
-					context.SetStrokeColor(UIColor.Green.CGColor);
-				} else {
-					context.SetFillColor (UIColor.Black.CGColor);
-					context.SetStrokeColor(UIColor.Black.CGColor);
-				}
-
 				for (int n=0; n< serie.Numbers.Count; n++) {
 
 					// We draw numbers from the grid to the frame border
 					// So we must pick them in the opposite order too
-					int number = serie.Numbers [serie.Numbers.Count - (n+1)];
+					var number = serie.Numbers [serie.Numbers.Count - (n+1)];
+
+					if (number.IsValid) {
+						context.SetFillColor (UIColor.Blue.CGColor);
+						context.SetStrokeColor(UIColor.Blue.CGColor);
+					} else {
+						context.SetFillColor (UIColor.Black.CGColor);
+						context.SetStrokeColor(UIColor.Black.CGColor);
+					}
 
 					// Draw the number
 					Point position = new Point (
@@ -175,7 +175,7 @@ namespace PixPuzzle
 						parent.GridLocation.Y + (x * parent.CellSize)
 					);
 
-					context.ShowTextAtPoint (position.X - 2 * parent.CellSize/3, position.Y + 2 * parent.CellSize / 3, number.ToString ());
+					context.ShowTextAtPoint (position.X - 2 * parent.CellSize/3, position.Y + 2 * parent.CellSize / 3, number.Value.ToString ());
 				}
 			}
 
@@ -187,7 +187,15 @@ namespace PixPuzzle
 
 					// We draw numbers from the grid to the frame border
 					// So we must pick them in the opposite order too
-					int number = serie.Numbers [serie.Numbers.Count - (n+1)];
+					var number = serie.Numbers [serie.Numbers.Count - (n+1)];
+
+					if (number.IsValid) {
+						context.SetFillColor (UIColor.Blue.CGColor);
+						context.SetStrokeColor(UIColor.Blue.CGColor);
+					} else {
+						context.SetFillColor (UIColor.Black.CGColor);
+						context.SetStrokeColor(UIColor.Black.CGColor);
+					}
 
 					// Draw the number
 					Point position = new Point (
@@ -195,7 +203,7 @@ namespace PixPuzzle
 						parent.GridLocation.Y - (n * parent.CellSize)
 					);
 
-					context.ShowTextAtPoint (position.X + parent.CellSize / 2, position.Y - parent.CellSize / 2, number.ToString ());
+					context.ShowTextAtPoint (position.X + parent.CellSize / 2, position.Y - parent.CellSize / 2, number.Value.ToString ());
 				}
 			}
 
