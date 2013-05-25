@@ -3,6 +3,7 @@ using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.IO;
+using PixPuzzle.Data;
 
 namespace PixPuzzle
 {
@@ -147,8 +148,25 @@ namespace PixPuzzle
 
 		private void launchLevel(string level) 
 		{
-			var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
-			appDelegate.ShowPuzzle (PixPuzzle.Data.GameModes.Path,level);
+			UIAlertView alert = new UIAlertView (
+				"Game Mode",
+				"Choisir le mode de jeu",
+				null,
+				"Path", "Picross");
+
+			alert.Dismissed += (object sender, UIButtonEventArgs e) => {
+
+				var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
+
+				GameModes mode = GameModes.Path;
+				if(e.ButtonIndex > 0) {
+					mode = GameModes.Picross;
+				}
+
+				appDelegate.ShowPuzzle (mode,level);
+			};
+			alert.Show ();
+
 		}
 	}
 }
