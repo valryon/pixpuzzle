@@ -152,18 +152,20 @@ namespace PixPuzzle
 				"Game Mode",
 				"Choisir le mode de jeu",
 				null,
-				"Path", "Picross");
+				"Retour", "Path", "Picross");
 
 			alert.Dismissed += (object sender, UIButtonEventArgs e) => {
 
 				var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
 
-				GameModes mode = GameModes.Path;
-				if(e.ButtonIndex > 0) {
-					mode = GameModes.Picross;
+				if(e.ButtonIndex == 1) {
+					GameModes mode = GameModes.Path;
+					appDelegate.ShowPuzzle (mode,level);
 				}
-
-				appDelegate.ShowPuzzle (mode,level);
+				else if(e.ButtonIndex == 2) {
+					GameModes mode = GameModes.Picross;
+					appDelegate.ShowPuzzle (mode,level);
+				}
 			};
 			alert.Show ();
 
