@@ -11,45 +11,50 @@ using Microsoft.Xna.Framework;
 namespace PixPuzzle.Data
 {
 	/// <summary>
-	/// A number from a line/column of the puzzle
-	/// </summary>
-	public class PicrossSerieNumber
-	{
-		public int Count;
-		public int CurrentCount;
-	}
-	/// <summary>
 	/// A line or column of the puzzle
 	/// </summary>
 	public class PicrossSerie
 	{
-		public List<PicrossSerieNumber> Numbers { get; private set; }
+		public List<int> Numbers { get; private set; }
 
 		public bool IsValid {
-			get {
-				bool isValid = true;
-				foreach (PicrossSerieNumber number in Numbers) {
-					isValid &= (number.Count == number.CurrentCount);
-
-					if (isValid == false)
-						return false;
-				}
-
-				return isValid;
-			}
+			get;
+			set;
 		}
 
 		public PicrossSerie ()
 		{
-			Numbers = new List<PicrossSerieNumber> ();
+			Numbers = new List<int> ();
+		}
+
+		/// <summary>
+		/// Compares the expected number pattern to the given one. 
+		/// If it's the same then the serie will be valid.
+		/// </summary>
+		/// <param name="currentNumbers">Current numbers.</param>
+		public void CompareToLineData(List<int> currentNumbers) {
+
+			IsValid = false;
+
+			if (currentNumbers.Count != Numbers.Count) {
+				return;
+			}
+
+			for (int i=0; i<Numbers.Count; i++) {
+				if (Numbers [i] != currentNumbers [i]) {
+					return;
+				}
+			}
+
+			IsValid = true;
 		}
 
 		public override string ToString ()
 		{
 			string s = " ";
 
-			foreach (PicrossSerieNumber number in Numbers) {
-				s += number.Count + " ";
+			foreach (int number in Numbers) {
+				s += number + " ";
 			}
 
 			return s;
@@ -175,9 +180,7 @@ namespace PixPuzzle.Data
 				} else {
 					if (expectedCount > 0) {
 
-						Lines [y].Numbers.Add (new PicrossSerieNumber() {
-							Count = expectedCount
-						});
+						Lines [y].Numbers.Add (expectedCount);
 
 						expectedCount = 0;
 					}
@@ -185,9 +188,8 @@ namespace PixPuzzle.Data
 			}
 
 			if (Lines [y].Numbers.Count == 0) {
-				Lines [y].Numbers.Add (new PicrossSerieNumber() {
-					Count = 0
-				});
+				Lines [y].Numbers.Add (0);
+				Lines [y].IsValid = true;
 			}
 		}
 
@@ -204,9 +206,7 @@ namespace PixPuzzle.Data
 				} else {
 					if (expectedCount > 0) {
 
-						Columns [x].Numbers.Add (new PicrossSerieNumber() {
-							Count = expectedCount
-						});
+						Columns [x].Numbers.Add (expectedCount);
 
 						expectedCount = 0;
 					}
@@ -214,9 +214,8 @@ namespace PixPuzzle.Data
 			}
 
 			if (Columns [x].Numbers.Count == 0) {
-				Columns [x].Numbers.Add (new PicrossSerieNumber() {
-							Count = 0
-						});
+				Columns [x].Numbers.Add (0);
+				Columns [x].IsValid = true;
 			}
 		}
 
@@ -224,6 +223,8 @@ namespace PixPuzzle.Data
 		{
 			int currentCount = 0;
 			int currentNumber = 0;
+
+			List<int> lineData = new List<int>();
 
 			for (int x=0; x<Width; x++) {
 
@@ -234,20 +235,23 @@ namespace PixPuzzle.Data
 				} else {
 					if (currentCount > 0) {
 
-						var number = Lines [y].Numbers [currentNumber];
-						number.CurrentCount = currentCount;
+						lineData.Add (currentCount);
 
 						currentNumber++;
 						currentCount = 0;
 					}
 				}
 			}
+
+			Lines [y].CompareToLineData (lineData);
 		}
 
 		public void CheckColumn (int x)
 		{
 			int currentCount = 0;
 			int currentNumber = 0;
+
+			List<int> lineData = new List<int>();
 
 			for (int y=0; y<Height; y++) {
 
@@ -258,14 +262,15 @@ namespace PixPuzzle.Data
 				} else {
 					if (currentCount > 0) {
 
-						var number = Columns [x].Numbers [currentNumber];
-						number.CurrentCount = currentCount;
+						lineData.Add (currentCount);
 
 						currentNumber++;
 						currentCount = 0;
 					}
 				}
 			}
+
+			Columns [x].CompareToLineData (lineData);
 		}
 		/// <summary>
 		/// Changes the state of the cell.
@@ -288,7 +293,7 @@ namespace PixPuzzle.Data
 
 				// Update numbers
 				// Get the line and the column
-				CheckLine (cell.X);
+				CheckLine (cell.Y);
 				CheckColumn (cell.X);
 
 				// Tell the view to refresh

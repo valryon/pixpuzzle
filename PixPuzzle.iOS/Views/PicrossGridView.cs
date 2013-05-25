@@ -11,6 +11,7 @@ namespace PixPuzzle
 		private PicrossGridView parent;
 		private CGContext context;
 		private RectangleF drawRect, linesNumbersRect, colNumbersRect;
+		private PicrossCellState lastState;
 
 		public PicrossGridViewInternal (PicrossGridView parent, RectangleF frame) 
 			: base(frame)
@@ -40,7 +41,14 @@ namespace PixPuzzle
 
 				PicrossCell cell = getCellFromViewCoordinates (fingerLocation);
 
-				parent.ChangeCellState (cell, PicrossCellState.Filled);
+				PicrossCellState state = PicrossCellState.None;
+				if(cell != null) {
+					if(cell.State == PicrossCellState.None) {
+						state = PicrossCellState.Filled;
+					}
+				}
+				lastState = state;
+				parent.ChangeCellState (cell, state);
 			}
 			base.TouchesBegan (touches, evt);
 		}
@@ -56,7 +64,7 @@ namespace PixPuzzle
 
 				PicrossCell cell = getCellFromViewCoordinates (fingerLocation);
 
-				parent.ChangeCellState (cell, PicrossCellState.Filled);
+				parent.ChangeCellState (cell, lastState);
 			}
 			base.TouchesMoved (touches, evt);
 		}
@@ -159,7 +167,7 @@ namespace PixPuzzle
 
 					// We draw numbers from the grid to the frame border
 					// So we must pick them in the opposite order too
-					PicrossSerieNumber number = serie.Numbers [serie.Numbers.Count - (n+1)];
+					int number = serie.Numbers [serie.Numbers.Count - (n+1)];
 
 					// Draw the number
 					Point position = new Point (
@@ -167,7 +175,7 @@ namespace PixPuzzle
 						parent.GridLocation.Y + (x * parent.CellSize)
 					);
 
-					context.ShowTextAtPoint (position.X - 2 * parent.CellSize/3, position.Y + 2 * parent.CellSize / 3, number.Count.ToString ());
+					context.ShowTextAtPoint (position.X - 2 * parent.CellSize/3, position.Y + 2 * parent.CellSize / 3, number.ToString ());
 				}
 			}
 
@@ -179,7 +187,7 @@ namespace PixPuzzle
 
 					// We draw numbers from the grid to the frame border
 					// So we must pick them in the opposite order too
-					PicrossSerieNumber number = serie.Numbers [serie.Numbers.Count - (n+1)];
+					int number = serie.Numbers [serie.Numbers.Count - (n+1)];
 
 					// Draw the number
 					Point position = new Point (
@@ -187,13 +195,7 @@ namespace PixPuzzle
 						parent.GridLocation.Y - (n * parent.CellSize)
 					);
 
-					if (number.Count == number.CurrentCount) {
-						context.SetFillColor (UIColor.Green.CGColor);
-					} else {
-						context.SetFillColor (UIColor.Black.CGColor);
-					}
-
-					context.ShowTextAtPoint (position.X + parent.CellSize / 2, position.Y - parent.CellSize / 2, number.Count.ToString ());
+					context.ShowTextAtPoint (position.X + parent.CellSize / 2, position.Y - parent.CellSize / 2, number.ToString ());
 				}
 			}
 
