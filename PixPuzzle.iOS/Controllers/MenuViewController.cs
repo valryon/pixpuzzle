@@ -121,6 +121,8 @@ namespace PixPuzzle
 			pictureButton.SetTitle ("Custom photo", UIControlState.Normal);
 			pictureButton.TouchUpInside += (object sender, EventArgs e) =>  {
 				Camera.TakePicture(this, (dico) => {
+//				Camera.SelectPicture(this, (dico) => {
+//					showCapturedImage(new UIImage()); // TODO One day
 
 				});
 			};
@@ -158,6 +160,14 @@ namespace PixPuzzle
 		{
 			buttonPanel.RemoveFromSuperview ();
 			View.AddSubview (levelSelectionPanel);
+		}
+
+		private void showCapturedImage (UIImage image)
+		{
+			BeginInvokeOnMainThread (() => {
+				UIImageView imageView = new UIImageView (image);
+				View.Add (imageView);
+			});
 		}
 
 		private void launchLevel(string level) 

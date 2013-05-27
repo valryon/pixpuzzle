@@ -4,6 +4,7 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoTouch.CoreGraphics;
 using PixPuzzle.Data;
+using GPUImage.Filters;
 
 namespace PixPuzzle
 {
@@ -48,12 +49,23 @@ namespace PixPuzzle
 			// Setup scrollview
 			UIScrollView scrollView = new UIScrollView (new RectangleF(0,0,UIScreen.MainScreen.Bounds.Height,UIScreen.MainScreen.Bounds.Width));
 			scrollView.ScrollEnabled = true;
+			scrollView.MinimumZoomScale = 0.5f;
+			scrollView.MaximumZoomScale = 2f;
+			scrollView.BouncesZoom = true;
+
 			scrollView.BackgroundColor = UIColor.Gray;
+			scrollView.ViewForZoomingInScrollView = new UIScrollViewGetZoomView((sv) => {
+				return gridUIView;
+			});
 
 			// Margin
-			float contentX = 32;
-			float contentY = 32;
-			scrollView.ContentSize = new SizeF (gridUIView.Frame.Width + (contentX*2), gridUIView.Frame.Height + (contentY * 2));
+			int margin = grid.CellSize * 2;
+
+			// Center the grid
+			scrollView.ContentSize = new SizeF (gridUIView.Frame.Width + margin, gridUIView.Frame.Height + margin);
+
+			PointF center = new PointF(scrollView.ContentSize.Width/2, scrollView.ContentSize.Height/2);
+//			scrollView.ContentOffset = new PointF (center.X/2, center.Y/2);
 
 			// Scrolling with two fingers
 			foreach (UIGestureRecognizer gestureRecognizer in scrollView.GestureRecognizers) {     
@@ -65,6 +77,7 @@ namespace PixPuzzle
 
 			}
 
+			gridUIView.Center = center;
 			scrollView.AddSubview (gridUIView);
 			View.AddSubview (scrollView);
 		}
@@ -80,6 +93,11 @@ namespace PixPuzzle
 				grid = pathGrid;
 			}
 			else {
+
+				// Image becomes B&W
+				GPUImageGrayscaleFilter filter = new GPUImageGrayscaleFilter ();
+				image = filter.ImageByFilteringImage (image);
+
 				var picrossGrid = new PicrossGridView ((int)image.Size.Width, (int)image.Size.Height);
 				view = picrossGrid.PicrossGridViewInternal;
 

@@ -149,7 +149,7 @@ namespace PixPuzzle.Data
 
 		public int CellSize { 
 			get;
-			private set; 
+			protected set; 
 		}
 
 		public int Width { 

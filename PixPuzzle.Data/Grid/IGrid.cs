@@ -7,6 +7,10 @@ namespace PixPuzzle.Data
 
 		void SetupGrid (CellColor[][] pixels);
 	
+		int CellSize 
+		{
+			get;
+		}
 	}
 }
 
