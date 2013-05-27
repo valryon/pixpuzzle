@@ -17,6 +17,8 @@ namespace PixPuzzle
 			: base(frame)
 		{
 			this.parent = parent;
+
+			BackgroundColor = UIColor.FromPatternImage(new UIImage("grid_background.jpg"));
 		}
 		#region Grid tools
 
@@ -107,7 +109,7 @@ namespace PixPuzzle
 			linesNumbersRect = new RectangleF (Frame.X, Frame.Y, xMargin, Frame.Height);
 			colNumbersRect = new RectangleF (Frame.X, Frame.Y, Frame.Width, yMargin);
 
-			this.BackgroundColor = UIColor.FromRGB (230, 230, 230);
+			BackgroundColor = UIColor.FromPatternImage(new UIImage("grid_background.jpg"));
 		}
 
 		public void OrderRefresh (Rectangle zoneToRefresh)

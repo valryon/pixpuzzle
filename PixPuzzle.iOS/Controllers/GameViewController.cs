@@ -46,6 +46,8 @@ namespace PixPuzzle
 		{
 			base.ViewDidLoad ();
 
+			View.BackgroundColor = UIColor.FromPatternImage (new UIImage("background.png"));
+
 			// Setup scrollview
 			UIScrollView scrollView = new UIScrollView (new RectangleF(0,0,UIScreen.MainScreen.Bounds.Height,UIScreen.MainScreen.Bounds.Width));
 			scrollView.ScrollEnabled = true;
@@ -53,7 +55,6 @@ namespace PixPuzzle
 			scrollView.MaximumZoomScale = 2f;
 			scrollView.BouncesZoom = true;
 
-			scrollView.BackgroundColor = UIColor.FromPatternImage (new UIImage("background.jpg"));
 			scrollView.ViewForZoomingInScrollView = new UIScrollViewGetZoomView((sv) => {
 				return gridUIView;
 			});
@@ -64,7 +65,7 @@ namespace PixPuzzle
 			// Center the grid
 			scrollView.ContentSize = new SizeF (gridUIView.Frame.Width + margin, gridUIView.Frame.Height + margin);
 
-			PointF center = new PointF(scrollView.ContentSize.Width/2, scrollView.ContentSize.Height/2);
+//			PointF center = new PointF(scrollView.ContentSize.Width/2, scrollView.ContentSize.Height/2);
 //			scrollView.ContentOffset = new PointF (center.X/2, center.Y/2);
 
 			// Scrolling with two fingers
@@ -77,7 +78,7 @@ namespace PixPuzzle
 
 			}
 
-			gridUIView.Center = center;
+//			gridUIView.Center = center;
 			scrollView.AddSubview (gridUIView);
 			View.AddSubview (scrollView);
 		}

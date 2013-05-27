@@ -33,7 +33,8 @@ namespace PixPuzzle
 			// create a new window instance based on the screen size
 			window = new UIWindow (UIScreen.MainScreen.Bounds);
 			
-			ShowMenu ();
+//			ShowMenu ();
+			ShowPuzzle (GameModes.Path, "puzzles/0.png");
 			return true;
 		}
 

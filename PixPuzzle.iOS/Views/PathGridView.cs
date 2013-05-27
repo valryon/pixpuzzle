@@ -30,7 +30,6 @@ namespace PixPuzzle
 
 		private CGContext context;
 		private Rectangle drawRect;
-		private UIColor defaultBackgroundColor;
 
 		public void InitializeViewForDrawing ()
 		{
@@ -40,8 +39,7 @@ namespace PixPuzzle
 			                             , (parent.CellSize * parent.Height) + parent.GridLocation.Y + parent.BorderWidth
 			                             );
 
-			defaultBackgroundColor = UIColor.FromRGB (230, 230, 230);
-			this.BackgroundColor = defaultBackgroundColor;
+			BackgroundColor = UIColor.FromPatternImage(new UIImage("grid_background.jpg"));
 		}
 
 		public override void Draw (RectangleF rect)

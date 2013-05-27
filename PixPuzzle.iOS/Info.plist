@@ -21,5 +21,11 @@
 	</array>
 	<key>MinimumOSVersion</key>
 	<string>6.1</string>
+	<key>CFBundleDisplayName</key>
+	<string>PixPuzzle</string>
+	<key>CFBundleIdentifier</key>
+	<string>io.pixelnest.pixpuzzle</string>
+	<key>CFBundleVersion</key>
+	<string>0.1</string>
 </dict>
 </plist>
