@@ -239,11 +239,11 @@ namespace PixPuzzle
 		public void DrawCellBase (PicrossCell cell, Rectangle rectangle)
 		{
 			// DEBUG
-			if (cell.ShouldBeFilled) {
-				CGColor color = UIColor.White.CGColor;
-				context.SetFillColor (color);
-				context.FillRect (rectangle);
-			}
+//			if (cell.ShouldBeFilled) {
+//				CGColor color = UIColor.White.CGColor;
+//				context.SetFillColor (color);
+//				context.FillRect (rectangle);
+//			}
 			if (cell.State == PicrossCellState.Filled) {
 				UIColor color = UIColor.Blue;
 
