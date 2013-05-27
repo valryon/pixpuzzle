@@ -151,5 +151,6 @@
     <BundleResource Include="Resources\splash.png" />
     <BundleResource Include="Resources\grid_background_%402X.png" />
     <BundleResource Include="Resources\splash_valid.png" />
+    <BundleResource Include="Resources\path.png" />
   </ItemGroup>
 </Project>

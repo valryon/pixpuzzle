@@ -13,7 +13,7 @@ namespace PixPuzzle
 	internal class PathGridViewInternal : UIView, IPathGridView
 	{
 		private PathGridView parent;
-		private UIImage splashImage, splashValidImage;
+		private UIImage splashImage, splashValidImage, pathImage;
 
 		public PathGridViewInternal (PathGridView parent, RectangleF frame) 
 			: base(frame)
@@ -44,6 +44,7 @@ namespace PixPuzzle
 
 			splashImage = new UIImage ("splash.png");
 			splashValidImage = new UIImage ("splash_valid.png");
+			pathImage = new UIImage ("path.png");
 		}
 
 		public override void Draw (RectangleF rect)
@@ -89,7 +90,7 @@ namespace PixPuzzle
 			int borderEndX = borderStartLocation.X + (parent.CellSize * parent.Width) + (borderWidth / 2);
 			int borderEndY = borderStartLocation.Y + (parent.CellSize * parent.Height) + (borderWidth / 2);
 
-			context.SetStrokeColorWithColor (UIColor.Blue.CGColor);
+			context.SetStrokeColorWithColor (UIColor.Black.CGColor);
 			context.MoveTo (borderStartLocation.X, borderStartLocation.Y); //start at this point
 			context.SetLineWidth (borderWidth);
 
@@ -106,6 +107,7 @@ namespace PixPuzzle
 			// ------------------------------------------------------------
 			context.SetStrokeColorWithColor (UIColor.Black.CGColor);
 			context.SetLineWidth (1.0f);
+			context.SetLineDash (0.5f, new float[] { 4, 2 });
 			context.MoveTo (borderStartLocation.X, borderStartLocation.X);
 
 			for (int x=0; x<parent.Width; x++) {
@@ -128,6 +130,10 @@ namespace PixPuzzle
 			bool isValid = cell.Path != null && cell.Path.IsValid;
 			CellColor cellColor = cell.Color;
 
+			if (cell.Path != null) {
+				cellColor = cell.Path.Color;
+			}
+
 			CGColor color = cellColor.UIColor.CGColor;
 			context.SetFillColor (color);
 
@@ -145,64 +151,67 @@ namespace PixPuzzle
 				image = splashValidImage;
 			}
 
-			image = UIImageEx.GetImageWithOverlayColor (image, cell.Color.UIColor);
+			image = UIImageEx.GetImageWithOverlayColor (image, cellColor.UIColor);
 
 			context.DrawImage (cellValueRect, image.CGImage);
 		}
 
 		public void DrawPath (PathCell cell, Rectangle pathRect, Point direction, CellColor color)
 		{
-			context.SetFillColor (color.UIColor.CGColor);
+			context.DrawImage (pathRect, UIImageEx.GetImageWithOverlayColor(pathImage, color.UIColor).CGImage);
+
+			// The old drawing code for perfect paths
+//			context.SetFillColor (color.UIColor.CGColor);
 
 			// Draw in 2 parts:
 			// First a rect
-			context.FillRect (pathRect);
-
-			// Then an arc to the end
-			if (direction.X < 0) {
-				context.MoveTo (pathRect.Right, pathRect.Top);
-				context.AddCurveToPoint (
-					pathRect.Right + pathRect.Width / 3,
-					pathRect.Top + pathRect.Height / 3,
-					pathRect.Right + pathRect.Width / 3,
-					pathRect.Top + 2 * pathRect.Height / 3,
-					pathRect.Right,
-					pathRect.Bottom
-					);
-			} else if (direction.X > 0) {
-				context.MoveTo (pathRect.Left, pathRect.Top);
-				context.AddCurveToPoint (
-					pathRect.Left - pathRect.Width / 3,
-					pathRect.Top + pathRect.Height / 3,
-					pathRect.Left - pathRect.Width / 3,
-					pathRect.Top + 2 * pathRect.Height / 3,
-					pathRect.Left,
-					pathRect.Bottom
-					);
-			}
-			if (direction.Y < 0) {
-				context.MoveTo (pathRect.Left, pathRect.Bottom);
-				context.AddCurveToPoint (
-					pathRect.Left + pathRect.Width / 3,
-					pathRect.Bottom + pathRect.Height / 3,
-					pathRect.Left + 2 * pathRect.Width / 3,
-					pathRect.Bottom + pathRect.Height / 3,
-					pathRect.Right,
-					pathRect.Bottom
-					);
-			} else if (direction.Y > 0) {
-				context.MoveTo (pathRect.Left, pathRect.Top);
-				context.AddCurveToPoint (
-					pathRect.Left + pathRect.Width / 3,
-					pathRect.Top - pathRect.Height / 3,
-					pathRect.Left + 2 * pathRect.Width / 3,
-					pathRect.Top - pathRect.Height / 3,
-					pathRect.Right,
-					pathRect.Top
-					);
-			}
-
-			context.FillPath ();
+//			context.FillRect (pathRect);
+//
+//			// Then an arc to the end
+//			if (direction.X < 0) {
+//				context.MoveTo (pathRect.Right, pathRect.Top);
+//				context.AddCurveToPoint (
+//					pathRect.Right + pathRect.Width / 3,
+//					pathRect.Top + pathRect.Height / 3,
+//					pathRect.Right + pathRect.Width / 3,
+//					pathRect.Top + 2 * pathRect.Height / 3,
+//					pathRect.Right,
+//					pathRect.Bottom
+//					);
+//			} else if (direction.X > 0) {
+//				context.MoveTo (pathRect.Left, pathRect.Top);
+//				context.AddCurveToPoint (
+//					pathRect.Left - pathRect.Width / 3,
+//					pathRect.Top + pathRect.Height / 3,
+//					pathRect.Left - pathRect.Width / 3,
+//					pathRect.Top + 2 * pathRect.Height / 3,
+//					pathRect.Left,
+//					pathRect.Bottom
+//					);
+//			}
+//			if (direction.Y < 0) {
+//				context.MoveTo (pathRect.Left, pathRect.Bottom);
+//				context.AddCurveToPoint (
+//					pathRect.Left + pathRect.Width / 3,
+//					pathRect.Bottom + pathRect.Height / 3,
+//					pathRect.Left + 2 * pathRect.Width / 3,
+//					pathRect.Bottom + pathRect.Height / 3,
+//					pathRect.Right,
+//					pathRect.Bottom
+//					);
+//			} else if (direction.Y > 0) {
+//				context.MoveTo (pathRect.Left, pathRect.Top);
+//				context.AddCurveToPoint (
+//					pathRect.Left + pathRect.Width / 3,
+//					pathRect.Top - pathRect.Height / 3,
+//					pathRect.Left + 2 * pathRect.Width / 3,
+//					pathRect.Top - pathRect.Height / 3,
+//					pathRect.Right,
+//					pathRect.Top
+//					);
+//			}
+//
+//			context.FillPath ();
 		}
 
 		public void DrawLastCellIncompletePath (PathCell cell, Rectangle rect, string pathValue, CellColor color)

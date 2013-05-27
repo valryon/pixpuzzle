@@ -213,6 +213,7 @@ namespace PixPuzzle
 			// ------------------------------------------------------------
 			context.SetStrokeColorWithColor (UIColor.Black.CGColor);
 			context.SetLineWidth (1.0f);
+			context.SetLineDash (0.5f, new float[] { 4, 2 });
 			context.MoveTo (parent.GridLocation.X, parent.GridLocation.X);
 
 			for (int x=0; x<parent.Width; x++) {
