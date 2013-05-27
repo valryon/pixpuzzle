@@ -118,6 +118,7 @@
       <DependentUpon>MenuViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\Camera.cs" />
+    <Compile Include="Tools\UIImageEx.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -145,8 +146,10 @@
     <BundleResource Include="..\Puzzles\0.png">
       <Link>Resources\puzzles\0.png</Link>
     </BundleResource>
-    <BundleResource Include="Resources\grid_background.jpg" />
-    <BundleResource Include="Resources\background_bw.jpg" />
     <BundleResource Include="Resources\background.png" />
+    <BundleResource Include="Resources\grid_background.png" />
+    <BundleResource Include="Resources\splash.png" />
+    <BundleResource Include="Resources\grid_background_%402X.png" />
+    <BundleResource Include="Resources\splash_valid.png" />
   </ItemGroup>
 </Project>

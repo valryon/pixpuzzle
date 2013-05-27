@@ -13,6 +13,7 @@ namespace PixPuzzle
 	internal class PathGridViewInternal : UIView, IPathGridView
 	{
 		private PathGridView parent;
+		private UIImage splashImage, splashValidImage;
 
 		public PathGridViewInternal (PathGridView parent, RectangleF frame) 
 			: base(frame)
@@ -39,7 +40,10 @@ namespace PixPuzzle
 			                             , (parent.CellSize * parent.Height) + parent.GridLocation.Y + parent.BorderWidth
 			                             );
 
-			BackgroundColor = UIColor.FromPatternImage(new UIImage("grid_background.jpg"));
+			BackgroundColor = UIColor.FromPatternImage(new UIImage("grid_background.png"));
+
+			splashImage = new UIImage ("splash.png");
+			splashValidImage = new UIImage ("splash_valid.png");
 		}
 
 		public override void Draw (RectangleF rect)
@@ -132,11 +136,18 @@ namespace PixPuzzle
 			int circleReductionValue = parent.CellSize / 10;
 
 			RectangleF cellValueRect = new RectangleF (rectangle.X + circleReductionValue, rectangle.Y + circleReductionValue, parent.CellSize - 2 * circleReductionValue, parent.CellSize - 2 * circleReductionValue);
+
+			UIImage image = null;
+
 			if (isValid == false) {
-				context.FillEllipseInRect (cellValueRect);
+				image = splashImage;
 			} else {
-				context.FillRect (cellValueRect);
+				image = splashValidImage;
 			}
+
+			image = UIImageEx.GetImageWithOverlayColor (image, cell.Color.UIColor);
+
+			context.DrawImage (cellValueRect, image.CGImage);
 		}
 
 		public void DrawPath (PathCell cell, Rectangle pathRect, Point direction, CellColor color)
