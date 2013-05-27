@@ -31,7 +31,7 @@ namespace PixPuzzle
 		private void createView ()
 		{
 			View = new UIView (new RectangleF(0,0,UIScreen.MainScreen.Bounds.Height,UIScreen.MainScreen.Bounds.Width));
-			View.BackgroundColor = UIColor.LightGray;
+			View.BackgroundColor = UIColor.FromPatternImage (new UIImage("background.jpg"));
 
 			// First buttons
 			// --------------------------------

@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+
 #if IOS
 using System.Drawing;
+
 #elif WINDOWS_PHONE
 using Microsoft.Xna.Framework;
-#endif
 
+#endif
 namespace PixPuzzle.Data
 {
 	/// <summary>
@@ -14,12 +16,10 @@ namespace PixPuzzle.Data
 	public abstract class PathGrid : Grid<PathCell, IPathGridView>
 	{
 		public const int MaximumPathLength = 9;
-
 		/// <summary>
 		/// Path data
 		/// </summary>
 		protected PathCell FirstPathCell, LastSelectedCell;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PixPuzzle.Data.Grid"/> class.
 		/// </summary>
@@ -30,7 +30,6 @@ namespace PixPuzzle.Data
 			: base(imageWidth, imageHeight, cellSize)
 		{
 		}
-
 		#region Grid creation
 
 		/// <summary>
@@ -56,8 +55,7 @@ namespace PixPuzzle.Data
 					// Get the pixel color
 					CellColor c = pixels [x] [y];
 
-					if (c.A < 0.2f) 
-					{
+					if (c.A < 0.2f) {
 						c = new CellColor () {
 							A = 1f,
 							R = 1f, 
@@ -295,7 +293,6 @@ namespace PixPuzzle.Data
 			// End the drawing
 			View.EndDraw ();
 		}
-
 		#region Path creation behavior
 
 		/// <summary>
@@ -354,96 +351,109 @@ namespace PixPuzzle.Data
 				Console.WriteLine ("The path is too long!");
 			}
 
+			bool cancelMove = false;
+			string cancelReason = string.Empty;
+
 			// We're in the grid and we moved (not the same cell)
 			if (cell != null && cell != LastSelectedCell) {
 
+				// Make sure we are one cell away from the previous one
+				int x = cell.X - LastSelectedCell.X;
+				int y = cell.Y - LastSelectedCell.Y;
+
+				if (Math.Abs (x) > 1 || Math.Abs (y) > 1) {
+					cancelMove = true;
+					cancelReason = "Cannot create a path that is not in a cell next the to the first one.";
+				} else {
 //				cell.SelectCell ();
 
-				if (cell.Path == null) {
-					// The cell is available for path
+					if (cell.Path == null) {
+						// The cell is available for path
 
-					// Add the cell to the path
-					if (lengthOk) {
-						FirstPathCell.Path.AddCell (cell);
-						cell.Path = FirstPathCell.Path;
-
-						// Update the modified cells
-						UpdateView (cell.Path.Cells.ToArray());
-
-						Console.WriteLine ("Adding cell to the path.");
-						Console.WriteLine ("Current path length: "+cell.Path.Length);
-					}
-
-				} else {
-
-					// Already a path in the target cell
-
-					bool sameColor = cell.Path.Color.Equals (FirstPathCell.Path.Color);
-					bool sameLength = (cell.Path.ExpectedLength == FirstPathCell.Path.ExpectedLength);
-
-					// -- It's a completely different path, do not override
-					if (sameColor == false
-						|| sameLength == false) {
-
-						Console.WriteLine ("Cannot mix two differents path.");
-
-						EndPathCreation (false);
-					} else if (cell.IsPathStartOrEnd && FirstPathCell != cell) {
-
-						// Does it cloes the path?
-						if (FirstPathCell.Path.Length + 1 == FirstPathCell.Path.ExpectedLength) {
-
-							// Fusion!
-							Console.WriteLine ("Fusion!");
-							FirstPathCell.Path.Fusion (cell.Path);
+						// Add the cell to the path
+						if (lengthOk) {
+							FirstPathCell.Path.AddCell (cell);
 							cell.Path = FirstPathCell.Path;
 
 							// Update the modified cells
-							UpdateView (FirstPathCell.Path.Cells.ToArray());
+							UpdateView (cell.Path.Cells.ToArray());
 
-							// End the creation, the path is complete
-							Console.WriteLine ("Path complete!");
-							EndPathCreation (true);
-						} else {
-							Console.WriteLine ("Path has not the right lenght!");
-							EndPathCreation (false);
+							Console.WriteLine ("Adding cell to the path.");
+							Console.WriteLine ("Current path length: "+cell.Path.Length);
 						}
-					} else if (FirstPathCell.Path.Cells.Contains (cell) 
-						&& Math.Abs (FirstPathCell.Path.IndexOf (LastSelectedCell) - FirstPathCell.Path.IndexOf (cell)) == 1) {
-						// We're getting back 
-						// Remove all the cells past the one we jut reached
-						// The current cell will NOT be removed
-						Console.WriteLine ("Removing cell after "+ cell);
-						List<PathCell> removedCells = FirstPathCell.Path.RemoveCellAfter (cell);
 
-						// Update the modified cells
-						// And the removed ones
-						List<PathCell> cellsToUpdate = new List<PathCell> ();
-						cellsToUpdate.AddRange (cell.Path.Cells);
-						cellsToUpdate.AddRange (removedCells);
-
-						UpdateView (cellsToUpdate.ToArray());
 					} else {
-						// I don't know what's we're doing.
-						// ABANDON ALL THE WORK
 
-						// You cannot loop so easily!
-						Console.WriteLine ("I'm doing shit.");
+						// Already a path in the target cell
 
-						EndPathCreation (false);
+						bool sameColor = cell.Path.Color.Equals (FirstPathCell.Path.Color);
+						bool sameLength = (cell.Path.ExpectedLength == FirstPathCell.Path.ExpectedLength);
+
+						// -- It's a completely different path, do not override
+						if (sameColor == false
+							|| sameLength == false) {
+
+							cancelMove = true;
+							cancelReason = "Cannot mix two differents path.";
+
+						} else if (cell.IsPathStartOrEnd && FirstPathCell != cell) {
+
+							// Does it cloes the path?
+							if (FirstPathCell.Path.Length + 1 == FirstPathCell.Path.ExpectedLength) {
+
+								// Fusion!
+								Console.WriteLine ("Fusion!");
+								FirstPathCell.Path.Fusion (cell.Path);
+								cell.Path = FirstPathCell.Path;
+
+								// Update the modified cells
+								UpdateView (FirstPathCell.Path.Cells.ToArray());
+
+								// End the creation, the path is complete
+								Console.WriteLine ("Path complete!");
+								EndPathCreation (true);
+							} else {
+								cancelMove = true;
+								cancelReason = "Path has not the right lenght!";
+							}
+						} else if (FirstPathCell.Path.Cells.Contains (cell) 
+							&& Math.Abs (FirstPathCell.Path.IndexOf (LastSelectedCell) - FirstPathCell.Path.IndexOf (cell)) == 1) {
+							// We're getting back 
+							// Remove all the cells past the one we jut reached
+							// The current cell will NOT be removed
+							Console.WriteLine ("Removing cell after "+ cell);
+							List<PathCell> removedCells = FirstPathCell.Path.RemoveCellAfter (cell);
+
+							// Update the modified cells
+							// And the removed ones
+							List<PathCell> cellsToUpdate = new List<PathCell> ();
+							cellsToUpdate.AddRange (cell.Path.Cells);
+							cellsToUpdate.AddRange (removedCells);
+
+							UpdateView (cellsToUpdate.ToArray());
+						} else {
+							// I don't know what's we're doing.
+							// ABANDON ALL THE WORK
+
+							// You cannot loop so easily!
+							cancelMove = true;
+							cancelReason = "I'm doing shit.";
+						}
 					}
-
 				}
-
 			} else if (cell != FirstPathCell && cell != LastSelectedCell) {
-
-				Console.WriteLine ("Invalid cell for path");
 
 				// The cell is invalid (probably out of the grid)
 				// Stop the path
-				EndPathCreation (false);
+				cancelMove = true;
+				cancelReason = "Invalid cell for path";
 			}
 
+			if (cancelMove) {
+				Console.WriteLine (cancelReason);
+				EndPathCreation (false);
+			}
+		
 			LastSelectedCell = cell;
 		}
 

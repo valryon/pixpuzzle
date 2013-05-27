@@ -145,5 +145,6 @@
     <BundleResource Include="..\Puzzles\0.png">
       <Link>Resources\puzzles\0.png</Link>
     </BundleResource>
+    <BundleResource Include="Resources\background.jpg" />
   </ItemGroup>
 </Project>

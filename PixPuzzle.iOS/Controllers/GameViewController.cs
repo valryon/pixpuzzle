@@ -53,7 +53,7 @@ namespace PixPuzzle
 			scrollView.MaximumZoomScale = 2f;
 			scrollView.BouncesZoom = true;
 
-			scrollView.BackgroundColor = UIColor.Gray;
+			scrollView.BackgroundColor = UIColor.FromPatternImage (new UIImage("background.jpg"));
 			scrollView.ViewForZoomingInScrollView = new UIScrollViewGetZoomView((sv) => {
 				return gridUIView;
 			});
