@@ -152,5 +152,7 @@
     <BundleResource Include="Resources\grid_background_%402X.png" />
     <BundleResource Include="Resources\splash_valid.png" />
     <BundleResource Include="Resources\path.png" />
+    <BundleResource Include="Resources\picross_crossed.png" />
+    <BundleResource Include="Resources\picross_filled.png" />
   </ItemGroup>
 </Project>

@@ -34,7 +34,7 @@ namespace PixPuzzle
 			window = new UIWindow (UIScreen.MainScreen.Bounds);
 			
 //			ShowMenu ();
-			ShowPuzzle (GameModes.Path, "puzzles/0.png");
+			ShowPuzzle (GameModes.Picross, "puzzles/0.png");
 			return true;
 		}
 

@@ -13,6 +13,8 @@ namespace PixPuzzle
 		private RectangleF drawRect, linesNumbersRect, colNumbersRect;
 		private PicrossCellState lastState;
 
+		private UIImage filledImage, crossedImage;
+
 		public PicrossGridViewInternal (PicrossGridView parent, RectangleF frame) 
 			: base(frame)
 		{
@@ -108,6 +110,9 @@ namespace PixPuzzle
 			colNumbersRect = new RectangleF (Frame.X, Frame.Y, Frame.Width, yMargin);
 
 			BackgroundColor = UIColor.FromPatternImage(new UIImage("grid_background.png"));
+
+			filledImage = new UIImage("picross_filled.png");
+			crossedImage = new UIImage("picross_crossed.png");
 		}
 
 		public void OrderRefresh (Rectangle zoneToRefresh)
@@ -216,14 +221,14 @@ namespace PixPuzzle
 			context.SetLineDash (0.5f, new float[] { 4, 2 });
 			context.MoveTo (parent.GridLocation.X, parent.GridLocation.X);
 
-			for (int x=0; x<parent.Width; x++) {
+			for (int x=0; x<=parent.Width; x++) {
 				int cellBorderX = parent.GridLocation.X + x * parent.CellSize;
-				context.MoveTo (cellBorderX, parent.GridLocation.X);
+				context.MoveTo (cellBorderX, parent.GridLocation.Y);
 				context.AddLineToPoint (cellBorderX, parent.GridLocation.Y + parent.Height * parent.CellSize);
 			}
 
-			for (int y=0; y<parent.Height; y++) {
-				int cellBorderY = parent.GridLocation.X + y * parent.CellSize;
+			for (int y=0; y<=parent.Height; y++) {
+				int cellBorderY = parent.GridLocation.Y + y * parent.CellSize;
 				context.MoveTo (parent.GridLocation.X, cellBorderY);
 				context.AddLineToPoint (parent.GridLocation.X + parent.Width * parent.CellSize, cellBorderY);
 			}
@@ -240,20 +245,26 @@ namespace PixPuzzle
 				context.FillRect (rectangle);
 			}
 			if (cell.State == PicrossCellState.Filled) {
-				CGColor color = UIColor.Red.CGColor;
-				context.SetFillColor (color);
-				context.FillRect (rectangle);
+				UIColor color = UIColor.Blue;
+
+				context.DrawImage(rectangle, UIImageEx.GetImageWithOverlayColor(filledImage, color).CGImage);
+
+//				context.SetFillColor (color);
+//				context.FillRect (rectangle);
 			} 
 			else if (cell.State == PicrossCellState.Crossed) {
-				CGColor color = UIColor.Gray.CGColor;
-				context.SetStrokeColor (color);
+				UIColor color = UIColor.Gray;
 
-				context.MoveTo (rectangle.Left, rectangle.Top);
-				context.AddLineToPoint (rectangle.Right, rectangle.Bottom);
-				context.MoveTo (rectangle.Right, rectangle.Top);
-				context.AddLineToPoint (rectangle.Left, rectangle.Bottom);
+				context.DrawImage(rectangle, UIImageEx.GetImageWithOverlayColor(crossedImage, color).CGImage);
 
-				context.StrokePath ();
+//				context.SetStrokeColor (color);
+//
+//				context.MoveTo (rectangle.Left, rectangle.Top);
+//				context.AddLineToPoint (rectangle.Right, rectangle.Bottom);
+//				context.MoveTo (rectangle.Right, rectangle.Top);
+//				context.AddLineToPoint (rectangle.Left, rectangle.Bottom);
+//
+//				context.StrokePath ();
 			}
 		}
 
