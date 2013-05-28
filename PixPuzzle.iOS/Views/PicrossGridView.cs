@@ -47,6 +47,10 @@ namespace PixPuzzle
 				if(cell != null) {
 					if(cell.State == PicrossCellState.None) {
 						state = PicrossCellState.Filled;
+					} else if(cell.State == PicrossCellState.Filled) {
+						state = PicrossCellState.Crossed;
+					}else if(cell.State == PicrossCellState.Crossed) {
+						state = PicrossCellState.None;
 					}
 				}
 				lastState = state;
@@ -105,7 +109,7 @@ namespace PixPuzzle
 			                             , (parent.CellSize * parent.Width) + parent.GridLocation.X + parent.BorderWidth + xMargin
 			                             , (parent.CellSize * parent.Height) + parent.GridLocation.Y + parent.BorderWidth + yMargin
 			);
-
+		
 			linesNumbersRect = new RectangleF (Frame.X, Frame.Y, xMargin, Frame.Height);
 			colNumbersRect = new RectangleF (Frame.X, Frame.Y, Frame.Width, yMargin);
 
@@ -238,6 +242,8 @@ namespace PixPuzzle
 
 		public void DrawCellBase (PicrossCell cell, Rectangle rectangle)
 		{
+			UIColor color = UIColor.Blue;
+
 			// DEBUG
 //			if (cell.ShouldBeFilled) {
 //				CGColor color = UIColor.White.CGColor;
@@ -245,7 +251,6 @@ namespace PixPuzzle
 //				context.FillRect (rectangle);
 //			}
 			if (cell.State == PicrossCellState.Filled) {
-				UIColor color = UIColor.Blue;
 
 				context.DrawImage(rectangle, UIImageEx.GetImageWithOverlayColor(filledImage, color).CGImage);
 
@@ -253,7 +258,6 @@ namespace PixPuzzle
 //				context.FillRect (rectangle);
 			} 
 			else if (cell.State == PicrossCellState.Crossed) {
-				UIColor color = UIColor.Gray;
 
 				context.DrawImage(rectangle, UIImageEx.GetImageWithOverlayColor(crossedImage, color).CGImage);
 

@@ -7,6 +7,7 @@ using System.Drawing;
 #elif WINDOWS_PHONE
 using Microsoft.Xna.Framework;
 
+
 #endif
 namespace PixPuzzle.Data
 {
@@ -15,7 +16,6 @@ namespace PixPuzzle.Data
 		public int Value;
 		public bool IsValid;
 	}
-
 	/// <summary>
 	/// A line or column of the puzzle
 	/// </summary>
@@ -45,7 +45,7 @@ namespace PixPuzzle.Data
 			Numbers = new List<PicrossSerieNumber> ();
 		}
 
-		public void SetZero() 
+		public void SetZero ()
 		{
 			IsZero = true;
 			Numbers.Add (new PicrossSerieNumber() {
@@ -53,18 +53,18 @@ namespace PixPuzzle.Data
 				IsValid = true
 			});
 		}
-
 		/// <summary>
 		/// Compares the expected number pattern to the given one. 
 		/// If it's the same then the serie will be valid.
 		/// </summary>
 		/// <param name="currentNumbers">Current numbers.</param>
-		public void CompareToLineData(List<int> currentNumbers) {
+		public void CompareToLineData (List<int> currentNumbers)
+		{
 
 			foreach (var number in Numbers) {
 
 				// The 0 case
-				if(number.Value == 0 && currentNumbers.Count == 0) {
+				if (number.Value == 0 && currentNumbers.Count == 0) {
 					number.IsValid = true;
 					return;
 				}
@@ -75,7 +75,7 @@ namespace PixPuzzle.Data
 			for (int i=0; i< Numbers.Count; i++) {
 
 				// A part of the serie can be valid
-				if(currentNumbers.Count > i) {
+				if (currentNumbers.Count > i) {
 					if (Numbers [i].Value == currentNumbers [i]) {
 						Numbers [i].IsValid = true;
 					}
@@ -105,9 +105,13 @@ namespace PixPuzzle.Data
 
 		public PicrossSerie[] Columns { get; private set; }
 
+		private List<int> revealedLines, revealedCols;
+
 		public PicrossGrid (int imageWidth, int imageHeight, int cellSize)
 			: base(imageWidth, imageHeight, cellSize)
 		{
+			revealedLines = new List<int> ();
+			revealedCols = new List<int> ();
 		}
 
 		public void SetFilledPixel (int x, int y)
@@ -116,6 +120,40 @@ namespace PixPuzzle.Data
 
 			if (cell != null) {
 				cell.ShouldBeFilled = true;
+			}
+		}
+
+		public void RevealLine (int y)
+		{
+			revealedLines.Add (y);
+
+			for (int x=0; x<Width; x++) {
+				PicrossCell cell = GetCell (x, y);
+
+				if (cell != null) {
+					if (cell.ShouldBeFilled) {
+						cell.State = PicrossCellState.Filled;
+					} else {
+						cell.State = PicrossCellState.Crossed;
+					}
+				}
+			}
+		}
+
+		public void RevealCol (int x)
+		{
+			revealedCols.Add (x);
+
+			for (int y=0; y<Height; y++) {
+				PicrossCell cell = GetCell (x, y);
+
+				if (cell != null) {
+					if (cell.ShouldBeFilled) {
+						cell.State = PicrossCellState.Filled;
+					} else {
+						cell.State = PicrossCellState.Crossed;
+					}
+				}
 			}
 		}
 
@@ -159,6 +197,33 @@ namespace PixPuzzle.Data
 				Columns [x] = new PicrossSerie ();
 
 				FirstCountCol (x);
+			}
+
+			// Reveal some lines and columns
+			int linesToReveal = (Width % 4);
+			int colsToReveal = (Height % 4);
+			Random random = new Random (DateTime.Now.Millisecond);
+
+			Console.WriteLine (string.Format("Revealing {0} lines and {1} columns.", linesToReveal, colsToReveal));
+
+			while (linesToReveal > 0 && revealedLines.Count < Width) {
+
+				int randomLine = random.Next (Lines.Length);
+
+				if(revealedLines.Contains(randomLine) == false) {
+					RevealLine (randomLine);
+					linesToReveal--;
+				}
+			}
+
+			while (colsToReveal > 0 && revealedCols.Count < Height) {
+
+				int randomCol = random.Next (Columns.Length);
+
+				if(revealedLines.Contains(randomCol) == false) {
+					RevealCol (randomCol);
+					colsToReveal--;
+				}
 			}
 
 			base.SetupGrid (pixels);
@@ -225,6 +290,7 @@ namespace PixPuzzle.Data
 
 			if (Lines [y].Numbers.Count == 0) {
 				Lines [y].SetZero ();
+				RevealLine (y);
 			}
 		}
 
@@ -252,6 +318,7 @@ namespace PixPuzzle.Data
 
 			if (Columns [x].Numbers.Count == 0) {
 				Columns [x].SetZero ();
+				RevealCol (x);
 			}
 		}
 
@@ -260,7 +327,7 @@ namespace PixPuzzle.Data
 			int currentCount = 0;
 			int currentNumber = 0;
 
-			List<int> lineData = new List<int>();
+			List<int> lineData = new List<int> ();
 
 			for (int x=0; x<Width; x++) {
 
@@ -287,7 +354,7 @@ namespace PixPuzzle.Data
 			int currentCount = 0;
 			int currentNumber = 0;
 
-			List<int> lineData = new List<int>();
+			List<int> lineData = new List<int> ();
 
 			for (int y=0; y<Height; y++) {
 
@@ -359,7 +426,8 @@ namespace PixPuzzle.Data
 			}
 		}
 
-		public void InputEnded() {
+		public void InputEnded ()
+		{
 			LastSelectedCell = null;
 		}
 		#endregion
