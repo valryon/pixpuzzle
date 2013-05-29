@@ -10,7 +10,8 @@ namespace PixPuzzle
 {
 	public partial class GameViewController : UIViewController
 	{
-		public static string ImageDirectory = "puzzles/";
+		public static string PathPuzzlesDirectory = "puzzles/path/";
+		public static string PicrossPuzzlesDirectory = "puzzles/picross/";
 		private IGrid grid;
 		private UIView gridUIView;
 		private GameModes mode;

@@ -97,6 +97,8 @@
     <Folder Include="Tools\Image\" />
     <Folder Include="Controllers\" />
     <Folder Include="Resources\puzzles\" />
+    <Folder Include="Resources\puzzles\picross\" />
+    <Folder Include="Resources\puzzles\path\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -128,24 +130,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="..\Puzzles\5.png">
-      <Link>Resources\puzzles\5.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\Puzzles\4.png">
-      <Link>Resources\puzzles\4.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\Puzzles\3.png">
-      <Link>Resources\puzzles\3.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\Puzzles\2.png">
-      <Link>Resources\puzzles\2.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\Puzzles\1.png">
-      <Link>Resources\puzzles\1.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\Puzzles\0.png">
-      <Link>Resources\puzzles\0.png</Link>
-    </BundleResource>
     <BundleResource Include="Resources\background.png" />
     <BundleResource Include="Resources\grid_background.png" />
     <BundleResource Include="Resources\splash.png" />
@@ -154,5 +138,38 @@
     <BundleResource Include="Resources\path.png" />
     <BundleResource Include="Resources\picross_crossed.png" />
     <BundleResource Include="Resources\picross_filled.png" />
+    <BundleResource Include="..\Puzzles\path\0.png">
+      <Link>Resources\puzzles\path\0.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\path\1.png">
+      <Link>Resources\puzzles\path\1.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\path\2.png">
+      <Link>Resources\puzzles\path\2.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\path\3.png">
+      <Link>Resources\puzzles\path\3.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\path\4.png">
+      <Link>Resources\puzzles\path\4.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\path\5.png">
+      <Link>Resources\puzzles\path\5.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\picross\pic1.png">
+      <Link>Resources\puzzles\picross\pic1.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\picross\pic2.png">
+      <Link>Resources\puzzles\picross\pic2.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\picross\pic3.png">
+      <Link>Resources\puzzles\picross\pic3.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\picross\pic4.png">
+      <Link>Resources\puzzles\picross\pic4.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\Puzzles\picross\pic5.png">
+      <Link>Resources\puzzles\picross\pic5.png</Link>
+    </BundleResource>
   </ItemGroup>
 </Project>

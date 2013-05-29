@@ -200,8 +200,8 @@ namespace PixPuzzle.Data
 			}
 
 			// Reveal some lines and columns
-			int linesToReveal = (Width % 4);
-			int colsToReveal = (Height % 4);
+			int linesToReveal = (Width / 10);
+			int colsToReveal = (Height / 10);
 			Random random = new Random (DateTime.Now.Millisecond);
 
 			Console.WriteLine (string.Format("Revealing {0} lines and {1} columns.", linesToReveal, colsToReveal));

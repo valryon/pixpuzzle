@@ -40,9 +40,9 @@ namespace PixPuzzle
 			int buttonWidth = 300;
 			int buttonHeight = 80;
 			RectangleF buttonRect = new RectangleF (UIScreen.MainScreen.Bounds.Height/2 - buttonWidth/2,
-			                                       UIScreen.MainScreen.Bounds.Width / 2 - buttonHeight / 2,
-			                                       buttonWidth,
-			                                       buttonHeight
+			                                        UIScreen.MainScreen.Bounds.Width / 2 - buttonHeight / 2,
+			                                        buttonWidth,
+			                                        buttonHeight
 			);
 
 			// Play button
@@ -92,10 +92,29 @@ namespace PixPuzzle
 			int elementByLine = 6;
 			int elementOnCurrentLine = 0;
 
-			foreach (var puzzle in Directory.GetFiles(GameViewController.ImageDirectory)) 
-			{
-				UIButton levelButton = CreateLevelButton(x,y,width, height, puzzle);
-			
+			foreach (var puzzle in Directory.GetFiles(GameViewController.PathPuzzlesDirectory)) {
+				UIButton levelButton = CreateLevelButton (x, y, width, height, puzzle, GameModes.Path);
+
+				x += baseX + width;
+
+				elementOnCurrentLine++;
+				if (elementOnCurrentLine >= elementByLine) {
+					elementOnCurrentLine = 0;
+
+					x = baseX;
+
+					int yJump = baseY + height;
+					y += yJump;
+
+					scrolLContentSize.Height += yJump;
+				}
+
+				scroll.AddSubview (levelButton);
+			}
+
+			foreach (var puzzle in Directory.GetFiles(GameViewController.PicrossPuzzlesDirectory)) {
+				UIButton levelButton = CreateLevelButton (x, y, width, height, puzzle, GameModes.Picross);
+
 				x += baseX + width;
 
 				elementOnCurrentLine++;
@@ -119,21 +138,21 @@ namespace PixPuzzle
 			pictureButton.Layer.BorderWidth = 3f;
 			pictureButton.SetTitleColor (UIColor.Black, UIControlState.Normal);
 			pictureButton.SetTitle ("Custom photo", UIControlState.Normal);
-			pictureButton.TouchUpInside += (object sender, EventArgs e) =>  {
-				Camera.TakePicture(this, (dico) => {
+			pictureButton.TouchUpInside += (object sender, EventArgs e) => {
+				Camera.TakePicture (this, (dico) => {
 //				Camera.SelectPicture(this, (dico) => {
 //					showCapturedImage(new UIImage()); // TODO One day
 
 				});
 			};
 
-			scroll.AddSubview (pictureButton);
+//			scroll.AddSubview (pictureButton);
 
 			scrolLContentSize.Height += baseY;
 			scroll.ContentSize = new SizeF (scrolLContentSize.Width, scrolLContentSize.Height);
 		}
 
-		UIButton CreateLevelButton (int x, int y, int width, int height, string puzzle)
+		UIButton CreateLevelButton (int x, int y, int width, int height, string puzzle, GameModes mode)
 		{
 			// Load the image
 			UIImage image = UIImage.FromFile (puzzle);
@@ -142,9 +161,9 @@ namespace PixPuzzle
 			levelButton.BackgroundColor = UIColor.White;
 			levelButton.Layer.BorderColor = UIColor.Blue.CGColor;
 			levelButton.Layer.BorderWidth = 3f;
-			levelButton.TouchUpInside += (object sender, EventArgs e) =>  {
+			levelButton.TouchUpInside += (object sender, EventArgs e) => {
 				string puzzleFilename = puzzle;
-				launchLevel (puzzleFilename);
+				launchLevel (mode, puzzleFilename);
 			};
 
 			return levelButton;
@@ -170,29 +189,11 @@ namespace PixPuzzle
 			});
 		}
 
-		private void launchLevel(string level) 
+		private void launchLevel (GameModes mode, string level)
 		{
-			UIAlertView alert = new UIAlertView (
-				"Game Mode",
-				"Choisir le mode de jeu",
-				null,
-				"Retour", "Path", "Picross");
+			var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
 
-			alert.Dismissed += (object sender, UIButtonEventArgs e) => {
-
-				var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
-
-				if(e.ButtonIndex == 1) {
-					GameModes mode = GameModes.Path;
-					appDelegate.ShowPuzzle (mode,level);
-				}
-				else if(e.ButtonIndex == 2) {
-					GameModes mode = GameModes.Picross;
-					appDelegate.ShowPuzzle (mode,level);
-				}
-			};
-			alert.Show ();
-
+			appDelegate.ShowPuzzle (mode, level);
 		}
 	}
 }
