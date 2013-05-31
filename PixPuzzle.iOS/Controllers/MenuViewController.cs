@@ -4,6 +4,7 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.IO;
 using PixPuzzle.Data;
+using GPUImage.Filters;
 
 namespace PixPuzzle
 {
@@ -139,14 +140,40 @@ namespace PixPuzzle
 			pictureButton.SetTitleColor (UIColor.Black, UIControlState.Normal);
 			pictureButton.SetTitle ("Custom photo", UIControlState.Normal);
 			pictureButton.TouchUpInside += (object sender, EventArgs e) => {
-				Camera.TakePicture (this, (dico) => {
-//				Camera.SelectPicture(this, (dico) => {
-//					showCapturedImage(new UIImage()); // TODO One day
+
+
+				// MARCHE PAS FUUU
+//				Camera.TakePicture (this, (dico) => {
+				Camera.SelectPicture(this, (dico) => {
+
+					UIImage img = UIImage.FromFile ("test2.jpg");
+
+					float ratio = img.Size.Width / img.Size.Height;
+					int size = 128;
+					SizeF newSize = new SizeF (size * ratio, size);
+
+					//			GPUImageGrayscaleFilter grayScaleFilter = new GPUImageGrayscaleFilter ();
+					//			test = grayScaleFilter.ImageByFilteringImage (test);
+
+					GPUImageSmoothToonFilter toonFilter = new GPUImageSmoothToonFilter();
+					toonFilter.quantizationLevels = 5f;
+
+					GPUImagePixellateFilter pixelateFilter = new GPUImagePixellateFilter();
+					pixelateFilter.FractionalWidthOfAPixel = 1/80f;
+
+					// Apply
+					img = toonFilter.ImageByFilteringImage (img);
+					img = pixelateFilter.ImageByFilteringImage (img);
+
+					img = UIImageEx.Scale (img, newSize);
+
+					// Launch level
+					launchLevel(GameModes.Path, img);
 
 				});
 			};
 
-//			scroll.AddSubview (pictureButton);
+			scroll.AddSubview (pictureButton);
 
 			scrolLContentSize.Height += baseY;
 			scroll.ContentSize = new SizeF (scrolLContentSize.Width, scrolLContentSize.Height);
@@ -163,7 +190,7 @@ namespace PixPuzzle
 			levelButton.Layer.BorderWidth = 3f;
 			levelButton.TouchUpInside += (object sender, EventArgs e) => {
 				string puzzleFilename = puzzle;
-				launchLevel (mode, puzzleFilename);
+				launchLevel (mode, UIImage.FromFile(puzzleFilename));
 			};
 
 			return levelButton;
@@ -189,7 +216,7 @@ namespace PixPuzzle
 			});
 		}
 
-		private void launchLevel (GameModes mode, string level)
+		private void launchLevel (GameModes mode, UIImage level)
 		{
 			var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
 

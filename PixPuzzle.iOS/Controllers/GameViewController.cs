@@ -15,16 +15,16 @@ namespace PixPuzzle
 		private IGrid grid;
 		private UIView gridUIView;
 		private GameModes mode;
-		private string selectedPuzzleFile;
+		private UIImage selectedPuzzle;
 
-		public GameViewController (GameModes mode, string selectedPuzzleFile)
+		public GameViewController (GameModes mode, UIImage selectedPuzzle)
 			: base (null, null)
 		{
 			this.mode = mode;
-			this.selectedPuzzleFile = selectedPuzzleFile;
+			this.selectedPuzzle = selectedPuzzle;
 
 			// Load the image
-			UIImage image = UIImage.FromFile (selectedPuzzleFile);
+			UIImage image = selectedPuzzle;
 			Bitmap bitmap = new Bitmap (image);
 
 			gridUIView = initializeGrid (image, bitmap, mode);
@@ -139,7 +139,7 @@ namespace PixPuzzle
 		{
 			UIAlertView alert = new UIAlertView (
 				"Game Over",
-				"You did it! " + selectedPuzzleFile + " " + mode,
+				"You did it! " + selectedPuzzle + " " + mode,
 				null,
 				"OK");
 
