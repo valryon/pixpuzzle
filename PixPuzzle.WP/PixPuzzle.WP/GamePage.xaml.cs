@@ -71,39 +71,28 @@ namespace PixPuzzle.WP
             grid.CreateGrid(0, 0, grid);
             grid.LoadContent(contentManager);
 
+            CellColor[][] colors = new CellColor[imageWidth][];
+
             for (int x = 0; x < imageWidth; x++)
             {
+                colors[x] = new CellColor[imageHeight];
+
                 for (int y = 0; y < imageHeight; y++)
                 {
                     CellColor c;
-
-                    //if (colors2D[x, y].A < 20)
-                    if (colors2D[x, y].A > 25f)
+                    c = new CellColor()
                     {
-                        c = new CellColor()
-                        {
-                            A = colors2D[x, y].A / 255f,
-                            R = colors2D[x, y].R / 255f,
-                            G = colors2D[x, y].G / 255f,
-                            B = colors2D[x, y].B / 255f
-                        };
-                    }
-                    else
-                    {
-                        c = new CellColor()
-                        {
-                            A = 1f,
-                            R = 1f,
-                            G = 1f,
-                            B = 1f
-                        };
-                    }
+                        A = colors2D[x, y].A / 255f,
+                        R = colors2D[x, y].R / 255f,
+                        G = colors2D[x, y].G / 255f,
+                        B = colors2D[x, y].B / 255f
+                    };
 
-                    grid.SetPixelData(x, y, c);
+                    colors[x][y] = c;
                 }
             }
 
-            grid.SetupGrid();
+            grid.SetupGrid(colors);
         }
 
         void grid_GridCompleted()

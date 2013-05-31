@@ -38,7 +38,7 @@ namespace PixPuzzle.Data
 		/// <param name="x">The x coordinate.</param>
 		/// <param name="y">The y coordinate.</param>
 		/// <param name="color">Color.</param>
-		public void SetPixelData (int x, int y, CellColor color)
+		protected void SetPixelData (int x, int y, CellColor color)
 		{
 			// Tell the cell we now have data
 			Cells [x] [y].Color = color;
