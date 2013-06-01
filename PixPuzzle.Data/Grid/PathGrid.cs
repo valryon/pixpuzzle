@@ -48,6 +48,8 @@ namespace PixPuzzle.Data
 			/// </summary>
 		public override void SetupGrid (CellColor[][] pixels)
 		{
+			Console.WriteLine ("Setup the grid...");
+
 			// Fill cells
 			for (int x=0; x<pixels.Length; x++) {
 				for (int y=0; y<pixels[x].Length; y++) {

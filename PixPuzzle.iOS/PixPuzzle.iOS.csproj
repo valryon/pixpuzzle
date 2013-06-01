@@ -171,5 +171,6 @@
     <BundleResource Include="..\Puzzles\picross\pic5.png">
       <Link>Resources\puzzles\picross\pic5.png</Link>
     </BundleResource>
+    <BundleResource Include="Resources\test2.jpg" />
   </ItemGroup>
 </Project>

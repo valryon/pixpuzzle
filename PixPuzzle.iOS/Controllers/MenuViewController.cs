@@ -133,7 +133,7 @@ namespace PixPuzzle
 				scroll.AddSubview (levelButton);
 			}
 
-			UIButton pictureButton = new UIButton (new RectangleF (View.Frame.Width / 2 - width, y, width * 2, height / 2));
+			UIButton pictureButton = new UIButton (new RectangleF (View.Frame.Width / 2 - width, 2*y, width * 2, height / 2));
 			pictureButton.BackgroundColor = UIColor.White;
 			pictureButton.Layer.BorderColor = UIColor.Green.CGColor;
 			pictureButton.Layer.BorderWidth = 3f;
@@ -141,42 +141,81 @@ namespace PixPuzzle
 			pictureButton.SetTitle ("Custom photo", UIControlState.Normal);
 			pictureButton.TouchUpInside += (object sender, EventArgs e) => {
 
-
-				// MARCHE PAS FUUU
 //				Camera.TakePicture (this, (dico) => {
-				Camera.SelectPicture(this, (dico) => {
+//				Camera.SelectPicture(this, (dico) => {
 
-					UIImage img = UIImage.FromFile ("test2.jpg");
+					var img = createPuzzleFromPhoto ();
 
-					float ratio = img.Size.Width / img.Size.Height;
-					int size = 128;
-					SizeF newSize = new SizeF (size * ratio, size);
 
-					//			GPUImageGrayscaleFilter grayScaleFilter = new GPUImageGrayscaleFilter ();
-					//			test = grayScaleFilter.ImageByFilteringImage (test);
 
-					GPUImageSmoothToonFilter toonFilter = new GPUImageSmoothToonFilter();
-					toonFilter.quantizationLevels = 5f;
+				// DIsplay image and a way to play
+				foreach(var v in View.Subviews) {
+					v.RemoveFromSuperview ();
+				}
 
-					GPUImagePixellateFilter pixelateFilter = new GPUImagePixellateFilter();
-					pixelateFilter.FractionalWidthOfAPixel = 1/80f;
+				UIImageView imageView = new UIImageView(img);
+				UIScrollView scrollView = new UIScrollView(View.Frame);
+				scrollView.BackgroundColor = UIColor.LightGray;
+				scrollView.Layer.BorderColor = UIColor.Red.CGColor;
+				scrollView.Layer.BorderWidth = 4f;
+				scrollView.ScrollEnabled = true;
+				scrollView.MinimumZoomScale = 0.5f;
+				scrollView.MaximumZoomScale = 2f;
+				scrollView.BouncesZoom = true;
 
-					// Apply
-					img = toonFilter.ImageByFilteringImage (img);
-					img = pixelateFilter.ImageByFilteringImage (img);
+				scrollView.ViewForZoomingInScrollView = new UIScrollViewGetZoomView((sv) => {
+					return imageView;
+				});
+				scrollView.AddSubview(imageView);
 
-					img = UIImageEx.Scale (img, newSize);
+				View.AddSubview(scrollView);
+
+					// Display image
+				UIButton playButton = new UIButton(new RectangleF(550,250,200,100));
+				playButton.SetTitle("PLAY!", UIControlState.Normal);
+				playButton.ContentMode = UIViewContentMode.ScaleToFill;
+				playButton.BackgroundColor = UIColor.Black;
+				playButton.Layer.BorderColor = UIColor.Red.CGColor;
+				playButton.Layer.BorderWidth = 4f;
+
+				View.AddSubview(playButton);
+
+				playButton.TouchDown += (object s2, EventArgs e2) => {;
 
 					// Launch level
 					launchLevel(GameModes.Path, img);
-
-				});
+				};
+//				});
 			};
 
 			scroll.AddSubview (pictureButton);
 
 			scrolLContentSize.Height += baseY;
 			scroll.ContentSize = new SizeF (scrolLContentSize.Width, scrolLContentSize.Height);
+		}
+
+		static UIImage createPuzzleFromPhoto ()
+		{
+			UIImage img = UIImage.FromFile ("test2.jpg");
+			float ratio = img.Size.Width / img.Size.Height;
+			int size = 32;
+			SizeF newSize = new SizeF (size * ratio, size);
+
+			//			GPUImageGrayscaleFilter grayScaleFilter = new GPUImageGrayscaleFilter ();
+			//			test = grayScaleFilter.ImageByFilteringImage (test);
+
+			GPUImageSmoothToonFilter toonFilter = new GPUImageSmoothToonFilter ();
+			toonFilter.quantizationLevels = 6f;
+
+			GPUImagePixellateFilter pixelateFilter = new GPUImagePixellateFilter ();
+			pixelateFilter.FractionalWidthOfAPixel = 1 / 80f;
+
+			// Apply
+//			img = toonFilter.ImageByFilteringImage (img);
+			img = pixelateFilter.ImageByFilteringImage (img);
+			img = UIImageEx.Scale (img, newSize);
+
+			return img;
 		}
 
 		UIButton CreateLevelButton (int x, int y, int width, int height, string puzzle, GameModes mode)
@@ -219,6 +258,12 @@ namespace PixPuzzle
 		private void launchLevel (GameModes mode, UIImage level)
 		{
 			var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
+
+			foreach(var v in View.Subviews) {
+				v.RemoveFromSuperview ();
+			}
+
+			Console.WriteLine ("Launching level!");
 
 			appDelegate.ShowPuzzle (mode, level);
 		}

@@ -14,6 +14,7 @@ namespace PixPuzzle
 	{
 		static UIImagePickerController picker;
 		static Action<NSDictionary> _callback;
+		static UIPopoverController popOver;
 
 		static void Init ()
 		{
@@ -24,7 +25,8 @@ namespace PixPuzzle
 			picker.Delegate = new CameraDelegate ();
 		}
 
-		class CameraDelegate : UIImagePickerControllerDelegate {
+		class CameraDelegate : UIImagePickerControllerDelegate
+		{
 			public override void FinishedPickingMedia (UIImagePickerController picker, NSDictionary info)
 			{
 				var cb = _callback;
@@ -37,18 +39,24 @@ namespace PixPuzzle
 
 		public static void TakePicture (UIViewController parent, Action<NSDictionary> callback)
 		{
-			Init ();
-			picker.SourceType = UIImagePickerControllerSourceType.Camera;
-			_callback = callback;
-			parent.PresentViewController (picker, true, null);
+			displayPicker (UIImagePickerControllerSourceType.Camera, parent, callback);
 		}
 
 		public static void SelectPicture (UIViewController parent, Action<NSDictionary> callback)
 		{
+			displayPicker (UIImagePickerControllerSourceType.PhotoLibrary, parent, callback);
+		}
+
+		private static void displayPicker (UIImagePickerControllerSourceType source, UIViewController parent, Action<NSDictionary> callback)
+		{
 			Init ();
-			picker.SourceType = UIImagePickerControllerSourceType.PhotoLibrary;
+			picker.SourceType = source;
 			_callback = callback;
-			parent.PresentViewController (picker, true, null);
+
+			if (popOver == null || popOver.ContentViewController == null) { 
+				popOver = new UIPopoverController (picker); 
+			} 
+			popOver.PresentFromRect (parent.View.Frame, parent.View, UIPopoverArrowDirection.Any, true); 
 		}
 	}
 }
