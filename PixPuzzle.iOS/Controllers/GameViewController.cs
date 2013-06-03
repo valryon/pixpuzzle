@@ -61,7 +61,7 @@ namespace PixPuzzle
 			});
 
 			// Margin
-			int margin = grid.CellSize * 2;
+			int margin = grid.CellSize * 4;
 
 			// Center the grid
 			scrollView.ContentSize = new SizeF (gridUIView.Frame.Width + margin, gridUIView.Frame.Height + margin);

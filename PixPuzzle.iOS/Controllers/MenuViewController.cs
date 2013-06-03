@@ -192,6 +192,13 @@ namespace PixPuzzle
 					playButton.TouchDown += (object s2, EventArgs e2) => {
 						;
 
+						
+						float ratio = img.Size.Width / img.Size.Height;
+						int size = 40;
+						SizeF newSize = new SizeF (size * ratio, size);
+						img = UIImageEx.Scale (img, newSize);
+
+
 						// Launch level
 						launchLevel (GameModes.Path, img);
 					};
@@ -209,27 +216,23 @@ namespace PixPuzzle
 			UIImage img;
 
 			if (selectedImage == null) {
-				img = UIImage.FromFile ("test2.jpg");
+				img = UIImage.FromFile ("testpathfromphoto.jpg");
 			} else {
 				img = selectedImage;
 			}
-			float ratio = img.Size.Width / img.Size.Height;
-			int size = 32;
-			SizeF newSize = new SizeF (size * ratio, size);
 
 			//			GPUImageGrayscaleFilter grayScaleFilter = new GPUImageGrayscaleFilter ();
 			//			test = grayScaleFilter.ImageByFilteringImage (test);
 
 			GPUImageSmoothToonFilter toonFilter = new GPUImageSmoothToonFilter ();
-			toonFilter.quantizationLevels = 6f;
+			toonFilter.quantizationLevels = 20f;
 
 			GPUImagePixellateFilter pixelateFilter = new GPUImagePixellateFilter ();
 			pixelateFilter.FractionalWidthOfAPixel = 1 / 80f;
 
 			// Apply
-//			img = toonFilter.ImageByFilteringImage (img);
+			img = toonFilter.ImageByFilteringImage (img);
 			img = pixelateFilter.ImageByFilteringImage (img);
-			img = UIImageEx.Scale (img, newSize);
 
 			return img;
 		}

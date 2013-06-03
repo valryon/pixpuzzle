@@ -51,6 +51,7 @@ namespace PixPuzzle
 		{
 			Init ();
 			picker.SourceType = source;
+			picker.AllowsEditing = true;
 			_callback = callback;
 
 			if (popOver == null || popOver.ContentViewController == null) { 
