@@ -141,51 +141,61 @@ namespace PixPuzzle
 			pictureButton.SetTitle ("Custom photo", UIControlState.Normal);
 			pictureButton.TouchUpInside += (object sender, EventArgs e) => {
 
-//				Camera.TakePicture (this, (dico) => {
+				Camera.TakePicture (this, (dico) => {
 //				Camera.SelectPicture(this, (dico) => {
 
-					var img = createPuzzleFromPhoto ();
+					UIImage selectedImage = null;
+
+					// Get camera result
+					var selectedImageObject = dico.ObjectForKey (UIImagePickerController.OriginalImage);
+
+					if (selectedImageObject != null && selectedImageObject is UIImage) {
+						selectedImage = selectedImageObject as UIImage;
+					}
+
+					var img = createPuzzleFromPhoto (selectedImage);
 
 
 
-				// DIsplay image and a way to play
-				foreach(var v in View.Subviews) {
-					v.RemoveFromSuperview ();
-				}
+					// DIsplay image and a way to play
+					foreach (var v in View.Subviews) {
+						v.RemoveFromSuperview ();
+					}
 
-				UIImageView imageView = new UIImageView(img);
-				UIScrollView scrollView = new UIScrollView(View.Frame);
-				scrollView.BackgroundColor = UIColor.LightGray;
-				scrollView.Layer.BorderColor = UIColor.Red.CGColor;
-				scrollView.Layer.BorderWidth = 4f;
-				scrollView.ScrollEnabled = true;
-				scrollView.MinimumZoomScale = 0.5f;
-				scrollView.MaximumZoomScale = 2f;
-				scrollView.BouncesZoom = true;
+					UIImageView imageView = new UIImageView (img);
+					UIScrollView scrollView = new UIScrollView (View.Frame);
+					scrollView.BackgroundColor = UIColor.LightGray;
+					scrollView.Layer.BorderColor = UIColor.Red.CGColor;
+					scrollView.Layer.BorderWidth = 4f;
+					scrollView.ScrollEnabled = true;
+					scrollView.MinimumZoomScale = 0.5f;
+					scrollView.MaximumZoomScale = 2f;
+					scrollView.BouncesZoom = true;
 
-				scrollView.ViewForZoomingInScrollView = new UIScrollViewGetZoomView((sv) => {
+					scrollView.ViewForZoomingInScrollView = new UIScrollViewGetZoomView ((sv) => {
 					return imageView;
 				});
-				scrollView.AddSubview(imageView);
+					scrollView.AddSubview (imageView);
 
-				View.AddSubview(scrollView);
+					View.AddSubview (scrollView);
 
 					// Display image
-				UIButton playButton = new UIButton(new RectangleF(550,250,200,100));
-				playButton.SetTitle("PLAY!", UIControlState.Normal);
-				playButton.ContentMode = UIViewContentMode.ScaleToFill;
-				playButton.BackgroundColor = UIColor.Black;
-				playButton.Layer.BorderColor = UIColor.Red.CGColor;
-				playButton.Layer.BorderWidth = 4f;
+					UIButton playButton = new UIButton (new RectangleF(550,250,200,100));
+					playButton.SetTitle ("PLAY!", UIControlState.Normal);
+					playButton.ContentMode = UIViewContentMode.ScaleToFill;
+					playButton.BackgroundColor = UIColor.Black;
+					playButton.Layer.BorderColor = UIColor.Red.CGColor;
+					playButton.Layer.BorderWidth = 4f;
 
-				View.AddSubview(playButton);
+					View.AddSubview (playButton);
 
-				playButton.TouchDown += (object s2, EventArgs e2) => {;
+					playButton.TouchDown += (object s2, EventArgs e2) => {
+						;
 
-					// Launch level
-					launchLevel(GameModes.Path, img);
-				};
-//				});
+						// Launch level
+						launchLevel (GameModes.Path, img);
+					};
+				});
 			};
 
 			scroll.AddSubview (pictureButton);
@@ -194,9 +204,15 @@ namespace PixPuzzle
 			scroll.ContentSize = new SizeF (scrolLContentSize.Width, scrolLContentSize.Height);
 		}
 
-		static UIImage createPuzzleFromPhoto ()
+		static UIImage createPuzzleFromPhoto (UIImage selectedImage)
 		{
-			UIImage img = UIImage.FromFile ("test2.jpg");
+			UIImage img;
+
+			if (selectedImage == null) {
+				img = UIImage.FromFile ("test2.jpg");
+			} else {
+				img = selectedImage;
+			}
 			float ratio = img.Size.Width / img.Size.Height;
 			int size = 32;
 			SizeF newSize = new SizeF (size * ratio, size);
@@ -229,7 +245,7 @@ namespace PixPuzzle
 			levelButton.Layer.BorderWidth = 3f;
 			levelButton.TouchUpInside += (object sender, EventArgs e) => {
 				string puzzleFilename = puzzle;
-				launchLevel (mode, UIImage.FromFile(puzzleFilename));
+				launchLevel (mode, UIImage.FromFile (puzzleFilename));
 			};
 
 			return levelButton;
@@ -259,7 +275,7 @@ namespace PixPuzzle
 		{
 			var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
 
-			foreach(var v in View.Subviews) {
+			foreach (var v in View.Subviews) {
 				v.RemoveFromSuperview ();
 			}
 
