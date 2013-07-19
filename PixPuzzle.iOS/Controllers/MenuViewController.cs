@@ -1,10 +1,13 @@
 using System;
+using System.Linq;
 using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.IO;
 using PixPuzzle.Data;
 using GPUImage.Filters;
+using MonoTouch.CoreGraphics;
+using System.Collections.Generic;
 
 namespace PixPuzzle
 {
@@ -31,16 +34,16 @@ namespace PixPuzzle
 
 		private void createView ()
 		{
-			View = new UIView (new RectangleF(0,0,UIScreen.MainScreen.Bounds.Height,UIScreen.MainScreen.Bounds.Width));
-			View.BackgroundColor = UIColor.FromPatternImage (new UIImage("background.png"));
+			View = new UIView (new RectangleF (0, 0, UIScreen.MainScreen.Bounds.Height, UIScreen.MainScreen.Bounds.Width));
+			View.BackgroundColor = UIColor.FromPatternImage (new UIImage ("background.png"));
 
 			// First buttons
 			// --------------------------------
-			buttonPanel = new UIView (new RectangleF(0,0,UIScreen.MainScreen.Bounds.Height,UIScreen.MainScreen.Bounds.Width));
+			buttonPanel = new UIView (new RectangleF (0, 0, UIScreen.MainScreen.Bounds.Height, UIScreen.MainScreen.Bounds.Width));
 
 			int buttonWidth = 300;
 			int buttonHeight = 80;
-			RectangleF buttonRect = new RectangleF (UIScreen.MainScreen.Bounds.Height/2 - buttonWidth/2,
+			RectangleF buttonRect = new RectangleF (UIScreen.MainScreen.Bounds.Height / 2 - buttonWidth / 2,
 			                                        UIScreen.MainScreen.Bounds.Width / 2 - buttonHeight / 2,
 			                                        buttonWidth,
 			                                        buttonHeight
@@ -76,7 +79,7 @@ namespace PixPuzzle
 
 			// Level selection
 			// --------------------------------
-			levelSelectionPanel = new UIView (new RectangleF(0,0,UIScreen.MainScreen.Bounds.Height,UIScreen.MainScreen.Bounds.Width));
+			levelSelectionPanel = new UIView (new RectangleF (0, 0, UIScreen.MainScreen.Bounds.Height, UIScreen.MainScreen.Bounds.Width));
 			UIScrollView scroll = new UIScrollView (levelSelectionPanel.Frame);
 
 			levelSelectionPanel.AddSubview (scroll);
@@ -133,7 +136,7 @@ namespace PixPuzzle
 				scroll.AddSubview (levelButton);
 			}
 
-			UIButton pictureButton = new UIButton (new RectangleF (View.Frame.Width / 2 - width, 2*y, width * 2, height / 2));
+			UIButton pictureButton = new UIButton (new RectangleF (View.Frame.Width / 2 - width, 2 * y, width * 2, height / 2));
 			pictureButton.BackgroundColor = UIColor.White;
 			pictureButton.Layer.BorderColor = UIColor.Green.CGColor;
 			pictureButton.Layer.BorderWidth = 3f;
@@ -141,68 +144,66 @@ namespace PixPuzzle
 			pictureButton.SetTitle ("Custom photo", UIControlState.Normal);
 			pictureButton.TouchUpInside += (object sender, EventArgs e) => {
 
-				Camera.TakePicture (this, (dico) => {
+//				Camera.TakePicture (this, (dico) => {
 //				Camera.SelectPicture(this, (dico) => {
 
-					UIImage selectedImage = null;
+				UIImage selectedImage = null;
 
-					// Get camera result
-					var selectedImageObject = dico.ObjectForKey (UIImagePickerController.OriginalImage);
+				// Get camera result
+//					var selectedImageObject = dico.ObjectForKey (UIImagePickerController.OriginalImage);
+//
+//					if (selectedImageObject != null && selectedImageObject is UIImage) {
+//						selectedImage = selectedImageObject as UIImage;
+//					}
 
-					if (selectedImageObject != null && selectedImageObject is UIImage) {
-						selectedImage = selectedImageObject as UIImage;
-					}
+				var img = createPuzzleFromPhoto (selectedImage);
 
-					var img = createPuzzleFromPhoto (selectedImage);
+				// DIsplay image and a way to play
+				foreach (var v in View.Subviews) {
+					v.RemoveFromSuperview ();
+				}
 
+				UIImageView imageView = new UIImageView (img);
+				UIScrollView scrollView = new UIScrollView (View.Frame);
+				scrollView.BackgroundColor = UIColor.LightGray;
+				scrollView.Layer.BorderColor = UIColor.Red.CGColor;
+				scrollView.Layer.BorderWidth = 4f;
+				scrollView.ScrollEnabled = true;
+				scrollView.MinimumZoomScale = 0.5f;
+				scrollView.MaximumZoomScale = 2f;
+				scrollView.BouncesZoom = true;
 
-
-					// DIsplay image and a way to play
-					foreach (var v in View.Subviews) {
-						v.RemoveFromSuperview ();
-					}
-
-					UIImageView imageView = new UIImageView (img);
-					UIScrollView scrollView = new UIScrollView (View.Frame);
-					scrollView.BackgroundColor = UIColor.LightGray;
-					scrollView.Layer.BorderColor = UIColor.Red.CGColor;
-					scrollView.Layer.BorderWidth = 4f;
-					scrollView.ScrollEnabled = true;
-					scrollView.MinimumZoomScale = 0.5f;
-					scrollView.MaximumZoomScale = 2f;
-					scrollView.BouncesZoom = true;
-
-					scrollView.ViewForZoomingInScrollView = new UIScrollViewGetZoomView ((sv) => {
+				scrollView.ViewForZoomingInScrollView = new UIScrollViewGetZoomView ((sv) => {
 					return imageView;
 				});
-					scrollView.AddSubview (imageView);
+				scrollView.AddSubview (imageView);
 
-					View.AddSubview (scrollView);
+				View.AddSubview (scrollView);
 
-					// Display image
-					UIButton playButton = new UIButton (new RectangleF(550,250,200,100));
-					playButton.SetTitle ("PLAY!", UIControlState.Normal);
-					playButton.ContentMode = UIViewContentMode.ScaleToFill;
-					playButton.BackgroundColor = UIColor.Black;
-					playButton.Layer.BorderColor = UIColor.Red.CGColor;
-					playButton.Layer.BorderWidth = 4f;
+				// Display image
+				UIButton playButton = new UIButton (new RectangleF (550, 250, 200, 100));
+				playButton.SetTitle ("PLAY!", UIControlState.Normal);
+				playButton.ContentMode = UIViewContentMode.ScaleToFill;
+				playButton.BackgroundColor = UIColor.Black;
+				playButton.Layer.BorderColor = UIColor.Red.CGColor;
+				playButton.Layer.BorderWidth = 4f;
 
-					View.AddSubview (playButton);
+				View.AddSubview (playButton);
 
-					playButton.TouchDown += (object s2, EventArgs e2) => {
-						;
+				playButton.TouchDown += (object s2, EventArgs e2) => {
+					;
 
 						
-						float ratio = img.Size.Width / img.Size.Height;
-						int size = 40;
-						SizeF newSize = new SizeF (size * ratio, size);
-						img = UIImageEx.Scale (img, newSize);
+					float ratio = img.Size.Width / img.Size.Height;
+					int size = 80;
+					SizeF newSize = new SizeF (size * ratio, size);
+					img = UIImageEx.Scale (img, newSize);
 
 
-						// Launch level
-						launchLevel (GameModes.Path, img);
-					};
-				});
+					// Launch level
+					launchLevel (GameModes.Path, img);
+				};
+//				});
 			};
 
 			scroll.AddSubview (pictureButton);
@@ -221,20 +222,26 @@ namespace PixPuzzle
 				img = selectedImage;
 			}
 
+			// ------------------------------------------------------------------------------------------
+			// OLD
+			// ------------------------------------------------------------------------------------------
 			//			GPUImageGrayscaleFilter grayScaleFilter = new GPUImageGrayscaleFilter ();
 			//			test = grayScaleFilter.ImageByFilteringImage (test);
 
-			GPUImageSmoothToonFilter toonFilter = new GPUImageSmoothToonFilter ();
-			toonFilter.quantizationLevels = 20f;
+//			GPUImageToonFilter toonFilter = new GPUImageToonFilter ();
+//			toonFilter.QuantizationLevels = 3f;
+//
+//			GPUImagePixellateFilter pixelateFilter = new GPUImagePixellateFilter ();
+//			pixelateFilter.FractionalWidthOfAPixel = 1 / 80f;
+//
+//			// Apply
+//			img = toonFilter.ImageByFilteringImage (img);
+//			img = pixelateFilter.ImageByFilteringImage (img);
 
-			GPUImagePixellateFilter pixelateFilter = new GPUImagePixellateFilter ();
-			pixelateFilter.FractionalWidthOfAPixel = 1 / 80f;
-
-			// Apply
-			img = toonFilter.ImageByFilteringImage (img);
-			img = pixelateFilter.ImageByFilteringImage (img);
-
-			return img;
+			// ------------------------------------------------------------------------------------------
+			// From mosaic-android
+			// ------------------------------------------------------------------------------------------
+			return ImageFilters.Filter (img);
 		}
 
 		UIButton CreateLevelButton (int x, int y, int width, int height, string puzzle, GameModes mode)

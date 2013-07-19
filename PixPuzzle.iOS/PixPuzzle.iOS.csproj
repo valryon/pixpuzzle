@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="Tools\Camera.cs" />
     <Compile Include="Tools\UIImageEx.cs" />
+    <Compile Include="Tools\ImageFilters.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
