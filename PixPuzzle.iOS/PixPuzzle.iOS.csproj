@@ -173,5 +173,6 @@
       <Link>Resources\puzzles\picross\pic5.png</Link>
     </BundleResource>
     <BundleResource Include="Resources\testpathfromphoto.jpg" />
+    <BundleResource Include="Resources\testpathfromphoto2.jpg" />
   </ItemGroup>
 </Project>

@@ -30,6 +30,7 @@ namespace PixPuzzle
 			
 			createView ();
 			showButtonPanel ();
+
 		}
 
 		private void createView ()
@@ -217,31 +218,12 @@ namespace PixPuzzle
 			UIImage img;
 
 			if (selectedImage == null) {
-				img = UIImage.FromFile ("testpathfromphoto.jpg");
+				img = UIImage.FromFile ("testpathfromphoto2.jpg");
 			} else {
 				img = selectedImage;
 			}
 
-			// ------------------------------------------------------------------------------------------
-			// OLD
-			// ------------------------------------------------------------------------------------------
-			//			GPUImageGrayscaleFilter grayScaleFilter = new GPUImageGrayscaleFilter ();
-			//			test = grayScaleFilter.ImageByFilteringImage (test);
-
-//			GPUImageToonFilter toonFilter = new GPUImageToonFilter ();
-//			toonFilter.QuantizationLevels = 3f;
-//
-//			GPUImagePixellateFilter pixelateFilter = new GPUImagePixellateFilter ();
-//			pixelateFilter.FractionalWidthOfAPixel = 1 / 80f;
-//
-//			// Apply
-//			img = toonFilter.ImageByFilteringImage (img);
-//			img = pixelateFilter.ImageByFilteringImage (img);
-
-			// ------------------------------------------------------------------------------------------
-			// From mosaic-android
-			// ------------------------------------------------------------------------------------------
-			return ImageFilters.Filter (img);
+			return ImageFilters.Filter (img, 64);
 		}
 
 		UIButton CreateLevelButton (int x, int y, int width, int height, string puzzle, GameModes mode)
