@@ -246,7 +246,7 @@ namespace PixPuzzle
 				v.RemoveFromSuperview ();
 			}
 
-			Console.WriteLine ("Launching level!");
+			Logger.I ("Launching level!");
 
 			appDelegate.ShowPuzzle (puzzle, level);
 		}
