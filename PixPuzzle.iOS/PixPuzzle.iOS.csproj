@@ -114,7 +114,6 @@
       <DependentUpon>GameViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\PathGridView.cs" />
-    <Compile Include="Views\PicrossGridView.cs" />
     <Compile Include="Controllers\MenuViewController.cs" />
     <Compile Include="Controllers\MenuViewController.designer.cs">
       <DependentUpon>MenuViewController.cs</DependentUpon>

@@ -97,28 +97,8 @@ namespace PixPuzzle
 			int elementByLine = 6;
 			int elementOnCurrentLine = 0;
 
-			foreach (var puzzle in Directory.GetFiles(GameViewController.PathPuzzlesDirectory)) {
-				UIButton levelButton = CreateLevelButton (x, y, width, height, puzzle, GameModes.Path);
-
-				x += baseX + width;
-
-				elementOnCurrentLine++;
-				if (elementOnCurrentLine >= elementByLine) {
-					elementOnCurrentLine = 0;
-
-					x = baseX;
-
-					int yJump = baseY + height;
-					y += yJump;
-
-					scrolLContentSize.Height += yJump;
-				}
-
-				scroll.AddSubview (levelButton);
-			}
-
-			foreach (var puzzle in Directory.GetFiles(GameViewController.PicrossPuzzlesDirectory)) {
-				UIButton levelButton = CreateLevelButton (x, y, width, height, puzzle, GameModes.Picross);
+			foreach (var puzzle in PuzzleService.Instance.GetPuzzles(false, false)) {
+				UIButton levelButton = CreateLevelButton (x, y, width, height, puzzle);
 
 				x += baseX + width;
 
@@ -192,8 +172,11 @@ namespace PixPuzzle
 				View.AddSubview (playButton);
 
 				playButton.TouchDown += (object s2, EventArgs e2) => {
+					// Save level
+					PuzzleData puzzle = PuzzleService.Instance.AddPuzzle("TODO","TODO",null);
+
 					// Launch level
-					launchLevel (GameModes.Path, img);
+					launchLevel (puzzle, img);
 				};
 //				});
 			};
@@ -218,18 +201,18 @@ namespace PixPuzzle
 			return ImageFilters.Filter (img, 128);
 		}
 
-		UIButton CreateLevelButton (int x, int y, int width, int height, string puzzle, GameModes mode)
+		UIButton CreateLevelButton (int x, int y, int width, int height, PuzzleData puzzle)
 		{
 			// Load the image
-			UIImage image = UIImage.FromFile (puzzle);
+			UIImage image = UIImage.FromFile (puzzle.Filename);
 			UIButton levelButton = new UIButton (new RectangleF (x, y, width, height));
 			levelButton.SetImage (image, UIControlState.Normal);
 			levelButton.BackgroundColor = UIColor.White;
 			levelButton.Layer.BorderColor = UIColor.Blue.CGColor;
 			levelButton.Layer.BorderWidth = 3f;
 			levelButton.TouchUpInside += (object sender, EventArgs e) => {
-				string puzzleFilename = puzzle;
-				launchLevel (mode, UIImage.FromFile (puzzleFilename));
+				string puzzleFilename = puzzle.Filename;
+				launchLevel (puzzle, UIImage.FromFile (puzzleFilename));
 			};
 
 			return levelButton;
@@ -255,7 +238,7 @@ namespace PixPuzzle
 			});
 		}
 
-		private void launchLevel (GameModes mode, UIImage level)
+		private void launchLevel (PuzzleData puzzle, UIImage level)
 		{
 			var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
 
@@ -265,7 +248,7 @@ namespace PixPuzzle
 
 			Console.WriteLine ("Launching level!");
 
-			appDelegate.ShowPuzzle (mode, level);
+			appDelegate.ShowPuzzle (puzzle, level);
 		}
 	}
 }

@@ -56,14 +56,14 @@ namespace PixPuzzle
 			window.MakeKeyAndVisible ();
 		}
 
-		public void ShowPuzzle(GameModes mode, UIImage selectedPuzzle) 
+		public void ShowPuzzle(PuzzleData puzzle, UIImage selectedPuzzle) 
 		{
 			if (window.RootViewController != null) {
 				window.RootViewController.View.RemoveFromSuperview ();
 				window.RootViewController.Dispose ();
 			}
 
-			window.RootViewController = new GameViewController(mode, selectedPuzzle);
+			window.RootViewController = new GameViewController(puzzle,  selectedPuzzle);
 			window.MakeKeyAndVisible ();
 		}
 	}

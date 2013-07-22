@@ -344,8 +344,8 @@ namespace PixPuzzle
 		public const int CellSizeIphone = 32;
 		public const int CellSizeIpad = 48;
 
-		public PathGridView (int width, int height)
-			: base(width, height, AppDelegate.UserInterfaceIdiomIsPhone ? CellSizeIphone : CellSizeIpad)
+		public PathGridView (PuzzleData puzzle, int width, int height)
+			: base(puzzle, width, height, AppDelegate.UserInterfaceIdiomIsPhone ? CellSizeIphone : CellSizeIpad)
 		{
 			// Create the view 
 			PathGridViewInternal theView = new PathGridViewInternal (this, new RectangleF (0, 0, width * CellSize, height * CellSize));

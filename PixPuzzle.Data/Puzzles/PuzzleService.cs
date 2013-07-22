@@ -117,9 +117,9 @@ namespace PixPuzzle.Data
 		/// <summary>
 		/// Save a new custom puzzle
 		/// </summary>
-		public void AddPuzzle (string filename, string owner, byte[][] image)
+		public PuzzleData AddPuzzle (string filename, string owner, byte[][] image)
 		{
-
+			return new PuzzleData ();
 		}
 
 		/// <summary>

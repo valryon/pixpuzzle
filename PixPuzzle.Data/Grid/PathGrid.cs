@@ -30,7 +30,7 @@ namespace PixPuzzle.Data
 		/// <param name="imageWidth">Image width.</param>
 		/// <param name="imageHeight">Image height.</param>
 		/// <param name="cellSize">Cell size.</param>
-		public PathGrid (int imageWidth, int imageHeight, int cellSize)
+		public PathGrid (PuzzleData puzzle, int imageWidth, int imageHeight, int cellSize)
 			: base(imageWidth, imageHeight, cellSize)
 		{
 			MaxPathLength = 9 + ((Math.Max (imageWidth, imageHeight) / 32) * 2);

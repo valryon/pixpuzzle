@@ -10,24 +10,20 @@ namespace PixPuzzle
 {
 	public partial class GameViewController : UIViewController
 	{
-		public static string PathPuzzlesDirectory = "puzzles/path/";
-		public static string PicrossPuzzlesDirectory = "puzzles/picross/";
 		private IGrid grid;
 		private UIView gridUIView;
-		private GameModes mode;
 		private UIImage selectedPuzzle;
 
-		public GameViewController (GameModes mode, UIImage selectedPuzzle)
+		public GameViewController (PuzzleData puzzle, UIImage selectedPuzzle)
 			: base (null, null)
 		{
-			this.mode = mode;
 			this.selectedPuzzle = selectedPuzzle;
 
 			// Load the image
 			UIImage image = selectedPuzzle;
 			Bitmap bitmap = new Bitmap (image);
 
-			gridUIView = initializeGrid (image, bitmap, mode);
+			gridUIView = initializeGrid (puzzle, image, bitmap);
 		}
 
 		public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations ()
@@ -84,27 +80,14 @@ namespace PixPuzzle
 			View.AddSubview (scrollView);
 		}
 
-		private UIView initializeGrid (UIImage image, Bitmap bitmap, GameModes mode) {
+		private UIView initializeGrid (PuzzleData puzzle, UIImage image, Bitmap bitmap) {
 			this.grid = null;
 			UIView view = null;
 
-			if(mode == GameModes.Path) {
-				var pathGrid = new PathGridView ((int)image.Size.Width, (int)image.Size.Height);
-				view = pathGrid.GridViewInternal;
+			var pathGrid = new PathGridView (puzzle, (int)image.Size.Width, (int)image.Size.Height);
+			view = pathGrid.GridViewInternal;
 
-				grid = pathGrid;
-			}
-			else {
-
-				// Image becomes B&W
-				GPUImageGrayscaleFilter filter = new GPUImageGrayscaleFilter ();
-				image = filter.ImageByFilteringImage (image);
-
-				var picrossGrid = new PicrossGridView ((int)image.Size.Width, (int)image.Size.Height);
-				view = picrossGrid.PicrossGridViewInternal;
-
-				grid = picrossGrid;
-			}
+			grid = pathGrid;
 
 			CellColor[][] pixels = new CellColor[(int)image.Size.Width][];
 
@@ -139,7 +122,7 @@ namespace PixPuzzle
 		{
 			UIAlertView alert = new UIAlertView (
 				"Game Over",
-				"You did it! " + selectedPuzzle + " " + mode,
+				"You did it! " + selectedPuzzle,
 				null,
 				"OK");
 
