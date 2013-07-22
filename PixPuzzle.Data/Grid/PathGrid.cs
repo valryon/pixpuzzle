@@ -15,11 +15,15 @@ namespace PixPuzzle.Data
 	/// </summary>
 	public abstract class PathGrid : Grid<PathCell, IPathGridView>
 	{
-		public const int MaximumPathLength = 9;
 		/// <summary>
 		/// Path data
 		/// </summary>
 		protected PathCell FirstPathCell, LastSelectedCell;
+
+		protected int MaxPathLength;
+
+		private Random random = new Random (182); // Predictable seed
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PixPuzzle.Data.Grid"/> class.
 		/// </summary>
@@ -29,7 +33,9 @@ namespace PixPuzzle.Data
 		public PathGrid (int imageWidth, int imageHeight, int cellSize)
 			: base(imageWidth, imageHeight, cellSize)
 		{
+			MaxPathLength = 9 + ((Math.Max (imageWidth, imageHeight) / 32) * 2);
 		}
+
 		#region Grid creation
 
 		/// <summary>
@@ -99,7 +105,6 @@ namespace PixPuzzle.Data
 			/// <param name="firstCell">First cell.</param>
 		private PathCell createPath (PathCell firstCell)
 		{
-			Random random = new Random (182); // Predictable seed
 			PathCell lastCell = firstCell;
 
 			// Start from the first cell
@@ -150,8 +155,8 @@ namespace PixPuzzle.Data
 					stopFloodFill = true;
 				}
 
-				// Hack
-				int max = MaximumPathLength;
+				// Limit maximum path lengh randomly
+				int max = random.Next(2, MaxPathLength);
 
 				if (currentCell == GetCell (0, 0)) {
 					max += 1;

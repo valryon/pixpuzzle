@@ -41,6 +41,7 @@
     <Folder Include="Views\" />
     <Folder Include="Cells\" />
     <Folder Include="Tools\" />
+    <Folder Include="Puzzles\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -58,5 +59,8 @@
     <Compile Include="Cells\PicrossCell.cs" />
     <Compile Include="Views\IPathGridView.cs" />
     <Compile Include="Views\IPicrossGridView.cs" />
+    <Compile Include="Puzzles\PuzzleService.cs" />
+    <Compile Include="Puzzles\Savedgame.cs" />
+    <Compile Include="Tools\Logger.cs" />
   </ItemGroup>
 </Project>

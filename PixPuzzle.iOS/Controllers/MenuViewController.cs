@@ -192,15 +192,6 @@ namespace PixPuzzle
 				View.AddSubview (playButton);
 
 				playButton.TouchDown += (object s2, EventArgs e2) => {
-					;
-
-						
-					float ratio = img.Size.Width / img.Size.Height;
-					int size = 80;
-					SizeF newSize = new SizeF (size * ratio, size);
-					img = UIImageEx.Scale (img, newSize);
-
-
 					// Launch level
 					launchLevel (GameModes.Path, img);
 				};
@@ -218,12 +209,13 @@ namespace PixPuzzle
 			UIImage img;
 
 			if (selectedImage == null) {
-				img = UIImage.FromFile ("testpathfromphoto2.jpg");
+				img = UIImage.FromFile ("testpathfromphoto.jpg");
 			} else {
 				img = selectedImage;
 			}
 
-			return ImageFilters.Filter (img, 64);
+			// 64 is already a BIG value
+			return ImageFilters.Filter (img, 128);
 		}
 
 		UIButton CreateLevelButton (int x, int y, int width, int height, string puzzle, GameModes mode)

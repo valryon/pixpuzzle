@@ -17,7 +17,7 @@ namespace PixPuzzle
 			public int B;
 		}
 
-		public static int PaletteColorNumbers = 32;
+		public static int BasePaletteColorsNumber = 32;
 		/// <summary>
 		/// Threshold to determine if colors are neighbor or not after adding each components
 		/// </summary>
@@ -29,10 +29,11 @@ namespace PixPuzzle
 				puzzleSize = 16;
 
 			int tileSize = puzzleSize / 16;
+			int paletteColorsNumber = BasePaletteColorsNumber + (8 * puzzleSize / 64);
 
 			// 1/ Get the main colors
 			// So we have a color palette
-			var colorPalette = getColorPalette (img);
+			var colorPalette = getColorPalette (img, paletteColorsNumber);
 
 			// 1/ Resize & Load image as readable
 			UIImage resizedImg = ResizeRatio (img, puzzleSize);
@@ -42,15 +43,15 @@ namespace PixPuzzle
 			var flippedImage = applyMosaic (tileSize, colorPalette, resizedImg, bitmap);
 
 			// -- Flip because bitmap has inverted coordinates
-//			UIImage finalImg = new UIImage (flippedImage, 0f, UIImageOrientation.DownMirrored); 
-			UIImage finalImg = new UIImage (flippedImage);
+			UIImage finalImg = new UIImage (flippedImage, 0f, UIImageOrientation.DownMirrored); 
+//			UIImage finalImg = new UIImage (flippedImage);
 
 			// -- Resize the final
 //			return ResizeRatio (finalImg, FinalSize);
 			return finalImg;
 		}
 
-		private static List<Color> getColorPalette (UIImage img)
+		private static List<Color> getColorPalette (UIImage img, int paletteColorsNumber)
 		{
 			// -- Make a thumbnail
 			UIImage thumb = ResizeRatio (img, 64);
@@ -92,7 +93,8 @@ namespace PixPuzzle
 
 			// -- Select the n most frequent colors
 			List<Color> colorPalette = new List<Color> ();
-			foreach (PaletteTempItem t in colorList.OrderByDescending (t => t.Value.Count).Take (PaletteColorNumbers).Select (t => t.Value)) {
+
+			foreach (PaletteTempItem t in colorList.OrderByDescending (t => t.Value.Count).Take (paletteColorsNumber).Select (t => t.Value)) {
 				Color c = Color.FromArgb (t.R / t.Count, t.G / t.Count, t.B / t.Count);
 				Console.WriteLine ("Palette color usage count: " + t.Count);
 				colorPalette.Add (c);
