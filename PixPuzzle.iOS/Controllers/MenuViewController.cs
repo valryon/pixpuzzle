@@ -137,6 +137,8 @@ namespace PixPuzzle
 //						selectedImage = selectedImageObject as UIImage;
 //					}
 
+				Logger.I("Transforming a custom picture in a puzzle...");
+
 				var img = createPuzzleFromPhoto (selectedImage);
 
 				// DIsplay image and a way to play

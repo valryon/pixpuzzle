@@ -33,6 +33,7 @@ namespace PixPuzzle
 
 			// 1/ Get the main colors
 			// So we have a color palette
+			Logger.I ("Filter: getting palette...");
 			var colorPalette = getColorPalette (img, paletteColorsNumber);
 
 			// 1/ Resize & Load image as readable
@@ -40,65 +41,101 @@ namespace PixPuzzle
 			Bitmap bitmap = new Bitmap (resizedImg);
 
 			// 2/ Apply mosaic
+			Logger.I ("Filter: applying mosaic...");
 			var flippedImage = applyMosaic (tileSize, colorPalette, resizedImg, bitmap);
 
 			// -- Flip because bitmap has inverted coordinates
+			Logger.I ("Filter: resizing...");
 			UIImage finalImg = new UIImage (flippedImage, 0f, UIImageOrientation.DownMirrored); 
 //			UIImage finalImg = new UIImage (flippedImage);
 
 			// -- Resize the final
 //			return ResizeRatio (finalImg, FinalSize);
+
+			Logger.I ("Filter: image ready!");
 			return finalImg;
 		}
 
 		private static List<Color> getColorPalette (UIImage img, int paletteColorsNumber)
 		{
 			// -- Make a thumbnail
+			Logger.D ("Palette -> resize");
 			UIImage thumb = ResizeRatio (img, 64);
 			Bitmap thumbBitmap = new Bitmap (thumb);
 
 			// -- Get each colors
-			Dictionary<Color, PaletteTempItem> colorList = new Dictionary<Color, PaletteTempItem> ();
+			Logger.D ("Palette -> get each color");
+
+			Dictionary<Color, int> rawColorList = new Dictionary<Color, int> ();
+
 			for (int xq = 0; xq < thumb.Size.Width; xq++) {
 				for (int yq = 0; yq < thumb.Size.Height; yq++) {
+
 					Color c = thumbBitmap.GetPixel (xq, yq);
-					// Look if we have a similar color already in the palette
-					bool hasBeenAdded = false;
-					foreach (Color cl in colorList.Keys) {
-						double distance = Math.Abs (Math.Pow (c.R - cl.R, 2) + Math.Pow (c.G - cl.G, 2) + Math.Pow (c.B - cl.B, 2));
-						if (distance < PaletteColorDifferenceThreshold) {
-							hasBeenAdded = true;
-							// Yes!
-							c = cl;
-							PaletteTempItem p = colorList [c];
-							p.Count += 1;
-							p.R += cl.R;
-							p.G += cl.G;
-							p.B += cl.B;
-							colorList [c] = p;
-							break;
-						}
-					}
-					// foreach
-					if (hasBeenAdded == false) {
-						colorList.Add (c, new PaletteTempItem () {
-							R = c.R,
-							G = c.G,
-							B = c.B,
-							Count = 1
-						});
+
+					if (rawColorList.ContainsKey (c)) {
+						rawColorList [c] += 1;
+					} else {
+						rawColorList.Add (c, 1);
 					}
 				} // for y
 			} // for x
 
-			// -- Select the n most frequent colors
-			List<Color> colorPalette = new List<Color> ();
+			var orderedColorList = rawColorList.OrderBy (c => c.Value).Select(c => c.Key).ToList();
+			rawColorList = null;
 
-			foreach (PaletteTempItem t in colorList.OrderByDescending (t => t.Value.Count).Take (paletteColorsNumber).Select (t => t.Value)) {
-				Color c = Color.FromArgb (t.R / t.Count, t.G / t.Count, t.B / t.Count);
-//				Console.WriteLine ("Palette color usage count: " + t.Count);
-				colorPalette.Add (c);
+			// -- Look if we have a similar color already in the palette
+			Logger.D ("Palette -> restrict to n");
+			List<Color> colorPalette = new List<Color> (paletteColorsNumber);
+
+			while (colorPalette.Count < paletteColorsNumber) {
+
+				if (orderedColorList.Any () == false) {
+					Logger.W ("Not enough color!");
+					break;
+				}
+
+				Color c1 = orderedColorList.First ();
+
+				List<Color> similarColors = new List<Color> ();
+				similarColors.Add (c1);
+
+				int avg_r = c1.R;
+				int avg_b = c1.B;
+				int avg_g = c1.G;
+
+				// Look for similar colors
+				foreach (Color c2 in orderedColorList) {
+
+					if (c1 == c2)
+						continue;
+
+					double distance = Math.Abs (Math.Pow (c1.R - c2.R, 2) + Math.Pow (c1.G - c2.G, 2) + Math.Pow (c1.B - c2.B, 2));
+
+					if (distance < PaletteColorDifferenceThreshold) {
+						// Too close, do the average
+						avg_r = c2.R;
+						avg_g = c2.G;
+						avg_b = c2.B;
+						similarColors.Add (c2);
+					}
+				}
+
+				// Add the average colors
+				colorPalette.Add (Color.FromArgb (
+					avg_r / similarColors.Count,
+					avg_g / similarColors.Count,
+					avg_b / similarColors.Count
+				));
+
+				// Remove checked colors
+				foreach(var deletedColor in similarColors) {
+					orderedColorList.Remove (deletedColor);
+				}
 			}
+
+			// Free things
+			thumbBitmap = null;
 
 			return colorPalette;
 		}

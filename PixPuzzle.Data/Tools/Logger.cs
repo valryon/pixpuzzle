@@ -6,27 +6,27 @@ namespace PixPuzzle
 	{
 		public static void D (string message)
 		{
-			Console.WriteLine ("PixPuzzle - DEBUG: " + message);
+			Console.WriteLine ("DEBUG: " + message);
 		}
 
 		public static void I (string message)
 		{
-			Console.WriteLine ("PixPuzzle - INFO : " + message);
+			Console.WriteLine ("INFO : " + message);
 		}
 
 		public static void W (string message)
 		{
-			Console.WriteLine ("PixPuzzle - WARN : " + message);
+			Console.WriteLine ("WARN : " + message);
 		}
 
 		public static void E (string message)
 		{
-			Console.WriteLine ("PixPuzzle - ERROR: " + message);
+			Console.WriteLine ("ERROR: " + message);
 		}
 
 		public static void E (string message, Exception e)
 		{
-			Console.WriteLine ("PixPuzzle - ERROR: " + message + "\n" + e.ToString ());
+			Console.WriteLine ("ERROR: " + message + "\n" + e.ToString ());
 		}
 	}
 }

@@ -69,7 +69,9 @@ namespace PixPuzzle
 			window.RootViewController = new GameViewController (puzzle, selectedPuzzle);
 			window.MakeKeyAndVisible ();
 		}
+
 		#region Game Center
+
 		/// <summary>
 		/// Authenticate the player for Game Center
 		/// </summary>
