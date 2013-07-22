@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using PixPuzzle.Data;
+using MonoTouch.GameKit;
 
 namespace PixPuzzle
 {
@@ -17,10 +17,8 @@ namespace PixPuzzle
 		public static bool UserInterfaceIdiomIsPhone {
 			get { return UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone; }
 		}
-
 		// class-level declarations
 		private UIWindow window;
-
 		//
 		// This method is invoked when the application has loaded and is ready to run. In this 
 		// method you should instantiate the window, load the UI into it and then make the window
@@ -35,37 +33,72 @@ namespace PixPuzzle
 		
 			Logger.I ("Finished launching");
 
+			// Game center
+			GCAuthenticate ();
+
+			// Savedgames
 			PuzzleService.Instance.Initialize (
 				"puzzles/path/",
 				"pix.save"
 			);
 
+			// UI
 			ShowMenu ();
-//			ShowPuzzle (GameModes.Picross, "puzzles/path//0.png");
+
 			return true;
 		}
 
-		public void ShowMenu() 
+		public void ShowMenu ()
 		{
 			if (window.RootViewController != null) {
 				window.RootViewController.View.RemoveFromSuperview ();
 				window.RootViewController.Dispose ();
 			}
 
-			window.RootViewController = new MenuViewController();
+			window.RootViewController = new MenuViewController ();
 			window.MakeKeyAndVisible ();
 		}
 
-		public void ShowPuzzle(PuzzleData puzzle, UIImage selectedPuzzle) 
+		public void ShowPuzzle (PuzzleData puzzle, UIImage selectedPuzzle)
 		{
 			if (window.RootViewController != null) {
 				window.RootViewController.View.RemoveFromSuperview ();
 				window.RootViewController.Dispose ();
 			}
 
-			window.RootViewController = new GameViewController(puzzle,  selectedPuzzle);
+			window.RootViewController = new GameViewController (puzzle, selectedPuzzle);
 			window.MakeKeyAndVisible ();
 		}
+		#region Game Center
+		/// <summary>
+		/// Authenticate the player for Game Center
+		/// </summary>
+		public void GCAuthenticate ()
+		{
+			Logger.I ("Game Center Authentication requested...");
+
+			GKLocalPlayer.LocalPlayer.AuthenticateHandler = (ui, error) => {
+
+				// If ui is null, that means the user is already authenticated,
+				// for example, if the user used Game Center directly to log in
+				if (ui != null) {
+					InvokeOnMainThread (() => {
+						window.RootViewController.PresentViewController (ui, true, null);
+					});
+				} 
+
+				if (error != null) {
+					Logger.E ("Game Center Authentication failed! " + error);
+				} else {
+					if (GKLocalPlayer.LocalPlayer.Authenticated) {
+						Logger.I ("Game Center - " + GKLocalPlayer.LocalPlayer.PlayerID + " (" + GKLocalPlayer.LocalPlayer.DisplayName + ")");
+					} else {
+						Logger.W ("Game Center - disabled !");
+					}
+				}
+			};
+		}
+		#endregion
 	}
 }
 

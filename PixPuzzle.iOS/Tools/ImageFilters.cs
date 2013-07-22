@@ -96,7 +96,7 @@ namespace PixPuzzle
 
 			foreach (PaletteTempItem t in colorList.OrderByDescending (t => t.Value.Count).Take (paletteColorsNumber).Select (t => t.Value)) {
 				Color c = Color.FromArgb (t.R / t.Count, t.G / t.Count, t.B / t.Count);
-				Console.WriteLine ("Palette color usage count: " + t.Count);
+//				Console.WriteLine ("Palette color usage count: " + t.Count);
 				colorPalette.Add (c);
 			}
 
