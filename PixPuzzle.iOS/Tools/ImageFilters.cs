@@ -25,10 +25,7 @@ namespace PixPuzzle
 
 		public static UIImage Filter (UIImage img, int puzzleSize)
 		{
-			if (puzzleSize < 16)
-				puzzleSize = 16;
-
-			int tileSize = puzzleSize / 16;
+			int tileSize = 2;
 			int paletteColorsNumber = BasePaletteColorsNumber + (8 * puzzleSize / 64);
 
 			// 1/ Get the main colors
@@ -37,7 +34,7 @@ namespace PixPuzzle
 			var colorPalette = getColorPalette (img, paletteColorsNumber);
 
 			// 1/ Resize & Load image as readable
-			UIImage resizedImg = ResizeRatio (img, puzzleSize);
+			UIImage resizedImg = UIImageEx.ResizeRatio (img, puzzleSize);
 			Bitmap bitmap = new Bitmap (resizedImg);
 
 			// 2/ Apply mosaic
@@ -60,7 +57,7 @@ namespace PixPuzzle
 		{
 			// -- Make a thumbnail
 			Logger.D ("Palette -> resize");
-			UIImage thumb = ResizeRatio (img, 64);
+			UIImage thumb = UIImageEx.ResizeRatio (img, 64);
 			Bitmap thumbBitmap = new Bitmap (thumb);
 
 			// -- Get each colors
@@ -93,9 +90,8 @@ namespace PixPuzzle
 
 			while (colorPalette.Count < paletteColorsNumber) {
 
-
 				if (orderedColorList.Any () == false) {
-					Logger.W ("Not enough color!");
+					Logger.W ("Palette -> Not enough color!");
 					break;
 				}
 
@@ -213,19 +209,6 @@ namespace PixPuzzle
 			context.Dispose ();
 
 			return flippedImage;
-		}
-
-		static UIImage ResizeRatio (UIImage img, int size)
-		{
-			float ratio = img.Size.Width / img.Size.Height;
-			SizeF newSize = new SizeF (size * ratio, size);
-			return UIImageEx.Scale (img, newSize);
-		}
-
-		static UIImage Resize (UIImage img, float width, float height)
-		{
-			SizeF newSize = new SizeF (width, height);
-			return UIImageEx.Scale (img, newSize);
 		}
 	}
 }

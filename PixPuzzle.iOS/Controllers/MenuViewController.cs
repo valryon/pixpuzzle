@@ -146,7 +146,7 @@ namespace PixPuzzle
 					v.RemoveFromSuperview ();
 				}
 
-				UIImageView imageView = new UIImageView (img);
+				UIImageView imageView = new UIImageView (UIImageEx.ResizeRatio(img, 512));
 				UIScrollView scrollView = new UIScrollView (View.Frame);
 				scrollView.BackgroundColor = UIColor.LightGray;
 				scrollView.Layer.BorderColor = UIColor.Red.CGColor;
@@ -200,7 +200,7 @@ namespace PixPuzzle
 			}
 
 			// 64 is already a BIG value
-			return ImageFilters.Filter (img, 64);
+			return ImageFilters.Filter (img, 128);
 		}
 
 		UIButton CreateLevelButton (int x, int y, int width, int height, PuzzleData puzzle)
