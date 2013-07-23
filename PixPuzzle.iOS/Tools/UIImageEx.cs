@@ -2,6 +2,7 @@ using System;
 using MonoTouch.UIKit;
 using MonoTouch.CoreGraphics;
 using System.Drawing;
+using MonoTouch.CoreImage;
 
 namespace MonoTouch.UIKit
 {
@@ -60,6 +61,29 @@ namespace MonoTouch.UIKit
 			UIGraphics.EndImageContext ();
 
 			return image;
+		}
+
+		public static UIImage AdjustBrightnessSaturationAndContrast(this UIImage image, float brightness = 0, float saturation = 1, float contrast = 1) {
+
+			CIColorControls colorCtrls = new CIColorControls () {
+				Image = CIImage.FromCGImage (image.CGImage),
+			};
+
+			// Clamp values
+			saturation = Math.Min (Math.Max (0, saturation), 2);
+			brightness = Math.Min (Math.Max (-1, brightness), 1);
+			contrast = Math.Min (Math.Max (0, contrast), 4);
+
+			colorCtrls.Brightness = brightness; 
+			colorCtrls.Saturation = saturation; 
+			colorCtrls.Contrast = contrast;
+
+
+			var output = colorCtrls.OutputImage;
+			var context = CIContext.FromOptions (null);
+			var result = context.CreateCGImage (output, output.Extent);
+
+			return UIImage.FromImage(result);
 		}
 	}
 }

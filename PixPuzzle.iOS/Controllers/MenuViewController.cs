@@ -194,10 +194,14 @@ namespace PixPuzzle
 			UIImage img;
 
 			if (selectedImage == null) {
-				img = UIImage.FromFile ("testpathfromphoto.jpg");
+//				img = UIImage.FromFile ("testpathfromphoto.jpg");
+				img = UIImage.FromFile ("testpathfromphoto2.jpg");
 			} else {
 				img = selectedImage;
 			}
+
+			// Slight saturation
+			img = UIImageEx.AdjustBrightnessSaturationAndContrast (img, 0, 1.1f);
 
 			// 64 is already a BIG value
 			return ImageFilters.Filter (img, 128);

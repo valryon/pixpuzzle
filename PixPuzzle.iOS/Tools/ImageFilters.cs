@@ -55,9 +55,9 @@ namespace PixPuzzle
 
 		private static List<Color> getColorPalette (UIImage img, int paletteColorsNumber)
 		{
-			// -- Make a thumbnail
+			// -- Make a thumbnail for better performace
 			Logger.D ("Palette -> resize");
-			UIImage thumb = UIImageEx.ResizeRatio (img, 64);
+			UIImage thumb = UIImageEx.ResizeRatio (img, Math.Min (96, (int)Math.Max (img.Size.Width, img.Size.Height)));
 			Bitmap thumbBitmap = new Bitmap (thumb);
 
 			// -- Get each colors
@@ -123,11 +123,13 @@ namespace PixPuzzle
 				}
 
 				// Add the average colors
-				colorPalette.Add (Color.FromArgb (
+				Color newColor = Color.FromArgb (
 					avg_r / similarColors.Count,
 					avg_g / similarColors.Count,
 					avg_b / similarColors.Count
-				));
+				);
+
+				colorPalette.Add (newColor);
 
 				// Remove checked colors
 				foreach(var deletedColor in similarColors) {
