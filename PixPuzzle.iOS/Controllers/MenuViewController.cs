@@ -125,17 +125,17 @@ namespace PixPuzzle
 			pictureButton.SetTitle ("Custom photo", UIControlState.Normal);
 			pictureButton.TouchUpInside += (object sender, EventArgs e) => {
 
-//				Camera.TakePicture (this, (dico) => {
+				Camera.TakePicture (this, (dico) => {
 //				Camera.SelectPicture(this, (dico) => {
 
 				UIImage selectedImage = null;
 
 				// Get camera result
-//					var selectedImageObject = dico.ObjectForKey (UIImagePickerController.OriginalImage);
-//
-//					if (selectedImageObject != null && selectedImageObject is UIImage) {
-//						selectedImage = selectedImageObject as UIImage;
-//					}
+					var selectedImageObject = dico.ObjectForKey (UIImagePickerController.OriginalImage);
+
+					if (selectedImageObject != null && selectedImageObject is UIImage) {
+						selectedImage = selectedImageObject as UIImage;
+					}
 
 				Logger.I("Transforming a custom picture in a puzzle...");
 
@@ -180,7 +180,7 @@ namespace PixPuzzle
 					// Launch level
 					launchLevel (puzzle, img);
 				};
-//				});
+				});
 			};
 
 			scroll.AddSubview (pictureButton);
@@ -204,7 +204,7 @@ namespace PixPuzzle
 			img = UIImageEx.AdjustBrightnessSaturationAndContrast (img, 0, 1.1f);
 
 			// 64 is already a BIG value
-			return ImageFilters.Filter (img, 128);
+			return ImageFilters.Filter (img, 96);
 		}
 
 		UIButton CreateLevelButton (int x, int y, int width, int height, PuzzleData puzzle)
