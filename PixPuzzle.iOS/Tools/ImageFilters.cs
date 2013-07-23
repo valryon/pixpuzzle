@@ -81,14 +81,14 @@ namespace PixPuzzle
 				} // for y
 			} // for x
 
-			var orderedColorList = rawColorList.OrderBy (c => c.Value).Select(c => c.Key).ToList();
-			rawColorList = null;
+			var orderedColorList = rawColorList.OrderByDescending (c => c.Value).Select(c => c.Key).ToList();
 
 			// -- Look if we have a similar color already in the palette
 			Logger.D ("Palette -> restrict to n");
 			List<Color> colorPalette = new List<Color> (paletteColorsNumber);
 
 			while (colorPalette.Count < paletteColorsNumber) {
+
 
 				if (orderedColorList.Any () == false) {
 					Logger.W ("Not enough color!");
@@ -113,10 +113,11 @@ namespace PixPuzzle
 					double distance = Math.Abs (Math.Pow (c1.R - c2.R, 2) + Math.Pow (c1.G - c2.G, 2) + Math.Pow (c1.B - c2.B, 2));
 
 					if (distance < PaletteColorDifferenceThreshold) {
+
 						// Too close, do the average
-						avg_r = c2.R;
-						avg_g = c2.G;
-						avg_b = c2.B;
+						avg_r += c2.R;
+						avg_g += c2.G;
+						avg_b += c2.B;
 						similarColors.Add (c2);
 					}
 				}
