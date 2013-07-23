@@ -200,7 +200,7 @@ namespace PixPuzzle
 			}
 
 			// 64 is already a BIG value
-			return ImageFilters.Filter (img, 128);
+			return ImageFilters.Filter (img, 64);
 		}
 
 		UIButton CreateLevelButton (int x, int y, int width, int height, PuzzleData puzzle)

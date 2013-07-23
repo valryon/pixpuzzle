@@ -43,8 +43,8 @@ namespace PixPuzzle
 				Color ret = Color.FromArgb(pixelData[pixelDataLoc+3],pixelData[pixelDataLoc+0],pixelData[pixelDataLoc+1],pixelData[pixelDataLoc+2]);
 				return ret;
 			} catch (Exception ex) {
-				Console.WriteLine("Orig: {0}x{1}", _backingImage.Size.Width,_backingImage.Size.Height);
-				Console.WriteLine("Req:  {0}x{1}", x, y);
+//				Console.WriteLine("Orig: {0}x{1}", _backingImage.Size.Width,_backingImage.Size.Height);
+//				Console.WriteLine("Req:  {0}x{1}", x, y);
 				throw ex;
 			}
 		}

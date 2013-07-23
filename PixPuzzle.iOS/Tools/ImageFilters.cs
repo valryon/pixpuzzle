@@ -81,7 +81,11 @@ namespace PixPuzzle
 				} // for y
 			} // for x
 
-			var orderedColorList = rawColorList.OrderByDescending (c => c.Value).Select(c => c.Key).ToList();
+			var orderedColorList = rawColorList
+				.Where(c => c.Value > 1) 			// Take only colors that appear at least twice (huge optim)
+				.OrderByDescending (c => c.Value)	// Order by frequency
+				.Select(c => c.Key)					// Select only keys
+				.ToList();
 
 			// -- Look if we have a similar color already in the palette
 			Logger.D ("Palette -> restrict to n");

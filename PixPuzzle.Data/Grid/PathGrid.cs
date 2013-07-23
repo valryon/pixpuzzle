@@ -312,7 +312,7 @@ namespace PixPuzzle.Data
 			if (cell != null) {
 
 				// Debug
-				Console.WriteLine ("**Cell X:"+cell.X + " Y:"+cell.Y);
+//				Console.WriteLine ("**Cell X:"+cell.X + " Y:"+cell.Y);
 
 				if (cell.Path != null) {
 
@@ -323,7 +323,7 @@ namespace PixPuzzle.Data
 					bool isPathLastCell = cell.Path.IsLastCell (cell);
 
 					// Debug
-					Console.WriteLine ("**Path val:"+cell.Path.ExpectedLength+" closed:"+isPathClosed + " isPathLastCell:"+isPathLastCell);
+//					Console.WriteLine ("**Path val:"+cell.Path.ExpectedLength+" closed:"+isPathClosed + " isPathLastCell:"+isPathLastCell);
 
 					if (isPathClosed == false && isPathLastCell) {
 						FirstPathCell = cell.Path.FirstCell;
@@ -334,14 +334,14 @@ namespace PixPuzzle.Data
 //						}
 						LastSelectedCell = cell;
 
-						Console.WriteLine ("Starting a new path.");
+//						Console.WriteLine ("Starting a new path.");
 
 						return true;
 					} 
 				}
 			}
 
-			Console.WriteLine ("New path not allowed here.");
+//			Console.WriteLine ("New path not allowed here.");
 
 			return false;
 		}
@@ -355,7 +355,7 @@ namespace PixPuzzle.Data
 			bool lengthOk = (FirstPathCell.Path.Length < FirstPathCell.Path.ExpectedLength);
 
 			if (lengthOk == false) {
-				Console.WriteLine ("The path is too long!");
+//				Console.WriteLine ("The path is too long!");
 			}
 
 			bool cancelMove = false;
@@ -385,8 +385,8 @@ namespace PixPuzzle.Data
 							// Update the modified cells
 							UpdateView (cell.Path.Cells.ToArray());
 
-							Console.WriteLine ("Adding cell to the path.");
-							Console.WriteLine ("Current path length: "+cell.Path.Length);
+//							Console.WriteLine ("Adding cell to the path.");
+//							Console.WriteLine ("Current path length: "+cell.Path.Length);
 						}
 
 					} else {
@@ -409,7 +409,7 @@ namespace PixPuzzle.Data
 							if (FirstPathCell.Path.Length + 1 == FirstPathCell.Path.ExpectedLength) {
 
 								// Fusion!
-								Console.WriteLine ("Fusion!");
+//								Console.WriteLine ("Fusion!");
 								FirstPathCell.Path.Fusion (cell.Path);
 								cell.Path = FirstPathCell.Path;
 
@@ -417,7 +417,7 @@ namespace PixPuzzle.Data
 								UpdateView (FirstPathCell.Path.Cells.ToArray());
 
 								// End the creation, the path is complete
-								Console.WriteLine ("Path complete!");
+								Logger.I ("Path complete!");
 								EndPathCreation (true);
 							} else {
 								cancelMove = true;
@@ -428,7 +428,7 @@ namespace PixPuzzle.Data
 							// We're getting back 
 							// Remove all the cells past the one we jut reached
 							// The current cell will NOT be removed
-							Console.WriteLine ("Removing cell after "+ cell);
+//							Console.WriteLine ("Removing cell after "+ cell);
 							List<PathCell> removedCells = FirstPathCell.Path.RemoveCellAfter (cell);
 
 							// Update the modified cells
@@ -457,7 +457,7 @@ namespace PixPuzzle.Data
 			}
 
 			if (cancelMove) {
-				Console.WriteLine (cancelReason);
+				Logger.I (cancelReason);
 				EndPathCreation (false);
 			}
 		
@@ -469,7 +469,7 @@ namespace PixPuzzle.Data
 			// Check the created path
 			if (FirstPathCell != null && LastSelectedCell != null) {
 
-				Console.WriteLine ("End path creation (success: "+success+")");
+//				Console.WriteLine ("End path creation (success: "+success+")");
 
 				// Check if grid is complete
 				// = if all cells are in a valid path
@@ -509,7 +509,7 @@ namespace PixPuzzle.Data
 			if (cell != null) {
 				if (cell.Path != null) {
 					List<PathCell> removedCells = cell.Path.DeleteItself ();
-					Console.WriteLine ("Deleting the path");
+//					Console.WriteLine ("Deleting the path");
 
 					UpdateView (removedCells.ToArray());
 				}

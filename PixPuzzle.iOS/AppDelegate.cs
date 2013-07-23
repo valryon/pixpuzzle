@@ -48,6 +48,11 @@ namespace PixPuzzle
 			return true;
 		}
 
+		public override void ReceiveMemoryWarning (UIApplication application)
+		{
+			Logger.E ("MEMORY WARNING");
+		}
+
 		public void ShowMenu ()
 		{
 			if (window.RootViewController != null) {
