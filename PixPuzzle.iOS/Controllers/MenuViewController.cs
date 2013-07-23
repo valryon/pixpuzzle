@@ -8,6 +8,7 @@ using PixPuzzle.Data;
 using GPUImage.Filters;
 using MonoTouch.CoreGraphics;
 using System.Collections.Generic;
+using MonoTouch.GameKit;
 
 namespace PixPuzzle
 {
@@ -122,20 +123,20 @@ namespace PixPuzzle
 			pictureButton.Layer.BorderColor = UIColor.Green.CGColor;
 			pictureButton.Layer.BorderWidth = 3f;
 			pictureButton.SetTitleColor (UIColor.Black, UIControlState.Normal);
-			pictureButton.SetTitle ("Custom photo", UIControlState.Normal);
+			pictureButton.SetTitle ("Test photo", UIControlState.Normal);
 			pictureButton.TouchUpInside += (object sender, EventArgs e) => {
 
-				Camera.TakePicture (this, (dico) => {
+//				Camera.TakePicture (this, (dico) => {
 //				Camera.SelectPicture(this, (dico) => {
 
 				UIImage selectedImage = null;
 
 				// Get camera result
-					var selectedImageObject = dico.ObjectForKey (UIImagePickerController.OriginalImage);
-
-					if (selectedImageObject != null && selectedImageObject is UIImage) {
-						selectedImage = selectedImageObject as UIImage;
-					}
+//					var selectedImageObject = dico.ObjectForKey (UIImagePickerController.OriginalImage);
+//
+//					if (selectedImageObject != null && selectedImageObject is UIImage) {
+//						selectedImage = selectedImageObject as UIImage;
+//					}
 
 				Logger.I("Transforming a custom picture in a puzzle...");
 
@@ -174,13 +175,24 @@ namespace PixPuzzle
 				View.AddSubview (playButton);
 
 				playButton.TouchDown += (object s2, EventArgs e2) => {
-					// Save level
-					PuzzleData puzzle = PuzzleService.Instance.AddPuzzle("TODO","TODO",null);
 
-					// Launch level
-					launchLevel (puzzle, img);
+					string owner = (GKLocalPlayer.LocalPlayer.Authenticated ? GKLocalPlayer.LocalPlayer.PlayerID : "Me");
+
+					// Send to a friend
+					var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
+						appDelegate.NewVersusPhoto(() => {
+
+						
+
+						// Save level
+						PuzzleData puzzle = PuzzleService.Instance.AddPuzzle(Guid.NewGuid()+".png", owner, img);
+
+						// Launch level
+						launchLevel (puzzle, img);
+
+					});
 				};
-				});
+//				}); // Camera callback
 			};
 
 			scroll.AddSubview (pictureButton);

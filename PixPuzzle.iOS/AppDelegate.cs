@@ -105,6 +105,24 @@ namespace PixPuzzle
 				}
 			};
 		}
+
+		public override void NewVersusPhoto (Action matchFoundCallback/*, Action cancelCallback, Action errorCallback, Action playerQuitCallback*/)
+		{
+			GKMatchRequest matchRequest = new GKMatchRequest ();
+			matchRequest.MinPlayers = 2;
+			matchRequest.MaxPlayers = 2;
+			matchRequest.DefaultNumberOfPlayers = 2;
+
+			GKTurnBasedMatchmakerViewController matchMakerVc = new GKTurnBasedMatchmakerViewController (matchRequest);
+			matchMakerVc.Delegate.FoundMatch((vc, match) => {
+				matchFoundCallback();
+			});
+
+			InvokeOnMainThread (() => {
+				window.RootViewController.PresentViewController (matchMakerVc, true, null);
+			});
+		}
+
 		#endregion
 	}
 }

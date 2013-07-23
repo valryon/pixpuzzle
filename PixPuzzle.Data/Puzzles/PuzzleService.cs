@@ -28,7 +28,9 @@ namespace PixPuzzle.Data
 			}
 		}
 		#endregion
+
 		private string puzzlePath;
+		private string customPuzzlePath;
 		private string savedgamePath;
 
 		public Savedgame Savedgame { get; private set; }
@@ -40,10 +42,15 @@ namespace PixPuzzle.Data
 		/// <param name="savedgamePath">Savedgame path.</param>
 		public void Initialize (string puzzlePath, string saveFilename)
 		{
+			var path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
+
+			customPuzzlePath = System.IO.Path.Combine(path, "custom");
+			if (Directory.Exists (customPuzzlePath) == false) {
+				Directory.CreateDirectory (customPuzzlePath);
+			}
 
 			// Load the saved infos
 			//----------------------------------------------------------------
-			var path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
 			this.savedgamePath = System.IO.Path.Combine (path, saveFilename);
 
 			if (File.Exists (savedgamePath) == false) {
@@ -71,7 +78,7 @@ namespace PixPuzzle.Data
 			}
 
 			// Look for puzzles!
-			var knowPuzzles = Savedgame.Puzzles.Select (p => p.Filename);
+			var knowPuzzles = Savedgame.Puzzles.Where(p => p.IsCustom == false).Select (p => p.Filename);
 			bool shouldSave = false;
 
 			foreach (string file in Directory.GetFiles(this.puzzlePath)) {
@@ -100,7 +107,6 @@ namespace PixPuzzle.Data
 		/// <param name="removeCompleted">If set to <c>true</c> remove completed.</param>
 		public List<PuzzleData> GetPuzzles (bool newOnly = false, bool removeCompleted = false)
 		{
-
 			var puzzles = Savedgame.Puzzles;
 
 			if (newOnly) {
@@ -117,10 +123,37 @@ namespace PixPuzzle.Data
 		/// <summary>
 		/// Save a new custom puzzle
 		/// </summary>
-		public PuzzleData AddPuzzle (string filename, string owner, byte[][] image)
+		#if IOS
+		public PuzzleData AddPuzzle (string filename, string owner, MonoTouch.UIKit.UIImage image)
 		{
-			return new PuzzleData ();
+			string completeFilePath = System.IO.Path.Combine (customPuzzlePath, filename);
+
+			Logger.I ("Adding a new " + owner+ " puzzle " + filename);
+
+			// Save the new image
+			MonoTouch.Foundation.NSError error;
+			image.AsPNG ().Save (completeFilePath, true, out error);
+
+			if (error == null) {
+				Logger.I ("Adding puzzle OK");
+			}
+			else {
+				Logger.E ("Adding puzzle KO: " + error);
+			}
+
+			PuzzleData newPuzzle = new PuzzleData () {
+				Filename = completeFilePath,
+				IsCustom = true,
+				IsNew = true,
+				OwnerId = owner
+			};
+
+			Savedgame.Puzzles.Add (newPuzzle);
+			Save ();
+
+			return newPuzzle;
 		}
+#endif
 
 		/// <summary>
 		/// Save the game properties
