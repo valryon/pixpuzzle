@@ -170,5 +170,9 @@
     </BundleResource>
     <BundleResource Include="Resources\testpathfromphoto.jpg" />
     <BundleResource Include="Resources\testpathfromphoto2.jpg" />
+    <BundleResource Include="Resources\testpathfromphoto3.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Views\iPad.storyboard" />
   </ItemGroup>
 </Project>
