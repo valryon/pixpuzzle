@@ -15,22 +15,8 @@ namespace PixPuzzle
 	{
 		private UIView buttonPanel, levelSelectionPanel;
 
-		public MenuViewController () : base (null, null)
+		public MenuViewController (IntPtr handle) : base (handle)
 		{
-		}
-
-		public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations ()
-		{
-			return UIInterfaceOrientationMask.Landscape;
-		}
-
-		public override void ViewDidLoad ()
-		{
-			base.ViewDidLoad ();
-			
-			createView ();
-			showButtonPanel ();
-
 		}
 
 		private void createView ()
@@ -266,7 +252,7 @@ namespace PixPuzzle
 
 			Logger.I ("Launching level!");
 
-			appDelegate.ShowPuzzle (puzzle, level);
+//			appDelegate.ShowPuzzle (puzzle, level);
 		}
 	}
 }

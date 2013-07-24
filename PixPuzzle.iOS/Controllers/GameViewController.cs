@@ -127,7 +127,7 @@ namespace PixPuzzle
 
 			alert.Dismissed += (object sender, UIButtonEventArgs e) => {
 				var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
-				appDelegate.ShowMenu ();
+//				appDelegate.ShowMenu ();
 			};
 			alert.Show ();
 		}

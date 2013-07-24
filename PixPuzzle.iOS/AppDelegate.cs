@@ -19,7 +19,10 @@ namespace PixPuzzle
 		}
 
 		// class-level declarations
-		private UIWindow window;
+		public override UIWindow Window {
+			get;
+			set;
+		}
 
 		//
 		// This method is invoked when the application has loaded and is ready to run. In this 
@@ -30,9 +33,6 @@ namespace PixPuzzle
 		//
 		public override bool FinishedLaunching (UIApplication app, NSDictionary options)
 		{
-			// create a new window instance based on the screen size
-			window = new UIWindow (UIScreen.MainScreen.Bounds);
-		
 			Logger.I ("Finished launching");
 
 			// Game center
@@ -44,9 +44,6 @@ namespace PixPuzzle
 				"pix.save"
 			);
 
-			// UI
-			ShowMenu ();
-
 			return true;
 		}
 
@@ -55,27 +52,7 @@ namespace PixPuzzle
 			Logger.E ("MEMORY WARNING");
 		}
 
-		public void ShowMenu ()
-		{
-			if (window.RootViewController != null) {
-				window.RootViewController.View.RemoveFromSuperview ();
-				window.RootViewController.Dispose ();
-			}
 
-			window.RootViewController = new MenuViewController ();
-			window.MakeKeyAndVisible ();
-		}
-
-		public void ShowPuzzle (PuzzleData puzzle, UIImage selectedPuzzle)
-		{
-			if (window.RootViewController != null) {
-				window.RootViewController.View.RemoveFromSuperview ();
-				window.RootViewController.Dispose ();
-			}
-
-			window.RootViewController = new GameViewController (puzzle, selectedPuzzle);
-			window.MakeKeyAndVisible ();
-		}
 		#region Game Center
 		/// <summary>
 		/// Authenticate the player for Game Center
@@ -90,7 +67,7 @@ namespace PixPuzzle
 				// for example, if the user used Game Center directly to log in
 				if (ui != null) {
 					InvokeOnMainThread (() => {
-						window.RootViewController.PresentViewController (ui, true, null);
+						Window.RootViewController.PresentViewController (ui, true, null);
 					});
 				} 
 
@@ -130,7 +107,7 @@ namespace PixPuzzle
 			matchMakerVc.Delegate = d;
 
 			InvokeOnMainThread (() => {
-				window.RootViewController.PresentViewController (matchMakerVc, true, null);
+				Window.RootViewController.PresentViewController (matchMakerVc, true, null);
 			});
 		}
 		#endregion
