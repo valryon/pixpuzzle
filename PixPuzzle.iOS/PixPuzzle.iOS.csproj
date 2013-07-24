@@ -118,6 +118,10 @@
     <Compile Include="Tools\Camera.cs" />
     <Compile Include="Tools\UIImageEx.cs" />
     <Compile Include="Tools\ImageFilters.cs" />
+    <Compile Include="Controllers\MenuPlayViewController.cs" />
+    <Compile Include="Controllers\MenuPlayViewController.designer.cs">
+      <DependentUpon>MenuPlayViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
