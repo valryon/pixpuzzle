@@ -60,5 +60,6 @@
     <Compile Include="Puzzles\Savedgame.cs" />
     <Compile Include="Tools\Logger.cs" />
     <Compile Include="Grid\IGrid.cs" />
+    <Compile Include="Puzzles\PuzzleData.cs" />
   </ItemGroup>
 </Project>

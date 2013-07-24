@@ -4,7 +4,6 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoTouch.CoreGraphics;
 using PixPuzzle.Data;
-using GPUImage.Filters;
 
 namespace PixPuzzle
 {

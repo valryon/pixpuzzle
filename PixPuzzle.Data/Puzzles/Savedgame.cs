@@ -3,17 +3,6 @@ using System.Collections.Generic;
 
 namespace PixPuzzle.Data
 {
-	[Serializable]
-	public class PuzzleData
-	{
-		public string Filename;
-		public int width;
-		public int height;
-		public DateTimeOffset? BestScore;
-		public bool IsNew;
-		public bool IsCustom;
-		public string OwnerId;
-	}
 
 	[Serializable]
 	public class Savedgame

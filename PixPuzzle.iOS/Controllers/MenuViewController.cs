@@ -5,7 +5,6 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.IO;
 using PixPuzzle.Data;
-using GPUImage.Filters;
 using MonoTouch.CoreGraphics;
 using System.Collections.Generic;
 using MonoTouch.GameKit;
@@ -176,21 +175,21 @@ namespace PixPuzzle
 
 				playButton.TouchDown += (object s2, EventArgs e2) => {
 
-					string owner = (GKLocalPlayer.LocalPlayer.Authenticated ? GKLocalPlayer.LocalPlayer.PlayerID : "Me");
+					string me = (GKLocalPlayer.LocalPlayer.Authenticated ? GKLocalPlayer.LocalPlayer.PlayerID : "Me");
 
 					// Send to a friend
 					var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
-						appDelegate.NewVersusPhoto(() => {
 
-						
+						appDelegate.NewVersusPhoto((matchPuzzle) => {
 
-						// Save level
-						PuzzleData puzzle = PuzzleService.Instance.AddPuzzle(Guid.NewGuid()+".png", owner, img);
+							// Save level
+							PuzzleData puzzle = PuzzleService.Instance.AddPuzzle(Guid.NewGuid()+".png", me, img);
+							puzzle.Match = matchPuzzle.Match;
 
-						// Launch level
-						launchLevel (puzzle, img);
+							// Launch level
+							launchLevel (puzzle, img);
 
-					});
+						}, null, null, null);
 				};
 //				}); // Camera callback
 			};
