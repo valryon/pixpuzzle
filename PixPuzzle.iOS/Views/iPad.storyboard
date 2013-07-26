@@ -24,7 +24,7 @@
         <!--Menu Play View Controller-->
         <scene sceneID="rUm-TP-hBr">
             <objects>
-                <viewController id="DI9-gn-DVB" customClass="MenuPlayViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MenuPlayViewController" id="DI9-gn-DVB" customClass="MenuPlayViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1dg-9h-H7C">
                         <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -61,7 +61,7 @@
         <!--Menu Create View Controller-->
         <scene sceneID="v7s-3J-RQn">
             <objects>
-                <viewController id="Sy4-0d-DJB" customClass="MenuCreateViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MenuCreateViewController" id="Sy4-0d-DJB" customClass="MenuCreateViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="O7k-L1-OgC">
                         <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -91,7 +91,7 @@
         <!--Menu Friends View Controller-->
         <scene sceneID="H39-9g-H3L">
             <objects>
-                <viewController id="4m4-qB-5YE" customClass="MenuFriendsViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MenuFriendsViewController" id="4m4-qB-5YE" customClass="MenuFriendsViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9yC-3g-9vU">
                         <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -118,7 +118,7 @@
         <!--Menu Credits View Controller-->
         <scene sceneID="Nen-sU-fGR">
             <objects>
-                <viewController id="HKw-Mf-mNn" customClass="MenuCreditsViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MenuCreditsViewController" id="HKw-Mf-mNn" customClass="MenuCreditsViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wZm-9a-ftX">
                         <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -145,7 +145,7 @@
         <!--Game View Controller-->
         <scene sceneID="Uae-VD-A1w">
             <objects>
-                <viewController id="JqQ-rF-dhF" customClass="GameViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GameViewController" id="JqQ-rF-dhF" customClass="GameViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="eTJ-1i-QdT">
                         <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -176,7 +176,7 @@
         <!--Menu View Controller-->
         <scene sceneID="Lac-he-PMv">
             <objects>
-                <viewController id="ofl-rK-6Au" customClass="MenuViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MenuViewController" id="ofl-rK-6Au" customClass="MenuViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dvb-m8-HZO">
                         <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -223,7 +223,6 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="OnCreateButtonPressed:" destination="ofl-rK-6Au" eventType="touchUpInside" id="307-Im-NkW"/>
                                     <action selector="OnFriendsButtonPressed:" destination="ofl-rK-6Au" eventType="touchUpInside" id="usB-xR-5tn"/>
                                 </connections>
                             </button>

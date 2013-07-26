@@ -13,6 +13,11 @@ namespace PixPuzzle
 		private UIView gridUIView;
 		private UIImage selectedPuzzle;
 
+		public GameViewController(IntPtr handle)
+			: base(handle)
+		{
+		}
+
 		public GameViewController (PuzzleData puzzle, UIImage selectedPuzzle)
 			: base (null, null)
 		{

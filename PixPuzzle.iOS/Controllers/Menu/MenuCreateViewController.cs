@@ -7,7 +7,8 @@ namespace PixPuzzle
 {
 	public partial class MenuCreateViewController : UIViewController
 	{
-		public MenuCreateViewController () : base ()
+		public MenuCreateViewController (IntPtr handle)
+			: base(handle)
 		{
 		}
 

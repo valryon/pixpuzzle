@@ -25,8 +25,40 @@ namespace PixPuzzle
 
 		partial void OnPlayButtonPressed (MonoTouch.Foundation.NSObject sender)
 		{
+			var vc = this.Storyboard.InstantiateViewController("MenuPlayViewController") as UIViewController;
+
 			NavigationController.PushViewController(
-				new MenuPlayViewController(),
+				vc,
+				true
+				);
+		}
+
+		partial void OnCreateButtonPressed (MonoTouch.Foundation.NSObject sender)
+		{
+			var vc = this.Storyboard.InstantiateViewController("MenuCreateViewController") as UIViewController;
+
+			NavigationController.PushViewController(
+				vc,
+				true
+				);
+		}
+
+		partial void OnCreditsButtonPressed (MonoTouch.Foundation.NSObject sender)
+		{
+			var vc = this.Storyboard.InstantiateViewController("MenuCreditsViewController") as UIViewController;
+
+			NavigationController.PushViewController(
+				vc,
+				true
+				);
+		}
+
+		partial void OnFriendsButtonPressed (MonoTouch.Foundation.NSObject sender)
+		{
+			var vc = this.Storyboard.InstantiateViewController("MenuFriendsViewController") as UIViewController;
+
+			NavigationController.PushViewController(
+				vc,
 				true
 				);
 		}
