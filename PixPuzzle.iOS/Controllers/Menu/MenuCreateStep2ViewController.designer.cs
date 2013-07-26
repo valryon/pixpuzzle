@@ -9,11 +9,11 @@ using System.CodeDom.Compiler;
 
 namespace PixPuzzle
 {
-	[Register ("MenuCreateViewController")]
-	partial class MenuCreateViewController
+	[Register ("MenuCreateStep2ViewController")]
+	partial class MenuCreateStep2ViewController
 	{
-		[Action ("OnTakePictureButtonPressed:")]
-		partial void OnTakePictureButtonPressed (MonoTouch.Foundation.NSObject sender);
+		[Action ("OnPlayButtonPressed:")]
+		partial void OnPlayButtonPressed (MonoTouch.Foundation.NSObject sender);
 		
 		void ReleaseDesignerOutlets ()
 		{

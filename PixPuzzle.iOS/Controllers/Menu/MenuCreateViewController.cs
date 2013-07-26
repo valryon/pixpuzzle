@@ -12,6 +12,15 @@ namespace PixPuzzle
 		{
 		}
 
+		partial void OnTakePictureButtonPressed (MonoTouch.Foundation.NSObject sender)
+		{
+			var vc = this.Storyboard.InstantiateViewController("MenuCreateStep2ViewController") as UIViewController;
+
+			NavigationController.PushViewController(
+				vc,
+				true
+				);
+		}
 	}
 }
 

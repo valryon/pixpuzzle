@@ -135,6 +135,10 @@
     </Compile>
     <Compile Include="Controllers\PuzzlesList\PuzzlesListViewControllerCell.cs" />
     <Compile Include="Controllers\PuzzlesList\MenuPlayViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuCreateStep2ViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuCreateStep2ViewController.designer.cs">
+      <DependentUpon>MenuCreateStep2ViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

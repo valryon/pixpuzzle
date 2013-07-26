@@ -57,6 +57,12 @@ namespace PixPuzzle
 			
 			return cell;
 		}
+
+//		public override UICollectionReusableView GetViewForSupplementaryElement (UICollectionView collectionView, NSString elementKind, NSIndexPath indexPath)
+//		{
+			// TODO
+//			return base.GetViewForSupplementaryElement (collectionView, elementKind, indexPath);
+//		}
 	}
 }
 
