@@ -1,50 +1,70 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4471.1" systemVersion="12E55" targetRuntime="iOS.CocoaTouch.iPad" variant="6xAndEarlier" propertyAccessControl="none" useAutolayout="YES" initialViewController="y7V-gD-ybH">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12E55" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="sw2-C9-UoM">
     <dependencies>
-        <deployment version="1552" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3697.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
     </dependencies>
     <scenes>
         <!--Navigation Controller-->
-        <scene sceneID="JRv-84-euB">
+        <scene sceneID="xWj-AB-aKT">
             <objects>
-                <navigationController definesPresentationContext="YES" id="y7V-gD-ybH" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="uyG-rr-ocS">
-                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
+                <navigationController definesPresentationContext="YES" id="sw2-C9-UoM" sceneMemberID="viewController">
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="PT0-IE-cpM">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
-                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="Pte-Zp-RV2">
-                        <rect key="frame" x="0.0" y="960" width="768" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </toolbar>
                     <connections>
-                        <segue destination="e7k-MU-43p" kind="relationship" relationship="rootViewController" id="EZn-SC-D4x"/>
+                        <segue destination="ofl-rK-6Au" kind="relationship" relationship="rootViewController" id="i4b-eP-Jov"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="FXD-W0-dYZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UWB-zh-7g1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1018" y="-341"/>
+            <point key="canvasLocation" x="-1166" y="-268"/>
         </scene>
-        <!--Menu View Controller-->
-        <scene sceneID="yyS-jA-no1">
+        <!--Menu Play View Controller-->
+        <scene sceneID="rUm-TP-hBr">
             <objects>
-                <viewController id="e7k-MU-43p" customClass="MenuViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="D1D-Ex-KLf"/>
-                        <viewControllerLayoutGuide type="bottom" id="LVc-Ut-ysM"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="bEu-Hx-ZMS">
+                <viewController id="DI9-gn-DVB" customClass="MenuPlayViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="1dg-9h-H7C">
                         <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Pix Puzzle - A super puzzle to play!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lOR-EZ-2bz">
-                                <rect key="frame" x="336" y="20" width="353" height="26"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Selected puzzle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Pg9-mv-eKP">
+                                <rect key="frame" x="770" y="20" width="121" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NvG-1Z-4zE">
-                                <rect key="frame" x="434" y="168" width="156" height="84"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Choose your puzzle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="YCC-fL-W6V">
+                                <rect key="frame" x="84" y="20" width="151" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="2hD-bI-XfI"/>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="88x-UE-0SR" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1475" y="-1642"/>
+        </scene>
+        <!--Menu View Controller-->
+        <scene sceneID="Lac-he-PMv">
+            <objects>
+                <viewController id="ofl-rK-6Au" customClass="MenuViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="dvb-m8-HZO">
+                        <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="tx2-b6-aEQ">
+                                <rect key="frame" x="440" y="115" width="236" height="115"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Play">
@@ -55,11 +75,11 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="OnPlayButtonTouched:" destination="e7k-MU-43p" eventType="touchUpInside" id="W6p-Nf-q9I"/>
+                                    <action selector="OnPlayButtonPressed:" destination="ofl-rK-6Au" eventType="touchUpInside" id="mhL-mm-oqp"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YAp-ke-M6a">
-                                <rect key="frame" x="434" y="283" width="156" height="84"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="kbt-0O-XYJ">
+                                <rect key="frame" x="440" y="257" width="236" height="104"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Create">
@@ -70,14 +90,14 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="OnButtonCreateTouched:" destination="e7k-MU-43p" eventType="touchUpInside" id="TqN-WI-24Y"/>
+                                    <action selector="OnCreateButtonPressed:" destination="ofl-rK-6Au" eventType="touchUpInside" id="feF-AV-gxg"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZfM-Hw-cKx">
-                                <rect key="frame" x="434" y="394" width="156" height="84"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="nyK-Of-3l2">
+                                <rect key="frame" x="440" y="380" width="236" height="104"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Friends">
+                                <state key="normal" title="Puzzles with friends">
                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -85,11 +105,12 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="OnButtonFriendsTouched:" destination="e7k-MU-43p" eventType="touchUpInside" id="Q74-VO-l5l"/>
+                                    <action selector="OnCreateButtonPressed:" destination="ofl-rK-6Au" eventType="touchUpInside" id="307-Im-NkW"/>
+                                    <action selector="OnFriendsButtonPressed:" destination="ofl-rK-6Au" eventType="touchUpInside" id="usB-xR-5tn"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sc4-th-dUy">
-                                <rect key="frame" x="434" y="616" width="156" height="44"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="X5b-ny-qzG">
+                                <rect key="frame" x="496" y="517" width="125" height="62"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Credits">
@@ -100,51 +121,56 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="OnButtonCreditsTouched:" destination="e7k-MU-43p" eventType="touchUpInside" id="kCL-dh-N8j"/>
+                                    <action selector="OnCreditsButtonPressed:" destination="ofl-rK-6Au" eventType="touchUpInside" id="i4w-i2-lxM"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="PixPuzzle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dzJ-LJ-6To">
+                                <rect key="frame" x="521" y="53" width="75" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
-                    <navigationItem key="navigationItem" id="Y8h-eD-W4U"/>
-                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackOpaque"/>
+                    <navigationItem key="navigationItem" id="bxA-iK-fOV"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                     <connections>
-                        <segue destination="9Rl-sV-9lv" kind="push" id="Ccc-Mp-Fs1"/>
+                        <outlet property="ButtonCreate" destination="kbt-0O-XYJ" id="5uh-MA-hrZ"/>
+                        <outlet property="ButtonCredits" destination="X5b-ny-qzG" id="dcB-ot-17E"/>
+                        <outlet property="ButtonFriends" destination="nyK-Of-3l2" id="Q0X-if-b3D"/>
+                        <outlet property="ButtonPlay" destination="tx2-b6-aEQ" id="LJm-lo-G2R"/>
+                        <segue destination="DI9-gn-DVB" kind="push" id="XHs-Xn-Je5"/>
                     </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="QBw-L6-Hag" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KBJ-FQ-pSS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="101" y="-213"/>
-        </scene>
-        <!--Menu Play View Controller-->
-        <scene sceneID="JhM-dL-rvA">
-            <objects>
-                <viewController id="9Rl-sV-9lv" customClass="MenuPlayViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="vxn-vd-8ZO"/>
-                        <viewControllerLayoutGuide type="bottom" id="KsP-Pg-WOl"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="N1v-CH-rv3">
-                        <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="Rda-s4-nGs"/>
-                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackOpaque"/>
-                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="wyF-Vm-yZb" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1509" y="-213"/>
+            <point key="canvasLocation" x="312" y="-268"/>
         </scene>
     </scenes>
+    <classes>
+        <class className="MenuPlayViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/MenuPlayViewController.h"/>
+        </class>
+        <class className="MenuViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/MenuViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="OnCreateButtonPressed:"/>
+                <relationship kind="action" name="OnCreditsButtonPressed:"/>
+                <relationship kind="action" name="OnFriendsButtonPressed:"/>
+                <relationship kind="action" name="OnPlayButtonPressed:"/>
+                <relationship kind="outlet" name="ButtonCreate" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="ButtonCredits" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="ButtonFriends" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="ButtonPlay" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
-        <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackOpaque"/>
+        <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>

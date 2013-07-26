@@ -96,6 +96,7 @@
     <Folder Include="Resources\puzzles\" />
     <Folder Include="Resources\puzzles\picross\" />
     <Folder Include="Resources\puzzles\path\" />
+    <Folder Include="Controllers\Menu\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -111,16 +112,16 @@
       <DependentUpon>GameViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\PathGridView.cs" />
-    <Compile Include="Controllers\MenuViewController.cs" />
-    <Compile Include="Controllers\MenuViewController.designer.cs">
-      <DependentUpon>MenuViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="Tools\Camera.cs" />
     <Compile Include="Tools\UIImageEx.cs" />
     <Compile Include="Tools\ImageFilters.cs" />
-    <Compile Include="Controllers\MenuPlayViewController.cs" />
-    <Compile Include="Controllers\MenuPlayViewController.designer.cs">
+    <Compile Include="Controllers\Menu\MenuPlayViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuPlayViewController.designer.cs">
       <DependentUpon>MenuPlayViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Menu\MenuViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuViewController.designer.cs">
+      <DependentUpon>MenuViewController.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
