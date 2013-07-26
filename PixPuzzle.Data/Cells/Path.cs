@@ -9,21 +9,6 @@ namespace PixPuzzle.Data
 	public class Path
 	{
 		/// <summary>
-		/// The path, an ordered list of cells
-		/// </summary>
-		/// <value>The path cells.</value>
-		public List<PathCell> Cells { get; private set; }
-		/// <summary>
-		/// The color is determined by the first cell
-		/// </summary>
-		/// <value>The color of the path.</value>
-		public CellColor Color { get; private set; }
-		/// <summary>
-		/// The expected length of the path, in cells.
-		/// </summary>
-		/// <value>The expected length.</value>
-		public int ExpectedLength { get; private set; }
-		/// <summary>
 		/// Initializes a new instance of the <see cref="PixPuzzle.Data.Path"/> class.
 		/// </summary>
 		/// <param name="firstCell">First cell.</param>
@@ -39,6 +24,7 @@ namespace PixPuzzle.Data
 
 			ExpectedLength = expectedLength;
 		}
+
 		/// <summary>
 		/// Add a cell to the path
 		/// </summary>
@@ -47,6 +33,7 @@ namespace PixPuzzle.Data
 		{
 			Cells.Add (cell);
 		}
+
 		/// <summary>
 		/// Removes all the cells that are after the given one
 		/// </summary>
@@ -69,6 +56,7 @@ namespace PixPuzzle.Data
 
 			return cellsToRemove;
 		}
+
 		/// <summary>
 		/// Delete the path, make it disappear
 		/// </summary>
@@ -106,6 +94,7 @@ namespace PixPuzzle.Data
 		{
 			return Cells.IndexOf (cell);
 		}
+
 		/// <summary>
 		/// Fusion the specified other path.
 		/// </summary>
@@ -162,6 +151,25 @@ namespace PixPuzzle.Data
 
 			return Cells [Cells.Count -1] == cell;
 		}
+
+		/// <summary>
+		/// The path, an ordered list of cells
+		/// </summary>
+		/// <value>The path cells.</value>
+		public List<PathCell> Cells { get; private set; }
+
+		/// <summary>
+		/// The color is determined by the first cell
+		/// </summary>
+		/// <value>The color of the path.</value>
+		public CellColor Color { get; private set; }
+
+		/// <summary>
+		/// The expected length of the path, in cells.
+		/// </summary>
+		/// <value>The expected length.</value>
+		public int ExpectedLength { get; private set; }
+
 		/// <summary>
 		/// Path first cell
 		/// </summary>
@@ -174,6 +182,7 @@ namespace PixPuzzle.Data
 				return Cells [0];
 			}
 		}
+
 		/// <summary>
 		/// The path is closed and has the expected length
 		/// </summary>
@@ -183,6 +192,7 @@ namespace PixPuzzle.Data
 				return IsClosed && (ExpectedLength == Length);
 			}
 		}
+
 		/// <summary>
 		/// Current path length
 		/// </summary>
@@ -192,6 +202,7 @@ namespace PixPuzzle.Data
 				return Cells.Count;
 			}
 		}
+
 		/// <summary>
 		/// A closed path is a path where the first and last cells contains a number
 		/// </summary>

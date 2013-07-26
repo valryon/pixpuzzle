@@ -10,8 +10,13 @@
             <objects>
                 <navigationController definesPresentationContext="YES" id="y7V-gD-ybH" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="uyG-rr-ocS">
+                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="Pte-Zp-RV2">
+                        <rect key="frame" x="0.0" y="960" width="768" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="e7k-MU-43p" kind="relationship" relationship="rootViewController" id="EZn-SC-D4x"/>
                     </connections>
@@ -50,7 +55,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="OnButtonPlayTouched:" destination="e7k-MU-43p" eventType="touchUpInside" id="X5c-UU-EW3"/>
+                                    <action selector="OnPlayButtonTouched:" destination="e7k-MU-43p" eventType="touchUpInside" id="W6p-Nf-q9I"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YAp-ke-M6a">
@@ -114,10 +119,10 @@
             </objects>
             <point key="canvasLocation" x="101" y="-213"/>
         </scene>
-        <!--View Controller-->
+        <!--Menu Play View Controller-->
         <scene sceneID="JhM-dL-rvA">
             <objects>
-                <viewController id="9Rl-sV-9lv" sceneMemberID="viewController">
+                <viewController id="9Rl-sV-9lv" customClass="MenuPlayViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="vxn-vd-8ZO"/>
                         <viewControllerLayoutGuide type="bottom" id="KsP-Pg-WOl"/>

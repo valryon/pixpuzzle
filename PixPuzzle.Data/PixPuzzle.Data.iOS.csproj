@@ -53,9 +53,7 @@
     <Compile Include="Cells\Path.cs" />
     <Compile Include="Cells\PathCell.cs" />
     <Compile Include="Cells\Cell.cs" />
-    <Compile Include="Cells\PicrossCell.cs" />
     <Compile Include="Views\IPathGridView.cs" />
-    <Compile Include="Views\IPicrossGridView.cs" />
     <Compile Include="Puzzles\PuzzleService.cs" />
     <Compile Include="Puzzles\Savedgame.cs" />
     <Compile Include="Tools\Logger.cs" />

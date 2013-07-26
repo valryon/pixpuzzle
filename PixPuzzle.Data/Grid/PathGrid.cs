@@ -15,15 +15,11 @@ namespace PixPuzzle.Data
 	/// </summary>
 	public abstract class PathGrid : Grid<PathCell, IPathGridView>
 	{
-		/// <summary>
-		/// Path data
-		/// </summary>
 		protected PathCell FirstPathCell, LastSelectedCell;
-
 		protected int MaxPathLength;
+		private Random mRandom = new Random (182);
 
-		private Random random = new Random (182); // Predictable seed
-
+		// Predictable seed
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PixPuzzle.Data.Grid"/> class.
 		/// </summary>
@@ -49,9 +45,10 @@ namespace PixPuzzle.Data
 			// Tell the cell we now have data
 			Cells [x] [y].Color = color;
 		}
-			/// <summary>
-			/// Prepare the grid
-			/// </summary>
+
+		/// <summary>
+		/// Prepare the grid
+		/// </summary>
 		public override void SetupGrid (CellColor[][] pixels)
 		{
 			Logger.I ("Setup the grid...");
@@ -96,13 +93,14 @@ namespace PixPuzzle.Data
 
 			base.SetupGrid (pixels);
 		}
-			/// <summary>
-			/// Create a path from a given cell.
-			/// </summary>
-			/// <returns>The last cell.</returns>
-			/// <param name="x">The x coordinate.</param>
-			/// <param name="y">The y coordinate.</param>
-			/// <param name="firstCell">First cell.</param>
+
+		/// <summary>
+		/// Create a path from a given cell.
+		/// </summary>
+		/// <returns>The last cell.</returns>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		/// <param name="firstCell">First cell.</param>
 		private PathCell createPath (PathCell firstCell)
 		{
 			PathCell lastCell = firstCell;
@@ -136,7 +134,7 @@ namespace PixPuzzle.Data
 				int borders = 0;
 				while (availableDirections.Count > 0) {
 
-					int index = random.Next (availableDirections.Count);
+					int index = mRandom.Next (availableDirections.Count);
 
 					CellPoint p = availableDirections [index];
 					availableDirections.Remove (p);
@@ -156,7 +154,7 @@ namespace PixPuzzle.Data
 				}
 
 				// Limit maximum path lengh randomly
-				int max = random.Next(2, MaxPathLength);
+				int max = mRandom.Next (2, MaxPathLength);
 
 				if (currentCell == GetCell (0, 0)) {
 					max += 1;
@@ -180,7 +178,8 @@ namespace PixPuzzle.Data
 
 			return lastCell;
 		}
-			#endregion
+
+		#endregion
 
 		/// <summary>
 		/// Common draw function for multiplatform rendering
@@ -300,6 +299,7 @@ namespace PixPuzzle.Data
 			// End the drawing
 			View.EndDraw ();
 		}
+
 		#region Path creation behavior
 
 		/// <summary>
@@ -345,6 +345,7 @@ namespace PixPuzzle.Data
 
 			return false;
 		}
+
 		/// <summary>
 		/// Creates the path.
 		/// </summary>
@@ -383,7 +384,7 @@ namespace PixPuzzle.Data
 							cell.Path = FirstPathCell.Path;
 
 							// Update the modified cells
-							UpdateView (cell.Path.Cells.ToArray());
+							UpdateView (cell.Path.Cells.ToArray ());
 
 //							Console.WriteLine ("Adding cell to the path.");
 //							Console.WriteLine ("Current path length: "+cell.Path.Length);
@@ -414,7 +415,7 @@ namespace PixPuzzle.Data
 								cell.Path = FirstPathCell.Path;
 
 								// Update the modified cells
-								UpdateView (FirstPathCell.Path.Cells.ToArray());
+								UpdateView (FirstPathCell.Path.Cells.ToArray ());
 
 								// End the creation, the path is complete
 								Logger.I ("Path complete!");
@@ -437,7 +438,7 @@ namespace PixPuzzle.Data
 							cellsToUpdate.AddRange (cell.Path.Cells);
 							cellsToUpdate.AddRange (removedCells);
 
-							UpdateView (cellsToUpdate.ToArray());
+							UpdateView (cellsToUpdate.ToArray ());
 						} else {
 							// I don't know what's we're doing.
 							// ABANDON ALL THE WORK
@@ -511,7 +512,7 @@ namespace PixPuzzle.Data
 					List<PathCell> removedCells = cell.Path.DeleteItself ();
 //					Console.WriteLine ("Deleting the path");
 
-					UpdateView (removedCells.ToArray());
+					UpdateView (removedCells.ToArray ());
 				}
 			}
 		}

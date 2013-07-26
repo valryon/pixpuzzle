@@ -22,6 +22,7 @@ namespace PixPuzzle.Data
 		/// Occurs when grid is completed.
 		/// </summary>
 		public event Action GridCompleted;
+
 		/// <summary>
 		/// The grid
 		/// </summary>
@@ -33,6 +34,7 @@ namespace PixPuzzle.Data
 			Width = imageWidth;
 			Height = imageHeight;
 		}
+
 		#region Grid creation
 
 		/// <summary>

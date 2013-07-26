@@ -16,6 +16,7 @@ namespace PixPuzzle.Data
 			X = x;
 			Y = y;
 		}
+
 		/// <summary>
 		/// Location (X)
 		/// </summary>
