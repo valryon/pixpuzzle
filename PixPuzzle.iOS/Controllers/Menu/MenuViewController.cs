@@ -21,6 +21,17 @@ namespace PixPuzzle
 		}
 
 
+		#region Events
+
+		partial void OnPlayButtonPressed (MonoTouch.Foundation.NSObject sender)
+		{
+			NavigationController.PushViewController(
+				new MenuPlayViewController(),
+				true
+				);
+		}
+
+		#endregion
 
 
 		///  OOOOOOOOOOOOOOOLD

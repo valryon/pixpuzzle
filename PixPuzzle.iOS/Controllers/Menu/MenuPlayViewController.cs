@@ -7,8 +7,8 @@ namespace PixPuzzle
 {
 	public partial class MenuPlayViewController : UIViewController
 	{
-		public MenuPlayViewController (IntPtr handle)
-			: base(handle)
+		public MenuPlayViewController ()
+			: base()
 		{
 		}
 

@@ -26,5 +26,7 @@
 	<string>0.1</string>
 	<key>UIMainStoryboardFile</key>
 	<string>iPad</string>
+	<key>UIMainStoryboardFile~ipad</key>
+	<string>iPad</string>
 </dict>
 </plist>
