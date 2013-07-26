@@ -86,6 +86,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
+    <Reference Include="MonoTouch.Dialog-1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -122,6 +123,18 @@
     <Compile Include="Controllers\Menu\MenuViewController.cs" />
     <Compile Include="Controllers\Menu\MenuViewController.designer.cs">
       <DependentUpon>MenuViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Menu\MenuCreateViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuCreateViewController.designer.cs">
+      <DependentUpon>MenuCreateViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Menu\MenuFriendsViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuFriendsViewController.designer.cs">
+      <DependentUpon>MenuFriendsViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Menu\MenuCreditsViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuCreditsViewController.designer.cs">
+      <DependentUpon>MenuCreditsViewController.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
