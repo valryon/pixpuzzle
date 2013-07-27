@@ -17,13 +17,8 @@ namespace PixPuzzle
 			Initialize ();
 		}
 
-		public MenuPlayViewController (UICollectionViewLayout layout) : base (layout)
+		private void Initialize ()
 		{
-			Initialize ();
-		}
-
-		private void Initialize() {
-
 			var allPuzzles = PuzzleService.Instance.GetPuzzles ();
 
 			puzzlesPxn = allPuzzles.Where (p => p.IsCustom == false).ToList ();
@@ -42,7 +37,7 @@ namespace PixPuzzle
 		{
 			base.ViewDidLoad ();
 
-			CollectionView.RegisterClassForCell(typeof(PuzzlesListViewControllerCell), PuzzlesListViewControllerCell.Key);
+			CollectionView.RegisterClassForCell (typeof(PuzzlesListViewControllerCell), PuzzlesListViewControllerCell.Key);
 		}
 
 		public override int NumberOfSections (UICollectionView collectionView)
@@ -81,16 +76,15 @@ namespace PixPuzzle
 			}
 
 			// Populate view from puzzle data
-			PuzzlesListViewControllerCell cell = PuzzlesListViewControllerCell.Create(puzzle);
+			PuzzlesListViewControllerCell cell = PuzzlesListViewControllerCell.Create (puzzle);
 
 			return cell;
 		}
-
-//		public override UICollectionReusableView GetViewForSupplementaryElement (UICollectionView collectionView, NSString elementKind, NSIndexPath indexPath)
-//		{
-			// TODO
-//			return base.GetViewForSupplementaryElement (collectionView, elementKind, indexPath);
-//		}
+		//		public override UICollectionReusableView GetViewForSupplementaryElement (UICollectionView collectionView, NSString elementKind, NSIndexPath indexPath)
+		//		{
+		// TODO
+		//			return base.GetViewForSupplementaryElement (collectionView, elementKind, indexPath);
+		//		}
 	}
 }
 
