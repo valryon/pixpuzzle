@@ -115,6 +115,7 @@ namespace PixPuzzle.Data
 				puzzles = puzzles.Where (p => p.BestScore.HasValue == false).ToList ();
 			}
 
+
 			return puzzles.ToList ();
 		}
 

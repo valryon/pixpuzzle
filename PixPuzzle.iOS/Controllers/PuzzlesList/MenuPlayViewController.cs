@@ -1,19 +1,33 @@
 using System;
-using System.Drawing;
+using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using PixPuzzle.Data;
+using System.Collections.Generic;
 
 namespace PixPuzzle
 {
 	[Register ("MenuPlayViewController")]
 	public class MenuPlayViewController : UICollectionViewController
 	{
+		private List<PuzzleData> puzzlesPxn, puzzlesCustom;
+
 		public MenuPlayViewController (IntPtr handle) : base (handle)
 		{
+			Initialize ();
 		}
 
 		public MenuPlayViewController (UICollectionViewLayout layout) : base (layout)
 		{
+			Initialize ();
+		}
+
+		private void Initialize() {
+
+			var allPuzzles = PuzzleService.Instance.GetPuzzles ();
+
+			puzzlesPxn = allPuzzles.Where (p => p.IsCustom == false).ToList ();
+			puzzlesCustom = allPuzzles.Where (p => p.IsCustom == true).ToList ();
 		}
 
 		public override void DidReceiveMemoryWarning ()
@@ -27,34 +41,48 @@ namespace PixPuzzle
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
-			
-			// Register any custom UICollectionViewCell classes
-			CollectionView.RegisterClassForCell (typeof(PuzzlesListViewControllerCell), PuzzlesListViewControllerCell.Key);
-			
-			// Note: If you use one of the Collection View Cell templates to create a new cell type,
-			// you can register it using the RegisterNibForCell() method like this:
-			//
-			// CollectionView.RegisterNibForCell (MyCollectionViewCell.Nib, MyCollectionViewCell.Key);
+
+			CollectionView.RegisterClassForCell(typeof(PuzzlesListViewControllerCell), PuzzlesListViewControllerCell.Key);
 		}
 
 		public override int NumberOfSections (UICollectionView collectionView)
 		{
-			// TODO: return the actual number of sections
-			return 1;
+			// We have two sections : 
+			// 1/ Puzzles embed in the app
+			int sectionCount = 1;
+
+			// 2/ Puzzles created by the user
+			if (puzzlesCustom.Any ()) {
+				sectionCount = 2;
+			}
+			return sectionCount;
 		}
 
 		public override int GetItemsCount (UICollectionView collectionView, int section)
 		{
-			// TODO: return the actual number of items in the section
-			return 1;
+			if (section == 0) {
+				return puzzlesPxn.Count;
+			} else if (section == 1) {
+				return puzzlesCustom.Count;
+			}
+
+			return 0;
 		}
 
 		public override UICollectionViewCell GetCell (UICollectionView collectionView, NSIndexPath indexPath)
 		{
-			var cell = collectionView.DequeueReusableCell (PuzzlesListViewControllerCell.Key, indexPath) as PuzzlesListViewControllerCell;
-			
-			// TODO: populate the cell with the appropriate data based on the indexPath
-			
+			// Get the appropriate puzzle
+			PuzzleData puzzle = null;
+
+			if (indexPath.Section == 0) {
+				puzzle = puzzlesPxn [indexPath.Item];
+			} else {
+				puzzle = puzzlesCustom [indexPath.Item];
+			}
+
+			// Populate view from puzzle data
+			PuzzlesListViewControllerCell cell = PuzzlesListViewControllerCell.Create(puzzle);
+
 			return cell;
 		}
 

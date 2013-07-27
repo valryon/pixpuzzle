@@ -195,5 +195,6 @@
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Views\iPad.storyboard" />
+    <InterfaceDefinition Include="Views\PuzzlesListViewCell.xib" />
   </ItemGroup>
 </Project>
