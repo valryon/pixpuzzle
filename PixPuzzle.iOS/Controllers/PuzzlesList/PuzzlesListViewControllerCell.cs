@@ -10,24 +10,50 @@ namespace PixPuzzle
 	public class PuzzlesListViewControllerCell : UICollectionViewCell
 	{
 		public static readonly NSString Key = new NSString ("PuzzlesListViewCell");
-		public static readonly UINib Nib= Nib = UINib.FromName ("PuzzlesListViewCell", NSBundle.MainBundle);
+		public static readonly UINib Nib = Nib = UINib.FromName ("PuzzlesListViewCell", NSBundle.MainBundle);
 
-		public PuzzlesListViewControllerCell(IntPtr handle) : base (handle)
+		public PuzzlesListViewControllerCell (IntPtr handle) : base (handle)
 		{
+			ExclusiveTouch = true;
+			MultipleTouchEnabled = false;
 		}
 
-		public static PuzzlesListViewControllerCell Create(PuzzleData puzzle) {
+		public void UpdatePuzzleView (PuzzleData puzzle)
+		{
+			// Code specific view properties
+			this.Layer.BorderWidth = 1.0f;
+			this.Layer.BorderColor = UIColor.Black.CGColor;
 
+			if (this.Selected) {
+				SetSelected ();
+			} else {
+				UnsetSelected ();
+			}
+		}
+
+		public void UpdateDetailPanel() 
+		{
+
+		}
+
+		public void SetSelected ()
+		{
+			this.BackgroundColor = UIColor.Cyan;
+
+			// Update panel
+			UpdateDetailPanel ();
+		}
+
+		public void UnsetSelected ()
+		{
+			this.BackgroundColor = UIColor.White;
+		}
+
+		public static PuzzlesListViewControllerCell Create (PuzzleData puzzle)
+		{
 			PuzzlesListViewControllerCell cell = Nib.Instantiate (null, null) [0] as PuzzlesListViewControllerCell;
 
-			// Code specific view properties
-			cell.Layer.BorderWidth = 1.0f;
-			cell.Layer.BorderColor = UIColor.Black.CGColor;
-
-			if (cell.Selected) {
-				cell.BackgroundColor = UIColor.Blue;
-			}
-
+			cell.UpdatePuzzleView (puzzle);
 
 			// Get components. Check XCode for tags.
 			// 1 = image

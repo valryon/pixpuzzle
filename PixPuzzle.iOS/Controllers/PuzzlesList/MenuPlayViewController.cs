@@ -67,24 +67,39 @@ namespace PixPuzzle
 		public override UICollectionViewCell GetCell (UICollectionView collectionView, NSIndexPath indexPath)
 		{
 			// Get the appropriate puzzle
-			PuzzleData puzzle = null;
-
-			if (indexPath.Section == 0) {
-				puzzle = puzzlesPxn [indexPath.Item];
-			} else {
-				puzzle = puzzlesCustom [indexPath.Item];
-			}
+			var puzzle = GetPuzzleForPath (indexPath);
 
 			// Populate view from puzzle data
 			PuzzlesListViewControllerCell cell = PuzzlesListViewControllerCell.Create (puzzle);
 
 			return cell;
 		}
-		//		public override UICollectionReusableView GetViewForSupplementaryElement (UICollectionView collectionView, NSString elementKind, NSIndexPath indexPath)
-		//		{
-		// TODO
-		//			return base.GetViewForSupplementaryElement (collectionView, elementKind, indexPath);
-		//		}
+	
+		public override void ItemSelected (UICollectionView collectionView, NSIndexPath indexPath)
+		{
+			var cell = collectionView.CellForItem (indexPath) as PuzzlesListViewControllerCell;
+
+			cell.SetSelected ();
+		}
+
+		public override void ItemDeselected (UICollectionView collectionView, NSIndexPath indexPath)
+		{
+			var cell = collectionView.CellForItem (indexPath) as PuzzlesListViewControllerCell;
+
+			cell.UnsetSelected ();
+		}
+
+		internal PuzzleData GetPuzzleForPath (NSIndexPath indexPath)
+		{
+			PuzzleData puzzle = null;
+			if (indexPath.Section == 0) {
+				puzzle = puzzlesPxn [indexPath.Item];
+			}
+			else {
+				puzzle = puzzlesCustom [indexPath.Item];
+			}
+			return puzzle;
+		}
 	}
 }
 
