@@ -99,6 +99,7 @@
     <Folder Include="Resources\puzzles\path\" />
     <Folder Include="Controllers\Menu\" />
     <Folder Include="Controllers\PuzzlesList\" />
+    <Folder Include="Controllers\FriendsPuzzlesList\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -147,6 +148,8 @@
     <Compile Include="Controllers\PuzzlesList\PuzzleListDetailViewController.designer.cs">
       <DependentUpon>PuzzleListDetailViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListCellViewController.cs" />
+    <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -200,9 +203,11 @@
     <BundleResource Include="Resources\testpathfromphoto3.jpg" />
     <BundleResource Include="Resources\icon_friends.jpg" />
     <BundleResource Include="Resources\icon_completed.jpg" />
+    <BundleResource Include="Resources\pixelnest_studio.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Views\iPad.storyboard" />
     <InterfaceDefinition Include="Views\PuzzlesListViewCell.xib" />
+    <InterfaceDefinition Include="Views\FriendsPuzzleListCell.xib" />
   </ItemGroup>
 </Project>

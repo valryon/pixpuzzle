@@ -13,8 +13,6 @@ namespace PixPuzzle
 {
 	public partial class MenuViewController : UIViewController
 	{
-		private UIView buttonPanel, levelSelectionPanel;
-
 		public MenuViewController (IntPtr handle) : base (handle)
 		{
 
