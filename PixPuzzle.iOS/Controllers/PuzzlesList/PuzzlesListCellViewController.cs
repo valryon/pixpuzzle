@@ -6,13 +6,13 @@ using PixPuzzle.Data;
 
 namespace PixPuzzle
 {
-	[Register("PuzzlesListViewControllerCell")]
-	public class PuzzlesListViewControllerCell : UICollectionViewCell
+	[Register("PuzzlesListCellViewController")]
+	public class PuzzlesListCellViewController : UICollectionViewCell
 	{
 		public static readonly NSString Key = new NSString ("PuzzlesListViewCell");
 		public static readonly UINib Nib = Nib = UINib.FromName ("PuzzlesListViewCell", NSBundle.MainBundle);
 
-		public PuzzlesListViewControllerCell (IntPtr handle) : base (handle)
+		public PuzzlesListCellViewController (IntPtr handle) : base (handle)
 		{
 			ExclusiveTouch = true;
 			MultipleTouchEnabled = false;
@@ -49,9 +49,9 @@ namespace PixPuzzle
 			this.BackgroundColor = UIColor.White;
 		}
 
-		public static PuzzlesListViewControllerCell Create (PuzzleData puzzle)
+		public static PuzzlesListCellViewController Create (PuzzleData puzzle)
 		{
-			PuzzlesListViewControllerCell cell = Nib.Instantiate (null, null) [0] as PuzzlesListViewControllerCell;
+			PuzzlesListCellViewController cell = Nib.Instantiate (null, null) [0] as PuzzlesListCellViewController;
 
 			cell.UpdatePuzzleView (puzzle);
 

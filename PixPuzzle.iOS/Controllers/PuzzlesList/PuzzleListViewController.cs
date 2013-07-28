@@ -7,12 +7,12 @@ using System.Collections.Generic;
 
 namespace PixPuzzle
 {
-	[Register ("MenuPlayViewController")]
-	public class MenuPlayViewController : UICollectionViewController
+	[Register ("PuzzleListViewController")]
+	public class PuzzleListViewController : UICollectionViewController
 	{
 		private List<PuzzleData> puzzlesPxn, puzzlesCustom;
 
-		public MenuPlayViewController (IntPtr handle) : base (handle)
+		public PuzzleListViewController (IntPtr handle) : base (handle)
 		{
 			Initialize ();
 		}
@@ -37,7 +37,7 @@ namespace PixPuzzle
 		{
 			base.ViewDidLoad ();
 
-			CollectionView.RegisterClassForCell (typeof(PuzzlesListViewControllerCell), PuzzlesListViewControllerCell.Key);
+			CollectionView.RegisterClassForCell (typeof(PuzzlesListCellViewController), PuzzlesListCellViewController.Key);
 		}
 
 		public override int NumberOfSections (UICollectionView collectionView)
@@ -70,21 +70,21 @@ namespace PixPuzzle
 			var puzzle = GetPuzzleForPath (indexPath);
 
 			// Populate view from puzzle data
-			PuzzlesListViewControllerCell cell = PuzzlesListViewControllerCell.Create (puzzle);
+			PuzzlesListCellViewController cell = PuzzlesListCellViewController.Create (puzzle);
 
 			return cell;
 		}
 	
 		public override void ItemSelected (UICollectionView collectionView, NSIndexPath indexPath)
 		{
-			var cell = collectionView.CellForItem (indexPath) as PuzzlesListViewControllerCell;
+			var cell = collectionView.CellForItem (indexPath) as PuzzlesListCellViewController;
 
 			cell.SetSelected ();
 		}
 
 		public override void ItemDeselected (UICollectionView collectionView, NSIndexPath indexPath)
 		{
-			var cell = collectionView.CellForItem (indexPath) as PuzzlesListViewControllerCell;
+			var cell = collectionView.CellForItem (indexPath) as PuzzlesListCellViewController;
 
 			cell.UnsetSelected ();
 		}

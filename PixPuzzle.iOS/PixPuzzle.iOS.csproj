@@ -133,12 +133,17 @@
     <Compile Include="Controllers\Menu\MenuCreditsViewController.designer.cs">
       <DependentUpon>MenuCreditsViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\PuzzlesList\PuzzlesListViewControllerCell.cs" />
-    <Compile Include="Controllers\PuzzlesList\MenuPlayViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuPlayViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuPlayViewController.designer.cs">
+      <DependentUpon>MenuPlayViewController.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\Menu\MenuCreateStep2ViewController.cs" />
     <Compile Include="Controllers\Menu\MenuCreateStep2ViewController.designer.cs">
       <DependentUpon>MenuCreateStep2ViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\PuzzlesList\PuzzlesListCellViewController.cs" />
+    <Compile Include="Controllers\PuzzlesList\PuzzleListViewController.cs" />
+
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
