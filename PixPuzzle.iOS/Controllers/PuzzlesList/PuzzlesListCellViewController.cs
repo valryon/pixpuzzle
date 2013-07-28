@@ -34,9 +34,6 @@ namespace PixPuzzle
 		public void SetSelected ()
 		{
 			this.BackgroundColor = UIColor.Cyan;
-
-			// Update panel
-			UpdateDetailPanel ();
 		}
 
 		public void UnsetSelected ()

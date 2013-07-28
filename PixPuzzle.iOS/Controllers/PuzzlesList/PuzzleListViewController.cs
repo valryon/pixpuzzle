@@ -11,6 +11,7 @@ namespace PixPuzzle
 	public class PuzzleListViewController : UICollectionViewController
 	{
 		private List<PuzzleData> puzzlesPxn, puzzlesCustom;
+		private PuzzlesListCellViewController lastSelectedCell;
 
 		public PuzzleListViewController (IntPtr handle) : base (handle)
 		{
@@ -23,14 +24,6 @@ namespace PixPuzzle
 
 			puzzlesPxn = allPuzzles.Where (p => p.IsCustom == false).ToList ();
 			puzzlesCustom = allPuzzles.Where (p => p.IsCustom == true).ToList ();
-		}
-
-		public override void DidReceiveMemoryWarning ()
-		{
-			// Releases the view if it doesn't have a superview.
-			base.DidReceiveMemoryWarning ();
-			
-			// Release any cached data, images, etc that aren't in use.
 		}
 
 		public override void ViewDidLoad ()
@@ -77,9 +70,16 @@ namespace PixPuzzle
 	
 		public override void ItemSelected (UICollectionView collectionView, NSIndexPath indexPath)
 		{
-			var cell = collectionView.CellForItem (indexPath) as PuzzlesListCellViewController;
+			lastSelectedCell.UnsetSelected ();
 
+			var cell = collectionView.CellForItem (indexPath) as PuzzlesListCellViewController;
+			lastSelectedCell = cell;
 			cell.SetSelected ();
+
+			var puzzle = GetPuzzleForPath (indexPath);
+
+			MenuPlayViewController menu = ParentViewController as MenuPlayViewController;
+			menu.SetSelectedPuzzle (puzzle);
 		}
 
 		public override void ItemDeselected (UICollectionView collectionView, NSIndexPath indexPath)
@@ -87,6 +87,9 @@ namespace PixPuzzle
 			var cell = collectionView.CellForItem (indexPath) as PuzzlesListCellViewController;
 
 			cell.UnsetSelected ();
+
+			MenuPlayViewController menu = ParentViewController as MenuPlayViewController;
+			menu.SetSelectedPuzzle (null);
 		}
 
 		internal PuzzleData GetPuzzleForPath (NSIndexPath indexPath)
@@ -99,6 +102,26 @@ namespace PixPuzzle
 				puzzle = puzzlesCustom [indexPath.Item];
 			}
 			return puzzle;
+		}
+
+		internal void SelectPuzzleManually (PuzzleData selectedPuzzle)
+		{
+			int index = -1;
+			int section = -1;
+
+			if (puzzlesPxn.Contains (selectedPuzzle)) {
+				section = 0;
+				index = puzzlesPxn.IndexOf (selectedPuzzle);
+			} else if (puzzlesCustom.Contains (selectedPuzzle)) {
+				section = 1;
+				index = puzzlesCustom.IndexOf (selectedPuzzle);
+			}
+
+			NSIndexPath path = NSIndexPath.FromItemSection (index, section);
+			var cell = CollectionView.CellForItem (path) as PuzzlesListCellViewController;
+			cell.SetSelected ();
+
+			lastSelectedCell = cell;
 		}
 	}
 }

@@ -18,8 +18,7 @@ namespace PixPuzzle
 		{
 		}
 
-		public GameViewController (PuzzleData puzzle, UIImage selectedPuzzle)
-			: base (null, null)
+		public void DefinePuzzle (PuzzleData puzzle, UIImage selectedPuzzle)
 		{
 			this.selectedPuzzle = selectedPuzzle;
 
@@ -30,33 +29,14 @@ namespace PixPuzzle
 			gridUIView = initializeGrid (puzzle, image, bitmap);
 		}
 
-		public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations ()
-		{
-			return UIInterfaceOrientationMask.Landscape;
-		}
-
-		public override void DidReceiveMemoryWarning ()
-		{
-			// Releases the view if it doesn't have a superview.
-			base.DidReceiveMemoryWarning ();
-			
-			// Release any cached data, images, etc that aren't in use.
-		}
-
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
 
-			View.BackgroundColor = UIColor.FromPatternImage (new UIImage("background.png"));
+			NavigationController.NavigationBarHidden = true;
+			NavigationController.NavigationBar.Hidden = true;
 
-			// Setup scrollview
-			UIScrollView scrollView = new UIScrollView (new RectangleF(0,0,UIScreen.MainScreen.Bounds.Height,UIScreen.MainScreen.Bounds.Width));
-			scrollView.ScrollEnabled = true;
-			scrollView.MinimumZoomScale = 0.5f;
-			scrollView.MaximumZoomScale = 2f;
-			scrollView.BouncesZoom = true;
-
-			scrollView.ViewForZoomingInScrollView = new UIScrollViewGetZoomView((sv) => {
+			ScrollViewGame.ViewForZoomingInScrollView = new UIScrollViewGetZoomView((sv) => {
 				return gridUIView;
 			});
 
@@ -64,24 +44,27 @@ namespace PixPuzzle
 			int margin = grid.CellSize * 4;
 
 			// Center the grid
-			scrollView.ContentSize = new SizeF (gridUIView.Frame.Width + margin, gridUIView.Frame.Height + margin);
+			ScrollViewGame.ContentSize = new SizeF (gridUIView.Frame.Width + margin, gridUIView.Frame.Height + margin);
 
-//			PointF center = new PointF(scrollView.ContentSize.Width/2, scrollView.ContentSize.Height/2);
-//			scrollView.ContentOffset = new PointF (center.X/2, center.Y/2);
+			PointF center = new PointF(ScrollViewGame.ContentSize.Width/2, ScrollViewGame.ContentSize.Height/2);
+			ScrollViewGame.ContentOffset = new PointF (center.X/2, center.Y/2);
 
 			// Scrolling with two fingers
-			foreach (UIGestureRecognizer gestureRecognizer in scrollView.GestureRecognizers) {     
-				if (gestureRecognizer is UIPanGestureRecognizer) {
-					UIPanGestureRecognizer panGR = (UIPanGestureRecognizer)gestureRecognizer;
-					panGR.MinimumNumberOfTouches = 2;               
-					panGR.MaximumNumberOfTouches = 2;
-				}
-
-			}
+//			foreach (UIGestureRecognizer gestureRecognizer in ScrollViewGame.GestureRecognizers) {     
+//				if (gestureRecognizer is UIPanGestureRecognizer) {
+//					UIPanGestureRecognizer panGR = (UIPanGestureRecognizer)gestureRecognizer;
+//					panGR.MinimumNumberOfTouches = 2;               
+//					panGR.MaximumNumberOfTouches = 2;
+//				}
+//			}
 
 //			gridUIView.Center = center;
-			scrollView.AddSubview (gridUIView);
-			View.AddSubview (scrollView);
+			ScrollViewGame.AddSubview (gridUIView);
+		}
+
+		partial void OnButtonQuitPressed (MonoTouch.Foundation.NSObject sender)
+		{
+
 		}
 
 		private UIView initializeGrid (PuzzleData puzzle, UIImage image, Bitmap bitmap) {
