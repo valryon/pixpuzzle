@@ -50,15 +50,15 @@ namespace PixPuzzle
 			ScrollViewGame.ContentOffset = new PointF (center.X/2, center.Y/2);
 
 			// Scrolling with two fingers
-//			foreach (UIGestureRecognizer gestureRecognizer in ScrollViewGame.GestureRecognizers) {     
-//				if (gestureRecognizer is UIPanGestureRecognizer) {
-//					UIPanGestureRecognizer panGR = (UIPanGestureRecognizer)gestureRecognizer;
-//					panGR.MinimumNumberOfTouches = 2;               
-//					panGR.MaximumNumberOfTouches = 2;
-//				}
-//			}
+			foreach (UIGestureRecognizer gestureRecognizer in ScrollViewGame.GestureRecognizers) {     
+				if (gestureRecognizer is UIPanGestureRecognizer) {
+					UIPanGestureRecognizer panGR = (UIPanGestureRecognizer)gestureRecognizer;
+					panGR.MinimumNumberOfTouches = 2;               
+					panGR.MaximumNumberOfTouches = 2;
+				}
+			}
 
-//			gridUIView.Center = center;
+			gridUIView.Center = center;
 			ScrollViewGame.AddSubview (gridUIView);
 		}
 
