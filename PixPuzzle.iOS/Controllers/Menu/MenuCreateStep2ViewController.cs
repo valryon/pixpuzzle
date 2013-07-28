@@ -36,24 +36,37 @@ namespace PixPuzzle
 
 		partial void OnPlayButtonPressed (MonoTouch.Foundation.NSObject sender)
 		{
-			var vc = this.Storyboard.InstantiateViewController("GameViewController") as GameViewController;
-
-			// Register a new puzzle
-			string me = (GKLocalPlayer.LocalPlayer.Authenticated ? GKLocalPlayer.LocalPlayer.PlayerID : "Me");
-			PuzzleData puzzle = PuzzleService.Instance.AddPuzzle(Guid.NewGuid()+".png", me, baseImage);
-
-			// Prepare game
-			vc.DefinePuzzle(puzzle, baseImage);
-
-			NavigationController.PushViewController(
-				vc,
-				true
-				);
+			LaunchPuzzleForCurrentImage (null);
 		}
 
 		partial void OnShareButtonPressed (MonoTouch.Foundation.NSObject sender)
 		{
+			// Send to a friend
+			var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
 
+			appDelegate.NewVersusPhoto((matchPuzzle) => {
+
+				// Launch level
+				LaunchPuzzleForCurrentImage (matchPuzzle);
+
+			}, null, null, null);
+		}
+
+		void LaunchPuzzleForCurrentImage (PuzzleData matchPuzzle)
+		{
+			// Register a new puzzle
+			string me = (GKLocalPlayer.LocalPlayer.Authenticated ? GKLocalPlayer.LocalPlayer.PlayerID : "Me");
+			PuzzleData puzzle = PuzzleService.Instance.AddPuzzle(Guid.NewGuid()+".png", me, baseImage);
+
+			if (matchPuzzle != null) {
+				puzzle.Match = matchPuzzle.Match;
+			}
+
+			// Prepare game
+			var vc = this.Storyboard.InstantiateViewController ("GameViewController") as GameViewController;
+			vc.DefinePuzzle (puzzle, baseImage);
+
+			NavigationController.PushViewController (vc, true);
 		}
 	}
 }
