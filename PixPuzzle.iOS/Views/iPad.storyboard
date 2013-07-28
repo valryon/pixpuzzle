@@ -305,15 +305,8 @@
                         <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Puzzle creation ste 2" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="LdN-0X-e0C">
-                                <rect key="frame" x="491" y="342" width="158" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="dCP-lk-X2l">
-                                <rect key="frame" x="531" y="380" width="55" height="44"/>
+                                <rect key="frame" x="673" y="537" width="159" height="82"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Play">
@@ -327,6 +320,31 @@
                                     <action selector="OnPlayButtonPressed:" destination="DtW-y8-FEn" eventType="touchUpInside" id="zJY-iH-Lr2"/>
                                 </connections>
                             </button>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="BDL-0z-A1b">
+                                <rect key="frame" x="192" y="26" width="640" height="480"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" id="Ohy-bC-rzB">
+                                        <rect key="frame" x="0.0" y="0.0" width="640" height="480"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                </subviews>
+                            </scrollView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Gb2-Hy-EiB">
+                                <rect key="frame" x="192" y="537" width="159" height="82"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="Share with a friend">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="OnShareButtonPressed:" destination="DtW-y8-FEn" eventType="touchUpInside" id="8A8-OG-HKg"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
@@ -335,6 +353,7 @@
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="ImageTransformed" destination="Ohy-bC-rzB" id="1Uq-pH-Ezo"/>
                         <segue destination="JqQ-rF-dhF" kind="push" identifier="MenuCreate2ToGame" id="APh-H0-IKw"/>
                     </connections>
                 </viewController>
@@ -459,7 +478,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xUD-bV-seF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4143" y="-1644"/>
+            <point key="canvasLocation" x="4127" y="-1644"/>
         </scene>
         <!--Menu View Controller-->
         <scene sceneID="Lac-he-PMv">
@@ -571,6 +590,8 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/MenuCreateStep2ViewController.h"/>
             <relationships>
                 <relationship kind="action" name="OnPlayButtonPressed:"/>
+                <relationship kind="action" name="OnShareButtonPressed:"/>
+                <relationship kind="outlet" name="ImageTransformed" candidateClass="UIImageView"/>
             </relationships>
         </class>
         <class className="MenuCreateViewController" superclassName="UIViewController">
@@ -642,6 +663,6 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="5qX-eq-nYP"/>
+        <segue reference="APh-H0-IKw"/>
     </inferredMetricsTieBreakers>
 </document>
