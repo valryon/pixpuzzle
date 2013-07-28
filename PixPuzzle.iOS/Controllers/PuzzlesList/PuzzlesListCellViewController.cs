@@ -31,11 +31,6 @@ namespace PixPuzzle
 			}
 		}
 
-		public void UpdateDetailPanel() 
-		{
-
-		}
-
 		public void SetSelected ()
 		{
 			this.BackgroundColor = UIColor.Cyan;
@@ -57,16 +52,16 @@ namespace PixPuzzle
 
 			// Get components. Check XCode for tags.
 			// 1 = image
-			// 2 = title label
-			// 3 = size label
+			// 2 = friends icon
+			// 3 = completed icon
 			UIImageView imageView = cell.ViewWithTag (1) as UIImageView;
 			imageView.Image = UIImage.FromFile (puzzle.Filename);
 
-			UILabel titleLabel = cell.ViewWithTag (2) as UILabel;
-			titleLabel.Text = System.IO.Path.GetFileNameWithoutExtension (puzzle.Filename);
+			UIImageView friendsIcon = cell.ViewWithTag (2) as UIImageView;
+			friendsIcon.Hidden = !(puzzle.IsCustom);
 
-			UILabel sizeLabel = cell.ViewWithTag (3) as UILabel;
-			sizeLabel.Text = "42 x 42";
+			UIImageView completedIcon = cell.ViewWithTag (3) as UIImageView;
+			completedIcon.Hidden = !(puzzle.BestScore.HasValue);
 
 			return cell;
 		}

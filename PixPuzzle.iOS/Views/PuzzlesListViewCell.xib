@@ -14,7 +14,6 @@
 			<string>IBProxyObject</string>
 			<string>IBUICollectionViewCell</string>
 			<string>IBUIImageView</string>
-			<string>IBUILabel</string>
 		</array>
 		<array key="IBDocument.PluginDependencies">
 			<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -43,79 +42,53 @@
 							<object class="IBUIImageView" id="909564776">
 								<reference key="NSNextResponder" ref="532320771"/>
 								<int key="NSvFlags">274</int>
-								<string key="NSFrame">{{20, 20}, {160, 120}}</string>
+								<string key="NSFrame">{{20, 20}, {60, 60}}</string>
 								<reference key="NSSuperview" ref="532320771"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="698638198"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<int key="IBUIContentMode">1</int>
 								<int key="IBUITag">1</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 							</object>
-							<object class="IBUILabel" id="698638198">
+							<object class="IBUIImageView" id="673876276">
 								<reference key="NSNextResponder" ref="532320771"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{57, 148}, {87, 21}}</string>
+								<string key="NSFrame">{{85, 0}, {15, 15}}</string>
 								<reference key="NSSuperview" ref="532320771"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="48403932"/>
+								<reference key="NSNextKeyView" ref="909564776"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
-								<bool key="IBUIOpaque">NO</bool>
-								<bool key="IBUIClipsSubviews">YES</bool>
-								<int key="IBUIContentMode">7</int>
-								<int key="IBUITag">2</int>
-								<bool key="IBUIUserInteractionEnabled">NO</bool>
-								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-								<string key="IBUIText">Puzzle title</string>
-								<object class="NSColor" key="IBUITextColor">
-									<int key="NSColorSpace">1</int>
-									<bytes key="NSRGB">MC4xMjE1Njg2Mjc1IDAuNDc0NTA5ODAzOSAwLjc5MjE1Njg2MjcAA</bytes>
-								</object>
-								<nil key="IBUIHighlightedColor"/>
-								<int key="IBUIBaselineAdjustment">0</int>
-								<int key="IBUITextAlignment">1</int>
-								<object class="IBUIFontDescription" key="IBUIFontDescription" id="5971933">
-									<int key="type">1</int>
-									<double key="pointSize">17</double>
-								</object>
-								<object class="NSFont" key="IBUIFont" id="156333299">
-									<string key="NSName">Helvetica</string>
-									<double key="NSSize">17</double>
-									<int key="NSfFlags">16</int>
-								</object>
-								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
-							</object>
-							<object class="IBUILabel" id="48403932">
-								<reference key="NSNextResponder" ref="532320771"/>
-								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{72, 166}, {56, 21}}</string>
-								<reference key="NSSuperview" ref="532320771"/>
-								<reference key="NSWindow"/>
-								<string key="NSReuseIdentifierKey">_NS:9</string>
-								<bool key="IBUIOpaque">NO</bool>
-								<bool key="IBUIClipsSubviews">YES</bool>
-								<int key="IBUIContentMode">7</int>
 								<int key="IBUITag">3</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-								<string key="IBUIText">21 x 21</string>
-								<object class="NSColor" key="IBUITextColor">
-									<int key="NSColorSpace">1</int>
-									<bytes key="NSRGB">MC4yNDMxMzcyNTQ5IDAuMjQzMTM3MjU0OSAwLjI0MzEzNzI1NDkAA</bytes>
+								<object class="NSCustomResource" key="IBUIImage">
+									<string key="NSClassName">NSImage</string>
+									<string key="NSResourceName">icon_completed.jpg</string>
 								</object>
-								<nil key="IBUIHighlightedColor"/>
-								<int key="IBUIBaselineAdjustment">0</int>
-								<int key="IBUITextAlignment">1</int>
-								<reference key="IBUIFontDescription" ref="5971933"/>
-								<reference key="IBUIFont" ref="156333299"/>
-								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
+							</object>
+							<object class="IBUIImageView" id="308914238">
+								<reference key="NSNextResponder" ref="532320771"/>
+								<int key="NSvFlags">292</int>
+								<string key="NSFrameSize">{15, 15}</string>
+								<reference key="NSSuperview" ref="532320771"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="673876276"/>
+								<string key="NSReuseIdentifierKey">_NS:9</string>
+								<int key="IBUITag">2</int>
+								<bool key="IBUIUserInteractionEnabled">NO</bool>
+								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
+								<object class="NSCustomResource" key="IBUIImage">
+									<string key="NSClassName">NSImage</string>
+									<string key="NSResourceName">icon_friends.jpg</string>
+								</object>
 							</object>
 						</array>
-						<string key="NSFrameSize">{200, 200}</string>
+						<string key="NSFrameSize">{100, 100}</string>
 						<reference key="NSSuperview" ref="273110050"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="909564776"/>
+						<reference key="NSNextKeyView" ref="308914238"/>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">3</int>
 							<bytes key="NSWhite">MCAwAA</bytes>
@@ -127,7 +100,7 @@
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 					</object>
 				</array>
-				<string key="NSFrameSize">{200, 200}</string>
+				<string key="NSFrameSize">{100, 100}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="532320771"/>
@@ -140,7 +113,7 @@
 				<bool key="IBUIClipsSubviews">YES</bool>
 				<int key="IBUIContentMode">4</int>
 				<bool key="IBUIMultipleTouchEnabled">YES</bool>
-				<string key="IBUIRestorationIdentifier"/>
+				<string key="IBUIRestorationIdentifier">PuzzlesListViewCell</string>
 				<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 				<string key="IBUIReuseIdentifier">PuzzlesListViewCell</string>
 				<reference key="IBUIContentView" ref="532320771"/>
@@ -171,9 +144,9 @@
 						<int key="objectID">3</int>
 						<reference key="object" ref="273110050"/>
 						<array class="NSMutableArray" key="children">
-							<reference ref="698638198"/>
-							<reference ref="48403932"/>
 							<reference ref="909564776"/>
+							<reference ref="308914238"/>
+							<reference ref="673876276"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -183,13 +156,13 @@
 						<reference key="parent" ref="273110050"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">5</int>
-						<reference key="object" ref="698638198"/>
+						<int key="objectID">7</int>
+						<reference key="object" ref="673876276"/>
 						<reference key="parent" ref="273110050"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">6</int>
-						<reference key="object" ref="48403932"/>
+						<int key="objectID">8</int>
+						<reference key="object" ref="308914238"/>
 						<reference key="parent" ref="273110050"/>
 					</object>
 				</array>
@@ -198,26 +171,26 @@
 				<string key="-1.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="-2.CustomClassName">UIResponder</string>
 				<string key="-2.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-				<string key="3.CustomClassName">PuzzlesListViewControllerCell</string>
+				<string key="3.CustomClassName">PuzzlesListCellViewController</string>
 				<string key="3.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="4.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="7.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="8.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">6</int>
+			<int key="maxID">8</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<object class="IBPartialClassDescription">
-					<string key="className">PuzzlesListViewControllerCell</string>
+					<string key="className">PuzzlesListCellViewController</string>
 					<string key="superclassName">UICollectionViewCell</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/PuzzlesListViewControllerCell.h</string>
+						<string key="minorKey">./Classes/PuzzlesListCellViewController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -250,6 +223,10 @@
 		</object>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
+		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
+			<string key="icon_completed.jpg">{15, 15}</string>
+			<string key="icon_friends.jpg">{15, 15}</string>
+		</dictionary>
 		<string key="IBCocoaTouchPluginVersion">2083</string>
 	</data>
 </archive>
