@@ -62,11 +62,6 @@ namespace PixPuzzle
 			ScrollViewGame.AddSubview (gridUIView);
 		}
 
-		partial void OnButtonQuitPressed (MonoTouch.Foundation.NSObject sender)
-		{
-
-		}
-
 		private UIView initializeGrid (PuzzleData puzzle, UIImage image, Bitmap bitmap) {
 			this.grid = null;
 			UIView view = null;
@@ -114,11 +109,27 @@ namespace PixPuzzle
 				"OK");
 
 			alert.Dismissed += (object sender, UIButtonEventArgs e) => {
-				var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate; 
-//				appDelegate.ShowMenu ();
+				GoBackToMenu();
 			};
 			alert.Show ();
 		}
+
+		
+		partial void OnButtonQuitPressed (MonoTouch.Foundation.NSObject sender)
+		{
+			GoBackToMenu();
+		}
+
+		private void GoBackToMenu()
+		{
+			var vc = this.Storyboard.InstantiateViewController ("MenuViewController") as UIViewController;
+
+			NavigationController.PopToViewController(
+				vc,
+				true
+				);
+		}
+
 		/// <summary>
 		/// We store the grid object even if we're not using it so it is not garbage collected by mistake
 		/// </summary>
