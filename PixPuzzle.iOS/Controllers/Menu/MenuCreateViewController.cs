@@ -15,38 +15,41 @@ namespace PixPuzzle
 
 		partial void OnTakePictureButtonPressed (MonoTouch.Foundation.NSObject sender)
 		{
-			Camera.TakePicture (this, (dico) => {
+			Camera.TakePicture (this, 
+	            (dico) => {
+
+					UIImage img = null;
+
+					// Get camera result
+					var selectedImageObject = dico.ObjectForKey (UIImagePickerController.OriginalImage);
+					
+					if (selectedImageObject != null && selectedImageObject is UIImage) {
+						img = selectedImageObject as UIImage;
+					}
+					GoToStep2 (img);
+				}
+			);
+		}
+
+		partial void OnLibraryButtonPressed (MonoTouch.Foundation.NSObject sender)
+		{
+			Camera.SelectPicture (this, 
+			    (dico) => {
 
 				UIImage img = null;
 
 				// Get camera result
 				var selectedImageObject = dico.ObjectForKey (UIImagePickerController.OriginalImage);
-				
+
 				if (selectedImageObject != null && selectedImageObject is UIImage) {
 					img = selectedImageObject as UIImage;
 				}
-				GoToStep2 (img);
-			});
-		}
-
-		partial void OnLibraryButtonPressed (MonoTouch.Foundation.NSObject sender)
-		{
-//			Camera.SelectPicture (this, (dico) => {
-
-				UIImage img = null;
-
-				// Get camera result
-//				var selectedImageObject = dico.ObjectForKey (UIImagePickerController.OriginalImage);
-//
-//				if (selectedImageObject != null && selectedImageObject is UIImage) {
-//					img = selectedImageObject as UIImage;
-//				}
 				
 				// DEBUG
-				img = UIImage.FromFile ("testpathfromphoto3.jpg");
+//				img = UIImage.FromFile ("testpathfromphoto3.jpg");
 
 				GoToStep2 (img);
-//			});
+			});
 		}
 
 		private void GoToStep2 (UIImage img)
