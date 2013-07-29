@@ -13,6 +13,9 @@ namespace PixPuzzle
 	partial class GameViewController
 	{
 		[Outlet]
+		MonoTouch.UIKit.UIButton ButtonDebug { get; set; }
+
+		[Outlet]
 		MonoTouch.UIKit.UIButton ButtonPause { get; set; }
 
 		[Outlet]
@@ -20,6 +23,9 @@ namespace PixPuzzle
 
 		[Outlet]
 		MonoTouch.UIKit.UIScrollView ScrollViewGame { get; set; }
+
+		[Action ("OnButtonDebugPressed:")]
+		partial void OnButtonDebugPressed (MonoTouch.Foundation.NSObject sender);
 
 		[Action ("OnButtonPausePressed:")]
 		partial void OnButtonPausePressed (MonoTouch.Foundation.NSObject sender);
@@ -29,6 +35,11 @@ namespace PixPuzzle
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (ButtonPause != null) {
+				ButtonPause.Dispose ();
+				ButtonPause = null;
+			}
+
 			if (LabelTime != null) {
 				LabelTime.Dispose ();
 				LabelTime = null;
@@ -39,9 +50,9 @@ namespace PixPuzzle
 				ScrollViewGame = null;
 			}
 
-			if (ButtonPause != null) {
-				ButtonPause.Dispose ();
-				ButtonPause = null;
+			if (ButtonDebug != null) {
+				ButtonDebug.Dispose ();
+				ButtonDebug = null;
 			}
 		}
 	}

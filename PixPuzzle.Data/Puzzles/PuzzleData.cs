@@ -6,7 +6,7 @@ namespace PixPuzzle.Data
 	public class PuzzleData
 	{
 		public string Filename;
-		public DateTimeOffset? BestScore;
+		public DateTime? BestScore;
 		public bool IsNew;
 		public bool IsCustom;
 		public string OwnerId;

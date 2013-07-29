@@ -25,6 +25,7 @@ namespace PixPuzzle
 		public void DefinePuzzle (PuzzleData puzzle, UIImage selectedPuzzle)
 		{
 			this.mSelectedPuzzle = selectedPuzzle;
+			this.Puzzle = puzzle;
 
 			// Load the image
 			UIImage image = selectedPuzzle;
@@ -153,9 +154,12 @@ namespace PixPuzzle
 		{
 			stopTimer ();
 
+			this.Puzzle.BestScore = mCurrentTime;
+			PuzzleService.Instance.Save ();
+
 			UIAlertView alert = new UIAlertView (
 				"Game Over",
-				"You did it! " + mSelectedPuzzle,
+				"You did it! ",
 				null,
 				"OK");
 
@@ -188,15 +192,26 @@ namespace PixPuzzle
 			}
 		}
 
+		partial void OnButtonDebugPressed (MonoTouch.Foundation.NSObject sender)
+		{
+			gridCompleted();
+		}
+
 		private void GoBackToMenu ()
 		{
-			NavigationController.PopToRootViewController (true);
-
-//			var vc = this.Storyboard.InstantiateViewController ("MenuViewController") as UIViewController;
-//			NavigationController.PresentViewController(
+			NavigationController.PopToRootViewController (false);
+//
+//			var vc = this.Storyboard.InstantiateViewController ("MenuPlayViewController") as UIViewController;
+//			NavigationController.PushViewController(
 //				vc,
 //				true
 //				);
+		}
+
+		public PuzzleData Puzzle
+		{
+			get;
+			private set;
 		}
 
 		/// <summary>
