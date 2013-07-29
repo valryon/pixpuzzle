@@ -305,8 +305,6 @@ namespace PixPuzzle
 
 				PointF fingerLocation = touch.LocationInView (this);
 
-				Console.WriteLine (fingerLocation);
-
 				PathCell cell = getCellFromViewCoordinates (fingerLocation);
 
 				mParent.StartPathCreation (cell);
