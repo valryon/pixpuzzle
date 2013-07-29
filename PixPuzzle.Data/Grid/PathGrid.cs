@@ -523,6 +523,9 @@ namespace PixPuzzle.Data
 				return FirstPathCell != null;
 			}
 		}
+
+		public bool ShouldDisplayFilledCells
+		{ get; set; }
 	}
 }
 

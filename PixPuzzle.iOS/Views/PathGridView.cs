@@ -136,23 +136,28 @@ namespace PixPuzzle
 			CGColor color = cellColor.UIColor.CGColor;
 			mContext.SetFillColor (color);
 
-			// Draw a circle of the color
-			// But reduce the circle value
-			int circleReductionValue = mParent.CellSize / 10;
+			if (mParent.ShouldDisplayFilledCells == false) {
+				// Draw a circle of the color
+				// But reduce the circle value
+				int circleReductionValue = mParent.CellSize / 10;
 
-			RectangleF cellValueRect = new RectangleF (rectangle.X + circleReductionValue, rectangle.Y + circleReductionValue, mParent.CellSize - 2 * circleReductionValue, mParent.CellSize - 2 * circleReductionValue);
+				RectangleF cellValueRect = new RectangleF (rectangle.X + circleReductionValue, rectangle.Y + circleReductionValue, mParent.CellSize - 2 * circleReductionValue, mParent.CellSize - 2 * circleReductionValue);
 
-			UIImage image = null;
+				UIImage image = null;
 
-			if (isValid == false) {
-				image = mSplashImage;
+				if (isValid == false) {
+					image = mSplashImage;
+				} else {
+					image = mSplashValidImage;
+				}
+
+				image = UIImageEx.GetImageWithOverlayColor (image, cellColor.UIColor);
+
+				mContext.DrawImage (cellValueRect, image.CGImage);
 			} else {
-				image = mSplashValidImage;
+				// Fill the whole cell to preview puzzle
+				mContext.FillRect (rectangle);
 			}
-
-			image = UIImageEx.GetImageWithOverlayColor (image, cellColor.UIColor);
-
-			mContext.DrawImage (cellValueRect, image.CGImage);
 		}
 
 		public void DrawPath (PathCell cell, Rectangle pathRect, Point direction, CellColor color)
@@ -275,6 +280,10 @@ namespace PixPuzzle
 
 		private void doubleTapEvent (UIGestureRecognizer sender)
 		{
+			// Disable gestures on preview mode
+			if (mParent.ShouldDisplayFilledCells)
+				return; 
+
 			if (sender.NumberOfTouches > 0) {
 
 				PointF touchLocation = sender.LocationInView (this);
@@ -286,6 +295,10 @@ namespace PixPuzzle
 
 		public override void TouchesBegan (MonoTouch.Foundation.NSSet touches, UIEvent evt)
 		{
+			// Disable gestures on preview mode
+			if (mParent.ShouldDisplayFilledCells)
+				return; 
+
 			// Touch began: find the cell under the finger and register it as a path start
 			if (touches.Count == 1) {
 				UITouch touch = (UITouch)touches.AnyObject;

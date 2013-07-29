@@ -10,9 +10,8 @@ namespace PixPuzzle
 {
 	public partial class GameViewController : UIViewController
 	{
-		private IGrid mGrid;
 		private UIView mGridUIView;
-		private UIImage mSelectedPuzzle;
+		private PathGridView mPathGrid;
 		private NSTimer mTimer;
 		private DateTime mCurrentTime;
 		private bool mIsPaused;
@@ -24,7 +23,6 @@ namespace PixPuzzle
 
 		public void DefinePuzzle (PuzzleData puzzle, UIImage selectedPuzzle)
 		{
-			this.mSelectedPuzzle = selectedPuzzle;
 			this.Puzzle = puzzle;
 
 			// Load the image
@@ -48,8 +46,26 @@ namespace PixPuzzle
 				return mGridUIView;
 			});
 
+			ScrollViewGame.DidZoom += (object sender, EventArgs e) => {
+
+				const float zoomLimit = 0.65f;
+
+				if (mPathGrid.ShouldDisplayFilledCells == false) {
+					if (ScrollViewGame.ZoomScale <= zoomLimit) {
+						mPathGrid.ShouldDisplayFilledCells = true;
+						mGridUIView.SetNeedsDisplay ();
+					}
+				} else {
+					if (ScrollViewGame.ZoomScale > zoomLimit) {
+						mPathGrid.ShouldDisplayFilledCells = false;
+						mGridUIView.SetNeedsDisplay ();
+					}
+				}
+
+			};
+
 			// Margin
-			int margin = mGrid.CellSize * 4;
+			int margin = mPathGrid.CellSize * 4;
 
 			// Center the grid
 			ScrollViewGame.ContentSize = new SizeF (mGridUIView.Frame.Width + margin, mGridUIView.Frame.Height + margin);
@@ -113,13 +129,10 @@ namespace PixPuzzle
 		/// <param name="bitmap">Bitmap.</param>
 		private UIView initializeGrid (PuzzleData puzzle, UIImage image, Bitmap bitmap)
 		{
-			this.mGrid = null;
 			UIView view = null;
 
-			var pathGrid = new PathGridView (puzzle, (int)image.Size.Width, (int)image.Size.Height);
-			view = pathGrid.GridViewInternal;
-
-			mGrid = pathGrid;
+			mPathGrid = new PathGridView (puzzle, (int)image.Size.Width, (int)image.Size.Height);
+			view = mPathGrid.GridViewInternal;
 
 			CellColor[][] pixels = new CellColor[(int)image.Size.Width][];
 
@@ -144,8 +157,8 @@ namespace PixPuzzle
 				}
 			}
 
-			this.mGrid.GridCompleted += gridCompleted;
-			this.mGrid.SetupGrid (pixels);
+			this.mPathGrid.GridCompleted += gridCompleted;
+			this.mPathGrid.SetupGrid (pixels);
 
 			return view;
 		}
@@ -179,22 +192,20 @@ namespace PixPuzzle
 		{
 			mIsPaused = !mIsPaused;
 
-			if(mIsPaused) 
-			{
+			if (mIsPaused) {
 				mGridUIView.Alpha = 0.2f;
 				LabelTime.Text = "Pause";
-				ButtonPause.SetTitle("Resume", UIControlState.Normal);
-			}
-			else {
+				ButtonPause.SetTitle ("Resume", UIControlState.Normal);
+			} else {
 				mGridUIView.Alpha = 1f;
 				LabelTime.Text = "Resuming";
-				ButtonPause.SetTitle("Pause", UIControlState.Normal);
+				ButtonPause.SetTitle ("Pause", UIControlState.Normal);
 			}
 		}
 
 		partial void OnButtonDebugPressed (MonoTouch.Foundation.NSObject sender)
 		{
-			gridCompleted();
+			gridCompleted ();
 		}
 
 		private void GoBackToMenu ()
@@ -208,20 +219,9 @@ namespace PixPuzzle
 //				);
 		}
 
-		public PuzzleData Puzzle
-		{
+		public PuzzleData Puzzle {
 			get;
 			private set;
-		}
-
-		/// <summary>
-		/// We store the grid object even if we're not using it so it is not garbage collected by mistake
-		/// </summary>
-		/// <value>The grid.</value>
-		public IGrid Grid {
-			get {
-				return mGrid;
-			}
 		}
 	}
 }
