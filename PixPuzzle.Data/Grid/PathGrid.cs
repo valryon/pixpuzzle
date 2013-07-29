@@ -223,75 +223,80 @@ namespace PixPuzzle.Data
 						View.DrawCellBase (cell, cellRect);
 					}
 
-					// Draw paths
-					if (hasPath) {
-						// Get the path!
-						// For this each cell of the path draw the cell just before them
-						PathCell previousCell = cell.Path.PreviousCell (cell);
-						if (previousCell != null) {
+					// Preview mode is simplier
+					if (ShouldDisplayFilledCells == false) {
 
-							// Get the direction of the previous cell
-							int previousDirectionX = previousCell.X - cell.X;
-							int previousDirectionY = previousCell.Y - cell.Y;
+						// Draw paths
+						if (hasPath) {
+							// Get the path!
+							// For this each cell of the path draw the cell just before them
+							PathCell previousCell = cell.Path.PreviousCell (cell);
+							if (previousCell != null) {
 
-							// If x or y is set then y or x has to be 0
+								// Get the direction of the previous cell
+								int previousDirectionX = previousCell.X - cell.X;
+								int previousDirectionY = previousCell.Y - cell.Y;
 
-							// Draw an ellipse between the two cells
-							// This code is brutal
-							int pathStartX;
-							int pathStartY;
-							int pathWidth;
-							int pathHeight;
+								// If x or y is set then y or x has to be 0
 
-							if (previousDirectionX != 0) {
+								// Draw an ellipse between the two cells
+								// This code is brutal
+								int pathStartX;
+								int pathStartY;
+								int pathWidth;
+								int pathHeight;
 
-								// Horizontal path
-								pathWidth = CellSize;
-								pathHeight = CellSize / 2;
+								if (previousDirectionX != 0) {
 
-								// Get the middle X of the previous cell
-								pathStartX = cellStartX + (previousDirectionX * pathWidth / 2);
+									// Horizontal path
+									pathWidth = CellSize;
+									pathHeight = CellSize / 2;
 
-								// Center Y in the current cell
-								pathStartY = cellStartY + ((CellSize - pathHeight) / 2);
+									// Get the middle X of the previous cell
+									pathStartX = cellStartX + (previousDirectionX * pathWidth / 2);
 
-							} else {
+									// Center Y in the current cell
+									pathStartY = cellStartY + ((CellSize - pathHeight) / 2);
 
-								// Vertical path
-								pathWidth = CellSize / 2;
-								pathHeight = CellSize;
+								} else {
 
-								// Center X in the current cell
-								pathStartX = cellStartX + ((CellSize - pathWidth) / 2);
+									// Vertical path
+									pathWidth = CellSize / 2;
+									pathHeight = CellSize;
 
-								// Get the middle Y of the previous cell
-								pathStartY = cellStartY + (previousDirectionY * pathHeight / 2);
+									// Center X in the current cell
+									pathStartX = cellStartX + ((CellSize - pathWidth) / 2);
 
+									// Get the middle Y of the previous cell
+									pathStartY = cellStartY + (previousDirectionY * pathHeight / 2);
+
+								}
+
+								Rectangle pathRect = new Rectangle (
+									pathStartX,
+									pathStartY,
+									pathWidth,
+									pathHeight
+								);
+
+
+								View.DrawPath (cell, pathRect, new Point (previousDirectionX, previousDirectionY), cell.Path.Color);
+
+								// Text!
+								// -- Last cell of an incomplete path?
+								if ((isLastCell == true) && (isValid == false) && (isStartOrEnd == false)) {
+									View.DrawLastCellIncompletePath (cell, cellRect, cell.Path.Length.ToString (), cell.Path.Color);
+								}
 							}
 
-							Rectangle pathRect = new Rectangle (
-								pathStartX,
-								pathStartY,
-								pathWidth,
-								pathHeight
-							);
+						} // path
 
-
-							View.DrawPath (cell, pathRect, new Point (previousDirectionX, previousDirectionY), cell.Path.Color);
-
-							// Text!
-							// -- Last cell of an incomplete path?
-							if ((isLastCell == true) && (isValid == false) && (isStartOrEnd == false)) {
-								View.DrawLastCellIncompletePath (cell, cellRect, cell.Path.Length.ToString (), cell.Path.Color);
-							}
+						// Text for node value at ends/Starts
+						if (isStartOrEnd) {
+							// Draw the text
+							View.DrawCellText (cell, cellRect, cell.Path.ExpectedLength.ToString (), cell.Path.Color);
 						}
 
-					} // path
-
-					// Text for node value at ends/Starts
-					if (isStartOrEnd) {
-						// Draw the text
-						View.DrawCellText (cell, cellRect, cell.Path.ExpectedLength.ToString (), cell.Path.Color);
 					}
 				} // y
 			} // x

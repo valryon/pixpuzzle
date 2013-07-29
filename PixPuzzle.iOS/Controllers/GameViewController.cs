@@ -48,17 +48,21 @@ namespace PixPuzzle
 
 			ScrollViewGame.DidZoom += (object sender, EventArgs e) => {
 
-				const float zoomLimit = 0.65f;
+				const float zoomLimit = 0.125f;
 
 				if (mPathGrid.ShouldDisplayFilledCells == false) {
 					if (ScrollViewGame.ZoomScale <= zoomLimit) {
 						mPathGrid.ShouldDisplayFilledCells = true;
-						mGridUIView.SetNeedsDisplay ();
+
+						RectangleF visibleRect = ScrollViewGame.ConvertRectToView(ScrollViewGame.Bounds, mGridUIView);
+						mGridUIView.SetNeedsDisplayInRect (visibleRect);
 					}
 				} else {
 					if (ScrollViewGame.ZoomScale > zoomLimit) {
 						mPathGrid.ShouldDisplayFilledCells = false;
-						mGridUIView.SetNeedsDisplay ();
+
+						RectangleF visibleRect = ScrollViewGame.ConvertRectToView(ScrollViewGame.Bounds, mGridUIView);
+						mGridUIView.SetNeedsDisplayInRect (visibleRect);
 					}
 				}
 

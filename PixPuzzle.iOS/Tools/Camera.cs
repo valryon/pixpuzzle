@@ -34,6 +34,8 @@ namespace PixPuzzle
 				_callback = null;
 
 				picker.DismissViewController (true, null);
+				popover.Dismiss (true);
+
 				cb (info);
 			}
 		}
