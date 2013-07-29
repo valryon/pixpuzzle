@@ -122,12 +122,13 @@ namespace PixPuzzle
 
 		private void GoBackToMenu()
 		{
-			var vc = this.Storyboard.InstantiateViewController ("MenuViewController") as UIViewController;
+			NavigationController.PopToRootViewController (true);
 
-			NavigationController.PopToViewController(
-				vc,
-				true
-				);
+//			var vc = this.Storyboard.InstantiateViewController ("MenuViewController") as UIViewController;
+//			NavigationController.PresentViewController(
+//				vc,
+//				true
+//				);
 		}
 
 		/// <summary>
