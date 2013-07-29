@@ -33,7 +33,8 @@ namespace PixPuzzle
 
 		partial void OnCreateButtonPressed (MonoTouch.Foundation.NSObject sender)
 		{
-			var vc = this.Storyboard.InstantiateViewController("MenuCreateViewController") as UIViewController;
+			var vc = this.Storyboard.InstantiateViewController("MenuCreateViewController") as MenuCreateViewController;
+			vc.IsFriendMatch = false;
 
 			NavigationController.PushViewController(
 				vc,

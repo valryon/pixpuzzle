@@ -11,6 +11,7 @@ namespace PixPuzzle
 	public class FriendsPuzzleListViewController : UICollectionViewController
 	{
 		private List<PuzzleData> puzzlesWitHFriends;
+		private UICollectionViewCell lastSelectedCell;
 
 		public FriendsPuzzleListViewController (IntPtr handle) : base (handle)
 		{
@@ -18,7 +19,8 @@ namespace PixPuzzle
 			LoadMatches ();
 		}
 
-		public void LoadMatches() {
+		public void LoadMatches ()
+		{
 			if (puzzlesWitHFriends != null) {
 				puzzlesWitHFriends.Clear ();
 			}
@@ -37,12 +39,37 @@ namespace PixPuzzle
 
 		public override void ItemSelected (UICollectionView collectionView, NSIndexPath indexPath)
 		{
-			base.ItemSelected (collectionView, indexPath);
+			if (lastSelectedCell != null) {
+				lastSelectedCell.BackgroundColor = UIColor.Clear;
+			}
+
+			var cell = collectionView.CellForItem (indexPath);
+			cell.BackgroundColor = UIColor.Cyan;
+
+			lastSelectedCell = cell;
+
+			if (cell is FriendsPuzzleListCellViewController) {
+				var friendsCell = cell as FriendsPuzzleListCellViewController;
+			} else if (cell is FriendsPuzzleListNewCellViewController) {
+
+				var vc = this.Storyboard.InstantiateViewController("MenuCreateViewController") as MenuCreateViewController;
+				vc.IsFriendMatch = true;
+
+				NavigationController.PushViewController(
+					vc,
+					true
+					);
+			}
 		}
 
 		public override void ItemDeselected (UICollectionView collectionView, NSIndexPath indexPath)
 		{
-			base.ItemDeselected (collectionView, indexPath);
+			var cell = collectionView.CellForItem (indexPath);
+			cell.BackgroundColor = UIColor.Clear;
+
+			if (cell is FriendsPuzzleListCellViewController) {
+				var friendsCell = cell as FriendsPuzzleListCellViewController;
+			}
 		}
 
 		public override int NumberOfSections (UICollectionView collectionView)
@@ -60,11 +87,11 @@ namespace PixPuzzle
 			if (indexPath.Item == 0) {
 				// First cell is the adding item
 				return FriendsPuzzleListNewCellViewController.Create ();
-			} 
-			else {
+			} else {
 //			var cell = collectionView.DequeueReusableCell (FriendsPuzzleListCellViewController.Key, indexPath) as FriendsPuzzleListCellViewController;
 
 				// Get puzzle
+				// Index - 1 because the first cell if for the adding thing
 				var puzzle = puzzlesWitHFriends [indexPath.Item - 1];
 
 				// Create cell

@@ -10,6 +10,7 @@ namespace PixPuzzle
 		public MenuCreateViewController (IntPtr handle)
 			: base(handle)
 		{
+			IsFriendMatch = false;
 		}
 
 		partial void OnTakePictureButtonPressed (MonoTouch.Foundation.NSObject sender)
@@ -51,12 +52,17 @@ namespace PixPuzzle
 		private void GoToStep2 (UIImage img)
 		{
 			var vc = this.Storyboard.InstantiateViewController ("MenuCreateStep2ViewController") as MenuCreateStep2ViewController;
-			vc.SetBaseImage (img);
+			vc.SetBaseImage (img, IsFriendMatch);
 
 			NavigationController.PushViewController (
 				vc,
 				true
 			);
+		}
+
+		public bool IsFriendMatch {
+			get;
+			set;
 		}
 	}
 }

@@ -342,7 +342,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="OnShareButtonPressed:" destination="DtW-y8-FEn" eventType="touchUpInside" id="8A8-OG-HKg"/>
+                                    <action selector="OnShareButtonPressed:" destination="DtW-y8-FEn" eventType="touchUpInside" id="DJl-q8-Va8"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -353,6 +353,8 @@
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="ButtonPlayPressed" destination="dCP-lk-X2l" id="Chh-1O-XED"/>
+                        <outlet property="ButtonShare" destination="Gb2-Hy-EiB" id="6N1-Dq-LCC"/>
                         <outlet property="ImageTransformed" destination="Ohy-bC-rzB" id="1Uq-pH-Ezo"/>
                         <segue destination="JqQ-rF-dhF" kind="push" identifier="MenuCreate2ToGame" id="APh-H0-IKw"/>
                     </connections>
@@ -571,7 +573,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="tx2-b6-aEQ">
-                                <rect key="frame" x="440" y="115" width="236" height="115"/>
+                                <rect key="frame" x="394" y="151" width="236" height="115"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Play">
@@ -586,7 +588,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="kbt-0O-XYJ">
-                                <rect key="frame" x="440" y="257" width="236" height="104"/>
+                                <rect key="frame" x="394" y="293" width="236" height="104"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Create">
@@ -601,7 +603,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="nyK-Of-3l2">
-                                <rect key="frame" x="440" y="380" width="236" height="104"/>
+                                <rect key="frame" x="394" y="416" width="236" height="104"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Puzzles with friends">
@@ -616,7 +618,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="X5b-ny-qzG">
-                                <rect key="frame" x="496" y="517" width="125" height="62"/>
+                                <rect key="frame" x="450" y="553" width="125" height="62"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Credits">
@@ -631,7 +633,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="PixPuzzle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dzJ-LJ-6To">
-                                <rect key="frame" x="521" y="53" width="75" height="21"/>
+                                <rect key="frame" x="475" y="89" width="75" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -679,6 +681,8 @@
             <relationships>
                 <relationship kind="action" name="OnPlayButtonPressed:"/>
                 <relationship kind="action" name="OnShareButtonPressed:"/>
+                <relationship kind="outlet" name="ButtonPlayPressed" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="ButtonShare" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="ImageTransformed" candidateClass="UIImageView"/>
             </relationships>
         </class>
@@ -751,6 +755,6 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Ecg-Ha-Qi0"/>
+        <segue reference="APh-H0-IKw"/>
     </inferredMetricsTieBreakers>
 </document>

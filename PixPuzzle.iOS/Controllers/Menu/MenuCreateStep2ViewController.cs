@@ -10,14 +10,27 @@ namespace PixPuzzle
 	public partial class MenuCreateStep2ViewController : UIViewController
 	{
 		private UIImage baseImage;
+		private bool isFriendMatch;
 
 		public MenuCreateStep2ViewController (IntPtr handle) : base (handle)
 		{
 		}
 
-		public void SetBaseImage(UIImage img) 
+		public override void ViewWillAppear (bool animated)
 		{
-			baseImage = img;
+			base.ViewWillAppear (animated);
+
+			if (this.isFriendMatch) {
+				ButtonShare.Hidden = true;
+			} else {
+				ButtonShare.Hidden = false;
+			}
+		}
+
+		public void SetBaseImage(UIImage img, bool isFriendMatch) 
+		{
+			this.baseImage = img;
+			this.isFriendMatch = isFriendMatch;
 
 			// Slight saturation
 			baseImage = UIImageEx.AdjustBrightnessSaturationAndContrast (baseImage, 0, 1.2f);

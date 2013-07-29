@@ -13,6 +13,12 @@ namespace PixPuzzle
 	partial class MenuCreateStep2ViewController
 	{
 		[Outlet]
+		MonoTouch.UIKit.UIButton ButtonPlayPressed { get; set; }
+
+		[Outlet]
+		MonoTouch.UIKit.UIButton ButtonShare { get; set; }
+
+		[Outlet]
 		MonoTouch.UIKit.UIImageView ImageTransformed { get; set; }
 
 		[Action ("OnPlayButtonPressed:")]
@@ -23,6 +29,16 @@ namespace PixPuzzle
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (ButtonPlayPressed != null) {
+				ButtonPlayPressed.Dispose ();
+				ButtonPlayPressed = null;
+			}
+
+			if (ButtonShare != null) {
+				ButtonShare.Dispose ();
+				ButtonShare = null;
+			}
+
 			if (ImageTransformed != null) {
 				ImageTransformed.Dispose ();
 				ImageTransformed = null;
