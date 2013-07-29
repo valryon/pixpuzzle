@@ -150,6 +150,11 @@
     </Compile>
     <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListCellViewController.cs" />
     <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListViewController.cs" />
+    <Compile Include="GameCenterHelper.cs" />
+    <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListNewCellViewController.cs" />
+    <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListNewCellViewController.designer.cs">
+      <DependentUpon>FriendsPuzzleListNewCellViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -204,10 +209,12 @@
     <BundleResource Include="Resources\icon_friends.jpg" />
     <BundleResource Include="Resources\icon_completed.jpg" />
     <BundleResource Include="Resources\pixelnest_studio.png" />
+    <BundleResource Include="Resources\add_icon.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Views\iPad.storyboard" />
     <InterfaceDefinition Include="Views\PuzzlesListViewCell.xib" />
     <InterfaceDefinition Include="Views\FriendsPuzzleListCell.xib" />
+    <InterfaceDefinition Include="Views\FriendsPuzzleListNewCell.xib" />
   </ItemGroup>
 </Project>
