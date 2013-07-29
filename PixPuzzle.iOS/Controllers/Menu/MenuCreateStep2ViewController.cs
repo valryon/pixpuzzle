@@ -49,23 +49,30 @@ namespace PixPuzzle
 
 		partial void OnPlayButtonPressed (MonoTouch.Foundation.NSObject sender)
 		{
-			LaunchPuzzleForCurrentImage (null);
+			if(isFriendMatch) {
+				SharePuzzle ();
+			}
+			else {
+				LaunchPuzzleForCurrentImage (null);
+			}
 		}
 
 		partial void OnShareButtonPressed (MonoTouch.Foundation.NSObject sender)
 		{
+			SharePuzzle ();
+		}
+
+		void SharePuzzle ()
+		{
 			// Send to a friend
-			GameCenterHelper.NewVersusPhoto (
-				(ui) => {
-					InvokeOnMainThread (() => {
-						PresentViewController (ui, true, null);
-					});
-				},
-				(matchPuzzle) => {
-					// Launch level
-					LaunchPuzzleForCurrentImage (matchPuzzle);
-				}
-			, null, null, null);
+			GameCenterHelper.NewVersusPhoto (ui =>  {
+				InvokeOnMainThread (() =>  {
+					PresentViewController (ui, true, null);
+				});
+			}, matchPuzzle =>  {
+				// Launch level
+				LaunchPuzzleForCurrentImage (matchPuzzle);
+			}, null, null, null);
 		}
 
 		void LaunchPuzzleForCurrentImage (PuzzleData matchPuzzle)

@@ -49,7 +49,7 @@ namespace PixPuzzle
 			lastSelectedCell = cell;
 
 			if (cell is FriendsPuzzleListCellViewController) {
-				var friendsCell = cell as FriendsPuzzleListCellViewController;
+//				var friendsCell = cell as FriendsPuzzleListCellViewController;
 			} else if (cell is FriendsPuzzleListNewCellViewController) {
 
 				var vc = this.Storyboard.InstantiateViewController("MenuCreateViewController") as MenuCreateViewController;
@@ -68,7 +68,7 @@ namespace PixPuzzle
 			cell.BackgroundColor = UIColor.Clear;
 
 			if (cell is FriendsPuzzleListCellViewController) {
-				var friendsCell = cell as FriendsPuzzleListCellViewController;
+//				var friendsCell = cell as FriendsPuzzleListCellViewController;
 			}
 		}
 
