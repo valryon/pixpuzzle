@@ -34,7 +34,7 @@ namespace PixPuzzle
 			Logger.I ("Finished launching");
 
 			// Game center
-			GameCenterHelper.GCAuthenticate ((ui) => {
+			GameCenterHelper.Authenticate ((ui) => {
 				InvokeOnMainThread (() => {
 					Window.RootViewController.PresentViewController (ui, true, null);
 				});

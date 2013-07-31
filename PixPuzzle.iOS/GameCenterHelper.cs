@@ -11,29 +11,10 @@ namespace PixPuzzle
 {
 	public static class GameCenterHelper
 	{
-
-		public static void OnInvititationReceived (GKInvite invite, string[] players)
-		{
-			Logger.I ("Invitaion received: " + invite);
-		}
-
-		/// <summary>
-		/// Get player friends id
-		/// </summary>
-		/// <returns>The friends.</returns>
-		public static string[] GetFriends() 
-		{
-			if (GKLocalPlayer.LocalPlayer.Authenticated) {
-				return GKLocalPlayer.LocalPlayer.Friends;
-			}
-
-			return null;
-		}
-
 		/// <summary>
 		/// Authenticate the player for Game Center
 		/// </summary>
-		public static void GCAuthenticate (Action<UIViewController> showCallback)
+		public static void Authenticate (Action<UIViewController> showCallback)
 		{
 			Logger.I ("Game Center: authentication requested...");
 
@@ -51,12 +32,40 @@ namespace PixPuzzle
 					Logger.E ("Game Center: authentication failed! " + error);
 				} else {
 					if (GKLocalPlayer.LocalPlayer.Authenticated) {
+
+						GKMatchmaker.SharedMatchmaker.SetInviteHandler (new GKInviteHandler (OnInvititationReceived));
+
 						Logger.I ("Game Center: " + GKLocalPlayer.LocalPlayer.PlayerID + " (" + GKLocalPlayer.LocalPlayer.DisplayName + ")");
 					} else {
 						Logger.W ("Game Center: disabled !");
 					}
 				}
 			};
+		}
+
+		public static void OnInvititationReceived (GKInvite invite, string[] players)
+		{
+			Logger.I ("Invitaion received: " + invite);
+			GKMatchmaker.SharedMatchmaker.Match (invite, (match, error) => {
+				if (error == null) {
+					Logger.I("Invitation transformed in match.");
+				} else {
+					Logger.E("Invitation failed.", error);
+				}
+			});
+		}
+
+		/// <summary>
+		/// Get player friends id
+		/// </summary>
+		/// <returns>The friends.</returns>
+		public static string[] GetFriends ()
+		{
+			if (GKLocalPlayer.LocalPlayer.Authenticated) {
+				return GKLocalPlayer.LocalPlayer.Friends;
+			}
+
+			return null;
 		}
 
 		/// <summary>
