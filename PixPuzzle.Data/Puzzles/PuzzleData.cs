@@ -10,6 +10,7 @@ namespace PixPuzzle.Data
 		public bool IsNew;
 		public bool IsCustom;
 		public string OwnerId;
+		public string MatchId;
 
 #if IOS
 		/// <summary>

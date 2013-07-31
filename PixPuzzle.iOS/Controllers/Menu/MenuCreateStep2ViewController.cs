@@ -45,6 +45,7 @@ namespace PixPuzzle
 		{
 			base.ViewWillAppear (animated);
 
+			// Play becomes share if we're in versus mode
 			if (this.mIsFriendMatch) {
 				ButtonShare.Hidden = true;
 			} else {
@@ -101,6 +102,7 @@ namespace PixPuzzle
 
 		partial void OnPlayButtonPressed (MonoTouch.Foundation.NSObject sender)
 		{
+			// Play becomes share if we're in versus mode
 			if (mIsFriendMatch) {
 				SharePuzzle ();
 			} else {

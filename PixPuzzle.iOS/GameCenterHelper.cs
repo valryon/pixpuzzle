@@ -92,6 +92,7 @@ namespace PixPuzzle
 
 						// TODO Deserialize match data
 
+						newPuzzle.MatchId = match.MatchID;
 						newPuzzle.Match = match;
 
 						puzzles.Add (newPuzzle);
@@ -162,6 +163,7 @@ namespace PixPuzzle
 
 				PuzzleData puzzleData = new PuzzleData ();
 				puzzleData.Match = match;
+				puzzleData.MatchId = match.MatchID;
 
 				bool matchError = false;
 
