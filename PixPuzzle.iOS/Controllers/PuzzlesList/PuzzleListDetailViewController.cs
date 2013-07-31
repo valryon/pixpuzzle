@@ -21,8 +21,9 @@ namespace PixPuzzle
 			ImagePuzzle.Image = UIImage.FromFile (puzzle.Filename);
 			LabelTitle.Text = System.IO.Path.GetFileNameWithoutExtension (puzzle.Filename);
 
-			if (puzzle.BestScore.HasValue) {
-				LabelTime.Text = puzzle.BestScore.Value.ToString ("mm:ss");
+			DateTime? bestScore = puzzle.GetBestPlayerScore (GameCenterHelper.LocalPlayer.PlayerID);
+			if (bestScore.HasValue) {
+				LabelTime.Text = bestScore.Value.ToString ("mm:ss");
 			} else {
 				LabelTime.Text = "Not completed yet";
 			}

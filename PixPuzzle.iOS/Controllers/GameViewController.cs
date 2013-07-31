@@ -54,14 +54,14 @@ namespace PixPuzzle
 					if (ScrollViewGame.ZoomScale <= zoomLimit) {
 						mPathGrid.ShouldDisplayFilledCells = true;
 
-						RectangleF visibleRect = ScrollViewGame.ConvertRectToView(ScrollViewGame.Bounds, mGridUIView);
+						RectangleF visibleRect = ScrollViewGame.ConvertRectToView (ScrollViewGame.Bounds, mGridUIView);
 						mGridUIView.SetNeedsDisplayInRect (visibleRect);
 					}
 				} else {
 					if (ScrollViewGame.ZoomScale > zoomLimit) {
 						mPathGrid.ShouldDisplayFilledCells = false;
 
-						RectangleF visibleRect = ScrollViewGame.ConvertRectToView(ScrollViewGame.Bounds, mGridUIView);
+						RectangleF visibleRect = ScrollViewGame.ConvertRectToView (ScrollViewGame.Bounds, mGridUIView);
 						mGridUIView.SetNeedsDisplayInRect (visibleRect);
 					}
 				}
@@ -171,19 +171,37 @@ namespace PixPuzzle
 		{
 			stopTimer ();
 
-			this.Puzzle.BestScore = mCurrentTime;
+			// Register the score
+			this.Puzzle.AddPlayerScore (GameCenterHelper.LocalPlayer.PlayerID, true, mCurrentTime);
 			PuzzleService.Instance.Save ();
 
-			UIAlertView alert = new UIAlertView (
-				"Game Over",
-				"You did it! ",
-				null,
-				"OK");
+			// Is it a versus match?
+			if (Puzzle.Match != null) {
+				// If so, send the score to the friend
+				GameCenterHelper.UpdateMatchFromPuzzle (Puzzle, (err) => {
+					UIAlertView alert = new UIAlertView (
+						"Versus",
+						"Data sent? " + err,
+						null,
+						"TODO");
 
-			alert.Dismissed += (object sender, UIButtonEventArgs e) => {
-				GoBackToMenu ();
-			};
-			alert.Show ();
+					alert.Dismissed += (object sender, UIButtonEventArgs e) => {
+						GoBackToMenu ();
+					};
+					alert.Show ();
+				});
+			} else {
+				UIAlertView alert = new UIAlertView (
+					"Game Over",
+					"You did it! ",
+					null,
+					"OK");
+
+				alert.Dismissed += (object sender, UIButtonEventArgs e) => {
+					GoBackToMenu ();
+				};
+				alert.Show ();
+			}
 		}
 
 		partial void OnButtonQuitPressed (MonoTouch.Foundation.NSObject sender)

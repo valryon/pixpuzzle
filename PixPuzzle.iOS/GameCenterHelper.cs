@@ -3,11 +3,33 @@ using MonoTouch.GameKit;
 using PixPuzzle.Data;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
+using MonoTouch.Foundation;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace PixPuzzle
 {
 	public static class GameCenterHelper
 	{
+
+		public static void OnInvititationReceived (GKInvite invite, string[] players)
+		{
+			Logger.I ("Invitaion received: " + invite);
+		}
+
+		/// <summary>
+		/// Get player friends id
+		/// </summary>
+		/// <returns>The friends.</returns>
+		public static string[] GetFriends() 
+		{
+			if (GKLocalPlayer.LocalPlayer.Authenticated) {
+				return GKLocalPlayer.LocalPlayer.Friends;
+			}
+
+			return null;
+		}
+
 		/// <summary>
 		/// Authenticate the player for Game Center
 		/// </summary>
@@ -69,6 +91,77 @@ namespace PixPuzzle
 		}
 
 		/// <summary>
+		/// Update versus match status
+		/// </summary>
+		public static void UpdateMatchFromPuzzle (PuzzleData puzzle, Action<NSError> callback)
+		{
+			if (puzzle.Match == null) {
+				Logger.E ("This puzzle contains no match data... Can't do anything!");
+				return;
+			}
+
+			// Match data -> Puzzle + Image
+			// -- Image as Base64 string
+			UIImage image = UIImage.FromFile (puzzle.Filename);
+			Byte[] byteArray = null; 
+			using (NSData nsImageData = image.AsPNG()) { 
+				byteArray = new Byte[nsImageData.Length]; 
+				System.Runtime.InteropServices.Marshal.Copy (nsImageData.Bytes, byteArray, 0, Convert.ToInt32 (nsImageData.Length)); 
+			} 
+
+			string base64image = Convert.ToBase64String (byteArray);
+
+			// -- Data
+			TransferablePuzzleData tp = new TransferablePuzzleData ();
+			tp.Puzzle = puzzle;
+			tp.Base64Image = base64image;
+
+			// Build an XML text
+			string xml = string.Empty;
+			XmlSerializer xmlSerializer = new XmlSerializer (tp.GetType ());
+
+			using (StringWriter textWriter = new StringWriter()) {
+				xmlSerializer.Serialize (textWriter, tp);
+				xml = textWriter.ToString ();
+			}
+
+			xmlSerializer = null;
+
+			// Xml to bytes
+			NSData puzzleData = NSData.FromString (xml);
+
+			// Next participant
+			GKTurnBasedParticipant nextPlayer = null;
+			foreach (var participant in puzzle.Match.Participants) {
+				if (participant.PlayerID != GKLocalPlayer.LocalPlayer.PlayerID) {
+					nextPlayer = participant;
+					break;
+				}
+			}
+
+			// Game center match progress
+			// -- Already an opponent score? End
+			if (puzzle.GetBestPlayerScore (nextPlayer.PlayerID).HasValue) {
+				puzzle.Match.EndMatchInTurn (
+					puzzleData,
+					(err) => {
+					if (callback != null) {
+						callback (err);
+					}
+				}
+				);
+			} else {
+				// -- Send current score
+				puzzle.Match.EndTurn (
+					new GKTurnBasedParticipant[] { nextPlayer },
+					120,
+					puzzleData,
+					callback
+				);
+			}
+		}
+
+		/// <summary>
 		/// List matches with friends
 		/// </summary>
 		/// <param name="listLoaded">List loaded.</param>
@@ -88,14 +181,15 @@ namespace PixPuzzle
 
 					foreach (GKTurnBasedMatch match in matches) {
 
-						PuzzleData newPuzzle = new PuzzleData ();
+						// Deserialize data
+						TransferablePuzzleData tp = GetPuzzleFromMatch (match);
 
-						// TODO Deserialize match data
+						if (tp != null) {
+							tp.Puzzle.MatchId = match.MatchID;
+							tp.Puzzle.Match = match;
 
-						newPuzzle.MatchId = match.MatchID;
-						newPuzzle.Match = match;
-
-						puzzles.Add (newPuzzle);
+							puzzles.Add (tp.Puzzle);
+						}
 					}
 
 					if (listLoaded != null) {
@@ -105,8 +199,57 @@ namespace PixPuzzle
 			});
 		}
 
-		public static bool IsAuthenticated
+		/// <summary>
+		/// Read and parse match data to extract match information.
+		/// </summary>
+		/// <returns>The puzzle from match.</returns>
+		/// <param name="match">Match.</param>
+		public static TransferablePuzzleData GetPuzzleFromMatch (GKTurnBasedMatch match)
 		{
+			// Filter obviously invalid matches
+			if (match.MatchData == null || match.MatchData.Length == 0) {
+				Logger.E ("Match without data! Maybe an old one? Shouldn't happend in production.");
+				return null;
+			}
+
+			try {
+				// Try to get the XML inside
+				string xml = NSString.FromData (match.MatchData, NSStringEncoding.UTF8);
+
+				TransferablePuzzleData tp = null;
+
+				XmlSerializer xmlSerializer = new XmlSerializer (typeof(TransferablePuzzleData));
+
+				using (StringReader reader = new StringReader(xml)) {
+					tp = (TransferablePuzzleData)xmlSerializer.Deserialize (reader);
+				}
+
+				xmlSerializer = null;
+
+				// Save the image if we don't have it locally
+				if (tp != null) {
+					if (string.IsNullOrEmpty (tp.Base64Image) == false) {
+						if (File.Exists (tp.Puzzle.Filename) == false) {
+
+							byte[] imgRaw = Convert.FromBase64String (tp.Base64Image);
+							NSData imageData = NSData.FromArray (imgRaw);
+							UIImage img = UIImage.LoadFromData (imageData);
+
+							NSError err = null;
+							img.AsPNG ().Save (tp.Puzzle.Filename, false, out err);
+						}
+					}
+				}
+
+				return tp;
+			} catch (Exception e) {
+				Logger.E ("GameCenterPlayer.FoundMatch", e);
+
+				return null;
+			}
+		}
+
+		public static bool IsAuthenticated {
 			get {
 				return GKLocalPlayer.LocalPlayer.Authenticated;
 			}
@@ -116,8 +259,7 @@ namespace PixPuzzle
 		/// Gets the local game kit player.
 		/// </summary>
 		/// <returns>The local player.</returns>
-		public static GKPlayer LocalPlayer
-		{
+		public static GKPlayer LocalPlayer {
 			get {
 				return GKLocalPlayer.LocalPlayer;
 			}
@@ -167,24 +309,13 @@ namespace PixPuzzle
 
 				bool matchError = false;
 
-				// Match has data
 				if (match.MatchData.Length > 0) {
-					//					VersusMatch existingMatch = new VersusMatch ();
-					//	
-					//					try {
-					//	
-					//						string jsonBase64 = NSString.FromData (match.MatchData, NSStringEncoding.UTF8);
-					//						string json = System.Text.Encoding.UTF8.GetString (Convert.FromBase64String (jsonBase64));
-					//	
-					//						existingMatch.FromJson (json.ToString ());
-					//						this.parent.CurrentMatch = existingMatch;
-					//					} catch (Exception e) {
-					//						matchError = true;
-					//						Logger.LogException (LogLevel.Error, "GameCenterPlayer.FoundMatch", e);
-					//					}
-				}
-				// No data: new match, 
-				else {
+					// Match has data
+//					var tp = GameCenterHelper.GetPuzzleFromMatch (match);
+					// TODO ?
+				} else {
+					// No data: new match
+
 					// Set up outcomes
 					// -> Player who sent the picture set a time first
 					match.Participants [0].MatchOutcome = GKTurnBasedMatchOutcome.First;

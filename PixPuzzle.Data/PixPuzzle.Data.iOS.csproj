@@ -59,5 +59,6 @@
     <Compile Include="Tools\Logger.cs" />
     <Compile Include="Grid\IGrid.cs" />
     <Compile Include="Puzzles\PuzzleData.cs" />
+    <Compile Include="Puzzles\TransferablePuzzleData.cs" />
   </ItemGroup>
 </Project>

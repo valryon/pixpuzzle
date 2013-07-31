@@ -21,7 +21,7 @@ namespace PixPuzzle
 		
 			// Select last puzzle not completed
 			var puzzles = PuzzleService.Instance.GetPuzzles ();
-			PuzzleData selectedPuzzle = puzzles.Where(p => p.BestScore.HasValue == false).FirstOrDefault();
+			PuzzleData selectedPuzzle = puzzles.Where(p => p.Scores.Any() == false).FirstOrDefault();
 
 			if (selectedPuzzle == null) {
 				selectedPuzzle = puzzles.Last ();

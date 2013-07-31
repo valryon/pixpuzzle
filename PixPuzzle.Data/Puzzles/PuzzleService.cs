@@ -111,8 +111,11 @@ namespace PixPuzzle.Data
 				puzzles = puzzles.Where (p => p.IsNew).ToList ();
 			}
 
-			if (removeCompleted) {
-				puzzles = puzzles.Where (p => p.BestScore.HasValue == false).ToList ();
+			if (removeCompleted) 
+			{
+				// Look at each score lines
+				// And find if the local player has at least one line
+				puzzles = puzzles.Where (p =>  (p.Scores.Where(s => s.IsLocal).Any ()) ).ToList ();
 			}
 
 
@@ -123,6 +126,7 @@ namespace PixPuzzle.Data
 		/// Save a new custom puzzle
 		/// </summary>
 		#if IOS
+
 		public PuzzleData AddPuzzle (string filename, string owner, MonoTouch.UIKit.UIImage image)
 		{
 			string completeFilePath = System.IO.Path.Combine (mCustomPuzzlePath, filename);
@@ -152,6 +156,7 @@ namespace PixPuzzle.Data
 
 			return newPuzzle;
 		}
+
 #endif
 
 		/// <summary>

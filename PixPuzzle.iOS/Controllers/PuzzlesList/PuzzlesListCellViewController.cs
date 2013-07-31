@@ -58,7 +58,7 @@ namespace PixPuzzle
 			friendsIcon.Hidden = !(puzzle.IsCustom);
 
 			UIImageView completedIcon = cell.ViewWithTag (3) as UIImageView;
-			completedIcon.Hidden = !(puzzle.BestScore.HasValue);
+			completedIcon.Hidden = (puzzle.GetBestPlayerScore(GameCenterHelper.LocalPlayer.PlayerID).HasValue == false);
 
 			return cell;
 		}

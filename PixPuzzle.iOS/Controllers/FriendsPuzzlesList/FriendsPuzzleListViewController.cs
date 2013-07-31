@@ -49,7 +49,10 @@ namespace PixPuzzle
 			lastSelectedCell = cell;
 
 			if (cell is FriendsPuzzleListCellViewController) {
-//				var friendsCell = cell as FriendsPuzzleListCellViewController;
+				var friendsCell = cell as FriendsPuzzleListCellViewController;
+				var puzzle = puzzlesWitHFriends [indexPath.Item - 1];
+
+
 			} else if (cell is FriendsPuzzleListNewCellViewController) {
 
 				var vc = this.Storyboard.InstantiateViewController("MenuCreateViewController") as MenuCreateViewController;
@@ -69,6 +72,7 @@ namespace PixPuzzle
 
 			if (cell is FriendsPuzzleListCellViewController) {
 //				var friendsCell = cell as FriendsPuzzleListCellViewController;
+//				var puzzle = puzzlesWitHFriends [indexPath.Item - 1];
 			}
 		}
 
@@ -88,7 +92,7 @@ namespace PixPuzzle
 				// First cell is the adding item
 				return FriendsPuzzleListNewCellViewController.Create ();
 			} else {
-//			var cell = collectionView.DequeueReusableCell (FriendsPuzzleListCellViewController.Key, indexPath) as FriendsPuzzleListCellViewController;
+//				var cell = collectionView.DequeueReusableCell (FriendsPuzzleListCellViewController.Key, indexPath) as FriendsPuzzleListCellViewController;
 
 				// Get puzzle
 				// Index - 1 because the first cell if for the adding thing
