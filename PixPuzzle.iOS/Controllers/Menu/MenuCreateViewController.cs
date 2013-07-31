@@ -16,25 +16,25 @@ namespace PixPuzzle
 		partial void OnTakePictureButtonPressed (MonoTouch.Foundation.NSObject sender)
 		{
 			Camera.TakePicture (this, 
-	            (dico) => {
+			                    (dico) => {
 
-					UIImage img = null;
+				UIImage img = null;
 
-					// Get camera result
-					var selectedImageObject = dico.ObjectForKey (UIImagePickerController.OriginalImage);
+				// Get camera result
+				var selectedImageObject = dico.ObjectForKey (UIImagePickerController.OriginalImage);
 					
-					if (selectedImageObject != null && selectedImageObject is UIImage) {
-						img = selectedImageObject as UIImage;
-					}
-					GoToStep2 (img);
+				if (selectedImageObject != null && selectedImageObject is UIImage) {
+					img = selectedImageObject as UIImage;
 				}
+				GoToStep2 (img);
+			}
 			);
 		}
 
 		partial void OnLibraryButtonPressed (MonoTouch.Foundation.NSObject sender)
 		{
 			Camera.SelectPicture (this, 
-			    (dico) => {
+			                      (dico) => {
 
 				UIImage img = null;
 
@@ -44,18 +44,22 @@ namespace PixPuzzle
 				if (selectedImageObject != null && selectedImageObject is UIImage) {
 					img = selectedImageObject as UIImage;
 				}
-				
-				// DEBUG
-//				img = UIImage.FromFile ("testpathfromphoto3.jpg");
 
 				GoToStep2 (img);
 			});
 		}
 
+		partial void OnDebugButtonPressed (MonoTouch.Foundation.NSObject sender)
+		{
+			var img = UIImage.FromFile ("testpathfromphoto3.jpg");
+
+			GoToStep2 (img);
+		}
+
 		private void GoToStep2 (UIImage img)
 		{
 			var vc = this.Storyboard.InstantiateViewController ("MenuCreateStep2ViewController") as MenuCreateStep2ViewController;
-			vc.SetBaseImage (img, IsFriendMatch);
+			vc.InitializePuzzleCreation (img, IsFriendMatch);
 
 			NavigationController.PushViewController (
 				vc,

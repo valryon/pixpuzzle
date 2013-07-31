@@ -21,6 +21,9 @@ namespace PixPuzzle
 		[Outlet]
 		MonoTouch.UIKit.UIImageView ImageTransformed { get; set; }
 
+		[Outlet]
+		MonoTouch.UIKit.UISlider SliderDifficulty { get; set; }
+
 		[Action ("OnPlayButtonPressed:")]
 		partial void OnPlayButtonPressed (MonoTouch.Foundation.NSObject sender);
 
@@ -42,6 +45,11 @@ namespace PixPuzzle
 			if (ImageTransformed != null) {
 				ImageTransformed.Dispose ();
 				ImageTransformed = null;
+			}
+
+			if (SliderDifficulty != null) {
+				SliderDifficulty.Dispose ();
+				SliderDifficulty = null;
 			}
 		}
 	}

@@ -12,6 +12,9 @@ namespace PixPuzzle
 	[Register ("MenuCreateViewController")]
 	partial class MenuCreateViewController
 	{
+		[Action ("OnDebugButtonPressed:")]
+		partial void OnDebugButtonPressed (MonoTouch.Foundation.NSObject sender);
+
 		[Action ("OnLibraryButtonPressed:")]
 		partial void OnLibraryButtonPressed (MonoTouch.Foundation.NSObject sender);
 

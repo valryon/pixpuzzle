@@ -282,6 +282,21 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="tGo-ei-V84">
+                                <rect key="frame" x="417" y="549" width="190" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="DEBUG: Resources pic">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="OnDebugButtonPressed:" destination="Sy4-0d-DJB" eventType="touchUpInside" id="vI9-ER-c89"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
@@ -382,6 +397,7 @@
                         <outlet property="ButtonPlayPressed" destination="dCP-lk-X2l" id="Chh-1O-XED"/>
                         <outlet property="ButtonShare" destination="Gb2-Hy-EiB" id="6N1-Dq-LCC"/>
                         <outlet property="ImageTransformed" destination="Ohy-bC-rzB" id="1Uq-pH-Ezo"/>
+                        <outlet property="SliderDifficulty" destination="Eja-mh-B7k" id="vRa-XY-9z2"/>
                         <segue destination="JqQ-rF-dhF" kind="push" identifier="MenuCreate2ToGame" id="APh-H0-IKw"/>
                     </connections>
                 </viewController>
@@ -741,11 +757,13 @@
                 <relationship kind="outlet" name="ButtonPlayPressed" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="ButtonShare" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="ImageTransformed" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="SliderDifficulty" candidateClass="UISlider"/>
             </relationships>
         </class>
         <class className="MenuCreateViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/MenuCreateViewController.h"/>
             <relationships>
+                <relationship kind="action" name="OnDebugButtonPressed:"/>
                 <relationship kind="action" name="OnLibraryButtonPressed:"/>
                 <relationship kind="action" name="OnTakePictureButtonPressed:"/>
             </relationships>
@@ -801,6 +819,9 @@
         </class>
         <class className="UICollectionViewFlowLayout" superclassName="UICollectionViewLayout">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewFlowLayout.h"/>
+        </class>
+        <class className="UICollectionViewLayout" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UICollectionViewLayout.h"/>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
