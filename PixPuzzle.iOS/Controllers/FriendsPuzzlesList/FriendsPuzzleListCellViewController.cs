@@ -7,7 +7,7 @@ using PixPuzzle.Data;
 namespace PixPuzzle
 {
 	[Register("FriendsPuzzleListCellViewController")]
-	public class FriendsPuzzleListCellViewController : UICollectionViewCell
+	public partial class FriendsPuzzleListCellViewController : UICollectionViewCell
 	{
 		public static readonly NSString Key = new NSString ("FriendsPuzzleListCell");
 		public static readonly UINib Nib = Nib = UINib.FromName ("FriendsPuzzleListCell", NSBundle.MainBundle);

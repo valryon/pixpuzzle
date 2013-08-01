@@ -155,6 +155,9 @@
     <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListNewCellViewController.designer.cs">
       <DependentUpon>FriendsPuzzleListNewCellViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListCellViewController.designer.cs">
+      <DependentUpon>FriendsPuzzleListCellViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
