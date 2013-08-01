@@ -115,7 +115,7 @@
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vEL-Lm-tyI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2771" y="-2485"/>
+            <point key="canvasLocation" x="2893" y="-2445"/>
         </scene>
         <!--Menu Play View Controller-->
         <scene sceneID="saW-IF-cyT">
@@ -230,7 +230,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4bI-u2-Pbu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2863" y="-1612"/>
+            <point key="canvasLocation" x="2893" y="-1604"/>
         </scene>
         <!--Menu Create View Controller-->
         <scene sceneID="v7s-3J-RQn">
@@ -501,7 +501,6 @@
                         </connections>
                     </collectionView>
                     <nil key="simulatedStatusBarMetrics"/>
-                    <nil key="simulatedTopBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
@@ -632,7 +631,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xUD-bV-seF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4511" y="-1088"/>
+            <point key="canvasLocation" x="4459" y="-1636"/>
         </scene>
         <!--Menu View Controller-->
         <scene sceneID="Lac-he-PMv">
