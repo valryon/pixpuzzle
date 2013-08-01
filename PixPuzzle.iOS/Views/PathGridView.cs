@@ -10,7 +10,7 @@ using MonoTouch.Foundation;
 
 namespace PixPuzzle
 {
-	internal class PathGridViewInternal : UIView, IPathGridView
+	internal class PathGridViewInternal : UIView, IGridView
 	{
 		private PathGridView mParent;
 		private UIImage mSplashImage, mSplashValidImage, mPathImage;
@@ -74,7 +74,7 @@ namespace PixPuzzle
 
 		}
 
-		public bool IsToRefresh (PathCell cell, Rectangle cellRect)
+		public bool IsToRefresh (Cell cell, Rectangle cellRect)
 		{
 			return mDrawRect.IntersectsWith (cellRect) || mDrawRect.Contains (cellRect);
 		}
@@ -124,7 +124,7 @@ namespace PixPuzzle
 			mContext.StrokePath ();
 		}
 
-		public void DrawCellBase (PathCell cell, Rectangle rectangle)
+		public void DrawCellBase (Cell cell, Rectangle rectangle)
 		{
 			bool isValid = cell.Path != null && cell.Path.IsValid;
 			CellColor cellColor = cell.Color;
@@ -160,7 +160,7 @@ namespace PixPuzzle
 			}
 		}
 
-		public void DrawPath (PathCell cell, Rectangle pathRect, Point direction, CellColor color)
+		public void DrawPath (Cell cell, Rectangle pathRect, Point direction, CellColor color)
 		{
 			mContext.DrawImage (pathRect, UIImageEx.GetImageWithOverlayColor(mPathImage, color.UIColor).CGImage);
 
@@ -218,7 +218,7 @@ namespace PixPuzzle
 //			context.FillPath ();
 		}
 
-		public void DrawLastCellIncompletePath (PathCell cell, Rectangle rect, string pathValue, CellColor color)
+		public void DrawLastCellIncompletePath (Cell cell, Rectangle rect, string pathValue, CellColor color)
 		{
 			UIColor colorUnderText = UIColor.LightGray;
 
@@ -233,7 +233,7 @@ namespace PixPuzzle
 			mContext.ShowTextAtPoint (rect.X + mParent.CellSize/3, rect.Y + 2 * mParent.CellSize / 3, pathValue);
 		}
 
-		public void DrawCellText (PathCell cell, Rectangle location, string text, CellColor color)
+		public void DrawCellText (Cell cell, Rectangle location, string text, CellColor color)
 		{
 			mContext.SelectFont ("Helvetica Neue", 16.0f, CGTextEncoding.MacRoman);
 
@@ -267,7 +267,7 @@ namespace PixPuzzle
 
 		#region Grid tools
 
-		private PathCell getCellFromViewCoordinates (PointF viewLocation)
+		private Cell getCellFromViewCoordinates (PointF viewLocation)
 		{
 			int x = (int)(viewLocation.X / (float)mParent.CellSize);
 			int y = (int)(viewLocation.Y / (float)mParent.CellSize);
@@ -288,7 +288,7 @@ namespace PixPuzzle
 
 				PointF touchLocation = sender.LocationInView (this);
 
-				PathCell cell = getCellFromViewCoordinates (touchLocation);
+				Cell cell = getCellFromViewCoordinates (touchLocation);
 				mParent.RemovePath (cell);
 			}
 		}
@@ -305,7 +305,7 @@ namespace PixPuzzle
 
 				PointF fingerLocation = touch.LocationInView (this);
 
-				PathCell cell = getCellFromViewCoordinates (fingerLocation);
+				Cell cell = getCellFromViewCoordinates (fingerLocation);
 
 				mParent.StartPathCreation (cell);
 			}
@@ -323,7 +323,7 @@ namespace PixPuzzle
 
 					PointF fingerLocation = touch.LocationInView (this);
 
-					PathCell cell = getCellFromViewCoordinates (fingerLocation);
+					Cell cell = getCellFromViewCoordinates (fingerLocation);
 
 					mParent.CreatePath (cell);
 				}

@@ -5,15 +5,15 @@ namespace PixPuzzle.Data
     /// <summary>
     /// One cell of the path puzzle
     /// </summary>
-    public class PathCell
+    public class Cell
     {
 		#region Constructor
 
-		public PathCell ()
+		public Cell ()
 		{
 		}
 
-        public PathCell(int x, int y)
+        public Cell(int x, int y)
         {
 			X = x;
 			Y = y;

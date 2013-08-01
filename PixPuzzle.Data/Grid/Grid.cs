@@ -19,9 +19,9 @@ namespace PixPuzzle.Data
 		/// <summary>
 		/// The grid
 		/// </summary>
-		protected PathCell[][] Cells;
+		protected Cell[][] Cells;
 
-		protected PathCell FirstPathCell, LastSelectedCell;
+		protected Cell FirstPathCell, LastSelectedCell;
 		protected int MaxPathLength;
 
 		private Random mRandom = new Random (182);
@@ -50,18 +50,18 @@ namespace PixPuzzle.Data
 		/// Create a grid and initialize with default values
 		/// </summary>
 		/// <param name="createCell">Create cell.</param>
-		public void CreateGrid (int locationX, int locationY, IPathGridView view)
+		public void CreateGrid (int locationX, int locationY, IGridView view)
 		{
 			// Create the grid
-			Cells = new PathCell[Width][];
+			Cells = new Cell[Width][];
 
 			for (int x=0; x<Width; x++) {
 
-				Cells [x] = new PathCell[Height];
+				Cells [x] = new Cell[Height];
 
 				for (int y=0; y<Height; y++) {
 
-					PathCell c = new PathCell ();
+					Cell c = new Cell ();
 					c.X = x;
 					c.Y = y;
 					Cells [x] [y] = c;
@@ -117,7 +117,7 @@ namespace PixPuzzle.Data
 					if (cell.IsMarked == false) {
 
 						// The cell become the first of a serie
-						PathCell firstCell = cell;
+						Cell firstCell = cell;
 
 						// Find its unmarked neighbors and the last cell of the serie
 						/* Cell lastCell =*/
@@ -136,14 +136,14 @@ namespace PixPuzzle.Data
 		/// <param name="x">The x coordinate.</param>
 		/// <param name="y">The y coordinate.</param>
 		/// <param name="firstCell">First cell.</param>
-		private PathCell InitializePath (PathCell firstCell)
+		private Cell InitializePath (Cell firstCell)
 		{
-			PathCell lastCell = firstCell;
+			Cell lastCell = firstCell;
 
 			// Start from the first cell
 			int count = 0;
 
-			Stack<PathCell> cellToExplore = new Stack<PathCell> ();
+			Stack<Cell> cellToExplore = new Stack<Cell> ();
 			cellToExplore.Push (firstCell);
 
 			// Try to move in another direction
@@ -151,7 +151,7 @@ namespace PixPuzzle.Data
 			while (cellToExplore.Count > 0) {
 
 				// Get the first cell to explore
-				PathCell currentCell = cellToExplore.Pop ();
+				Cell currentCell = cellToExplore.Pop ();
 				count++;
 
 				// Mark this cell
@@ -174,7 +174,7 @@ namespace PixPuzzle.Data
 					CellPoint p = availableDirections [index];
 					availableDirections.Remove (p);
 
-					PathCell nextCell = GetCell (currentCell.X + p.X, currentCell.Y + p.Y);
+					Cell nextCell = GetCell (currentCell.X + p.X, currentCell.Y + p.Y);
 					if (nextCell != null && nextCell.IsMarked == false && nextCell.Color.Equals (firstCell.Color)) {
 						cellToExplore.Push (nextCell);
 					} else {
@@ -224,11 +224,11 @@ namespace PixPuzzle.Data
 		/// Request the grid to be updated, especially some cells that may have been modified
 		/// </summary>
 		/// <param name="cellsToUpdate">Cells to update.</param>
-		public virtual void UpdateView (PathCell[] cellsToRefresh)
+		public virtual void UpdateView (Cell[] cellsToRefresh)
 		{
 			Rectangle zoneToRefresh = Rectangle.Empty;
 
-			foreach (PathCell cell in cellsToRefresh) {
+			foreach (Cell cell in cellsToRefresh) {
 
 				int x = GridLocation.X + cell.X * CellSize;
 				int y = GridLocation.Y + cell.Y * CellSize;

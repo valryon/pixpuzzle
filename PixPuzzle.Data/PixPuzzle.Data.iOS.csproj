@@ -48,13 +48,13 @@
     <Compile Include="Tools\CellColor.cs" />
     <Compile Include="Tools\CellPoint.cs" />
     <Compile Include="Cells\Path.cs" />
-    <Compile Include="Cells\PathCell.cs" />
-    <Compile Include="Views\IPathGridView.cs" />
     <Compile Include="Puzzles\PuzzleService.cs" />
     <Compile Include="Puzzles\Savedgame.cs" />
     <Compile Include="Tools\Logger.cs" />
     <Compile Include="Puzzles\PuzzleData.cs" />
     <Compile Include="Puzzles\TransferablePuzzleData.cs" />
     <Compile Include="Grid\Grid.cs" />
+    <Compile Include="Cells\Cell.cs" />
+    <Compile Include="Views\IGridView.cs" />
   </ItemGroup>
 </Project>
