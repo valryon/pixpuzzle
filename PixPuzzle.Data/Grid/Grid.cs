@@ -49,11 +49,12 @@ namespace PixPuzzle.Data
 		}
 
 		/// <summary>
-		/// Create a grid and initialize with default values
+		/// Create a grid and register view data
 		/// </summary>
-		/// <param name="createCell">Create cell.</param>
 		public void CreateGrid (int locationX, int locationY, IGridView view)
 		{
+			Logger.I ("Creating the "+Width +"x"+Height+" grid...");
+
 			// Create the grid
 			Cells = new Cell[Width][];
 
@@ -76,6 +77,8 @@ namespace PixPuzzle.Data
 
 			this.View = view;
 
+			// Calculate border size
+			// TODO This sucks
 			BorderWidth = 4;
 			int borderStartX = GridLocation.X + (BorderWidth / 2);
 			int borderStartY = GridLocation.Y + (BorderWidth / 2);
@@ -84,11 +87,11 @@ namespace PixPuzzle.Data
 		}
 
 		/// <summary>
-		/// Prepare the grid
+		/// Prepare the grid from image data
 		/// </summary>
 		public void SetupGrid (CellColor[][] pixels)
 		{
-			Logger.I ("Setup the grid...");
+			Logger.I ("Setup the grid using image pixels data...");
 
 			// Fill cells
 			for (int x=0; x<pixels.Length; x++) {
@@ -97,6 +100,7 @@ namespace PixPuzzle.Data
 					// Get the pixel color
 					CellColor c = pixels [x] [y];
 
+					// Transparent becomes white
 					if (c.A < 0.2f) {
 						c = new CellColor () {
 							A = 1f,
@@ -121,8 +125,7 @@ namespace PixPuzzle.Data
 						// The cell become the first of a serie
 						Cell firstCell = cell;
 
-						// Find its unmarked neighbors and the last cell of the serie
-						/* Cell lastCell =*/
+						// Find its unmarked neighbors 
 						InitializePath (firstCell);
 					}
 				}
@@ -135,8 +138,6 @@ namespace PixPuzzle.Data
 		/// Create a path from a given cell.
 		/// </summary>
 		/// <returns>The last cell.</returns>
-		/// <param name="x">The x coordinate.</param>
-		/// <param name="y">The y coordinate.</param>
 		/// <param name="firstCell">First cell.</param>
 		private Cell InitializePath (Cell firstCell)
 		{
@@ -230,6 +231,7 @@ namespace PixPuzzle.Data
 		{
 			Rectangle zoneToRefresh = Rectangle.Empty;
 
+			// Get the rect containing all those cells
 			foreach (Cell cell in cellsToRefresh) {
 
 				int x = GridLocation.X + cell.X * CellSize;
@@ -251,13 +253,15 @@ namespace PixPuzzle.Data
 					}
 				}
 
-				// Trigger the refresh if necessary
-				View.OrderRefresh (zoneToRefresh);
+				// Trigger the refresh 
+				if(zoneToRefresh != Rectangle.Empty) {
+					View.OrderRefresh (zoneToRefresh);
+				}
 			}
 		}
 
 		/// <summary>
-		/// Common draw function for multiplatform rendering
+		/// Puzzle draw global routine
 		/// </summary>
 		public void DrawPuzzle ()
 		{
@@ -385,16 +389,13 @@ namespace PixPuzzle.Data
 		#region Path creation behavior
 
 		/// <summary>
-		/// Starts the path creation.
+		/// Starts a new path creation.
 		/// </summary>
-		/// <returns><c>true</c>, if path creation was started, <c>false</c> otherwise.</returns>
+		/// <returns><c>true</c>, if a path was started, <c>false</c> otherwise.</returns>
 		/// <param name="cell">Cell.</param>
 		public bool StartPathCreation (Cell cell)
 		{
 			if (cell != null) {
-
-				// Debug
-//				Console.WriteLine ("**Cell X:"+cell.X + " Y:"+cell.Y);
 
 				if (cell.Path != null) {
 
@@ -404,142 +405,136 @@ namespace PixPuzzle.Data
 					bool isPathClosed = cell.Path.IsClosed;
 					bool isPathLastCell = cell.Path.IsLastCell (cell);
 
-					// Debug
-//					Console.WriteLine ("**Path val:"+cell.Path.ExpectedLength+" closed:"+isPathClosed + " isPathLastCell:"+isPathLastCell);
-
 					if (isPathClosed == false && isPathLastCell) {
 						FirstPathCell = cell.Path.FirstCell;
 
-//						cell.SelectCell ();
-//						if (LastSelectedCell != null) {
-//							LastSelectedCell.UnselectCell (false);
-//						}
 						LastSelectedCell = cell;
-
-//						Console.WriteLine ("Starting a new path.");
 
 						return true;
 					} 
 				}
 			}
 
-//			Console.WriteLine ("New path not allowed here.");
-
 			return false;
 		}
 
 		/// <summary>
-		/// Creates the path.
+		/// Create a path between the current known path and the given cell.
 		/// </summary>
 		/// <param name="cell">Cell.</param>
 		public void CreatePath (Cell cell)
 		{
+			bool cancelMove = false;
+			string cancelReason = string.Empty;
+
 			// The path length must be respected
 			bool lengthOk = (FirstPathCell.Path.Length < FirstPathCell.Path.ExpectedLength);
 
 			if (lengthOk == false) {
-//				Console.WriteLine ("The path is too long!");
+				cancelMove = true;
+				cancelReason = "The path is too long!";
 			}
+			else 
+			{
+				// We're in the grid and we moved (not the same cell)
+				if (cell != null && cell != LastSelectedCell) {
 
-			bool cancelMove = false;
-			string cancelReason = string.Empty;
+					// Make sure we are one cell away from the previous one
+					int x = cell.X - LastSelectedCell.X;
+					int y = cell.Y - LastSelectedCell.Y;
 
-			// We're in the grid and we moved (not the same cell)
-			if (cell != null && cell != LastSelectedCell) {
+					if (Math.Abs (x) > 1 || Math.Abs (y) > 1) {
+						cancelMove = true;
+						cancelReason = "Cannot create a path that is not in a cell next the to the first one.";
+					} 
+					else 
+					{
+						if (cell.Path == null) {
+							// The cell is available for path
 
-				// Make sure we are one cell away from the previous one
-				int x = cell.X - LastSelectedCell.X;
-				int y = cell.Y - LastSelectedCell.Y;
-
-				if (Math.Abs (x) > 1 || Math.Abs (y) > 1) {
-					cancelMove = true;
-					cancelReason = "Cannot create a path that is not in a cell next the to the first one.";
-				} else {
-//				cell.SelectCell ();
-
-					if (cell.Path == null) {
-						// The cell is available for path
-
-						// Add the cell to the path
-						if (lengthOk) {
+							// Add the cell to the currently edited path
 							FirstPathCell.Path.AddCell (cell);
 							cell.Path = FirstPathCell.Path;
 
 							// Update the modified cells
 							UpdateView (cell.Path.Cells.ToArray ());
 
-//							Console.WriteLine ("Adding cell to the path.");
-//							Console.WriteLine ("Current path length: "+cell.Path.Length);
-						}
+						} else {
 
-					} else {
+							// Already a path in the target cell
+							bool sameColor = cell.Path.Color.Equals (FirstPathCell.Path.Color);
+							bool sameLength = (cell.Path.ExpectedLength == FirstPathCell.Path.ExpectedLength);
 
-						// Already a path in the target cell
+							// -- It's a completely different path, do not override
+							if (sameColor == false || sameLength == false) 
+							{
+								cancelMove = true;
+								cancelReason = "Cannot mix two differents path.";
+							}
+							else if (cell.IsPathStartOrEnd && FirstPathCell != cell) 
+							{
+								// TODO Fusion between two paths parts
 
-						bool sameColor = cell.Path.Color.Equals (FirstPathCell.Path.Color);
-						bool sameLength = (cell.Path.ExpectedLength == FirstPathCell.Path.ExpectedLength);
+								// Does it cloes the path?
+								if (FirstPathCell.Path.Length + 1 == FirstPathCell.Path.ExpectedLength) 
+								{
+									// Fusion!
+									FirstPathCell.Path.Fusion (cell.Path);
+									cell.Path = FirstPathCell.Path;
 
-						// -- It's a completely different path, do not override
-						if (sameColor == false
-							|| sameLength == false) {
+									// Update the modified cells
+									UpdateView (FirstPathCell.Path.Cells.ToArray ());
 
-							cancelMove = true;
-							cancelReason = "Cannot mix two differents path.";
-
-						} else if (cell.IsPathStartOrEnd && FirstPathCell != cell) {
-
-							// Does it cloes the path?
-							if (FirstPathCell.Path.Length + 1 == FirstPathCell.Path.ExpectedLength) {
-
-								// Fusion!
-//								Console.WriteLine ("Fusion!");
-								FirstPathCell.Path.Fusion (cell.Path);
-								cell.Path = FirstPathCell.Path;
+									// End the creation, the path is complete
+									Logger.I ("Path complete!");
+									EndPathCreation (true);
+								}
+								else 
+								{
+									cancelMove = true;
+									cancelReason = "Path has not the right lenght!";
+								}
+							} 
+							else if (FirstPathCell.Path.Cells.Contains (cell) 
+								&& Math.Abs (FirstPathCell.Path.IndexOf (LastSelectedCell) - FirstPathCell.Path.IndexOf (cell)) == 1) {
+								
+								// We're getting back 
+								// Remove all the cells past the one we jut reached
+								// The current cell will NOT be removed
+	//							Console.WriteLine ("Removing cell after "+ cell);
+								List<Cell> removedCells = FirstPathCell.Path.RemoveCellAfter (cell);
 
 								// Update the modified cells
-								UpdateView (FirstPathCell.Path.Cells.ToArray ());
+								// And the removed ones
+								List<Cell> cellsToUpdate = new List<Cell> ();
+								cellsToUpdate.AddRange (cell.Path.Cells);
+								cellsToUpdate.AddRange (removedCells);
 
-								// End the creation, the path is complete
-								Logger.I ("Path complete!");
-								EndPathCreation (true);
-							} else {
+								UpdateView (cellsToUpdate.ToArray ());
+							} 
+							else 
+							{
+								// I don't know what's we're doing.
+								// ABANDON ALL THE WORK
+
+								// You cannot loop so easily!
 								cancelMove = true;
-								cancelReason = "Path has not the right lenght!";
+								cancelReason = "Unreachable code... reached. Time to panic! ";
 							}
-						} else if (FirstPathCell.Path.Cells.Contains (cell) 
-							&& Math.Abs (FirstPathCell.Path.IndexOf (LastSelectedCell) - FirstPathCell.Path.IndexOf (cell)) == 1) {
-							// We're getting back 
-							// Remove all the cells past the one we jut reached
-							// The current cell will NOT be removed
-//							Console.WriteLine ("Removing cell after "+ cell);
-							List<Cell> removedCells = FirstPathCell.Path.RemoveCellAfter (cell);
-
-							// Update the modified cells
-							// And the removed ones
-							List<Cell> cellsToUpdate = new List<Cell> ();
-							cellsToUpdate.AddRange (cell.Path.Cells);
-							cellsToUpdate.AddRange (removedCells);
-
-							UpdateView (cellsToUpdate.ToArray ());
-						} else {
-							// I don't know what's we're doing.
-							// ABANDON ALL THE WORK
-
-							// You cannot loop so easily!
-							cancelMove = true;
-							cancelReason = "I'm doing shit.";
 						}
 					}
+				} 
+				else if (cell != FirstPathCell && cell != LastSelectedCell) 
+				{
+					// The cell is invalid (probably out of the grid)
+					// Stop the path
+					cancelMove = true;
+					cancelReason = "Invalid cell for path";
 				}
-			} else if (cell != FirstPathCell && cell != LastSelectedCell) {
-
-				// The cell is invalid (probably out of the grid)
-				// Stop the path
-				cancelMove = true;
-				cancelReason = "Invalid cell for path";
 			}
 
-			if (cancelMove) {
+			if (cancelMove) 
+			{
 				Logger.I (cancelReason);
 				EndPathCreation (false);
 			}
@@ -547,13 +542,15 @@ namespace PixPuzzle.Data
 			LastSelectedCell = cell;
 		}
 
+		/// <summary>
+		/// Ends the current path creation
+		/// </summary>
+		/// <param name="success">If set to <c>true</c> success.</param>
 		public void EndPathCreation (bool success = false)
 		{
-			// Check the created path
-			if (FirstPathCell != null && LastSelectedCell != null) {
-
-//				Console.WriteLine ("End path creation (success: "+success+")");
-
+			// Make sure we're doing path work
+			if (FirstPathCell != null && LastSelectedCell != null) 
+			{
 				// Check if grid is complete
 				// = if all cells are in a valid path
 				bool isComplete = true;
@@ -573,53 +570,60 @@ namespace PixPuzzle.Data
 					EndGrid ();
 				}
 
-				// Unselect cell
-//				LastSelectedCell.UnselectCell (success);
+				// Forget cells
 				LastSelectedCell = null;
 				FirstPathCell = null;
 			}
 		}
-
+		
+		/// <summary>
+		/// The grid is completed
+		/// </summary>
 		protected void EndGrid ()
 		{
 			Logger.I ("Grid complete!");
 
-			OnGridCompleted ();
+			if (GridCompleted != null) {
+				GridCompleted ();
+			}
 		}
-
+		
+		/// <summary>
+		/// Removes the path linked to the given cell
+		/// </summary>
+		/// <param name="cell">Cell.</param>
 		public void RemovePath (Cell cell)
 		{
 			if (cell != null) {
 				if (cell.Path != null) {
 					List<Cell> removedCells = cell.Path.DeleteItself ();
-//					Console.WriteLine ("Deleting the path");
-
 					UpdateView (removedCells.ToArray ());
 				}
 			}
 		}
+
 		#endregion
 
-			#region Grid tools
+		#region Grid tools
 
-			/// <summary>
-			/// Get the cell from grid indices
-			/// </summary>
-			/// <returns>The cell.</returns>
-			/// <param name="x">The x coordinate.</param>
-			/// <param name="y">The y coordinate.</param>
-			public Cell GetCell (int x, int y)
-			{
-				if ((x >= 0 && x < Width) && (y >= 0 && y < Height)) {
-					// Get the cell
-					return Cells [x] [y];
-				}
-
-				return null;
+		/// <summary>
+		/// Get the cell from grid indices
+		/// </summary>
+		/// <returns>The cell.</returns>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		public Cell GetCell (int x, int y)
+		{
+			if ((x >= 0 && x < Width) && (y >= 0 && y < Height)) {
+				// Get the cell
+				return Cells [x] [y];
 			}
-			#endregion
 
-			#endregion
+			return null;
+		}
+		#endregion
+
+		#endregion
 
 		#region Events
 
@@ -627,13 +631,6 @@ namespace PixPuzzle.Data
 		/// Occurs when grid is completed.
 		/// </summary>
 		public event Action GridCompleted;
-
-		protected void OnGridCompleted ()
-		{
-			if (GridCompleted != null) {
-				GridCompleted ();
-			}
-		}
 
 		#endregion
 
