@@ -7,21 +7,24 @@ using Microsoft.Xna.Framework;
 
 namespace PixPuzzle.Data
 {
+	/// <summary>
+	/// Cross platform puzzle render interface
+	/// </summary>
 	public interface IGridView
 	{
 		void InitializeViewForDrawing ();
 
 		void OrderRefresh (Rectangle zoneToRefresh);
 
+		bool IsToRefresh (Cell cell, Rectangle cellRect);
+
 		void StartDraw ();
 
-		bool IsToRefresh (Cell cell, Rectangle cellRect);
+		void EndDraw ();
 
 		void DrawGrid ();
 
 		void DrawCellBase (Cell cell,Rectangle rectangle);
-
-		void EndDraw ();
 
 		void DrawPath (Cell cell,Rectangle pathRect, Point direction, CellColor color);
 
