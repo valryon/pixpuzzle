@@ -47,10 +47,8 @@
   <ItemGroup>
     <Compile Include="Tools\CellColor.cs" />
     <Compile Include="Tools\CellPoint.cs" />
-    <Compile Include="Views\IGridView.cs" />
     <Compile Include="Cells\Path.cs" />
     <Compile Include="Cells\PathCell.cs" />
-    <Compile Include="Cells\Cell.cs" />
     <Compile Include="Views\IPathGridView.cs" />
     <Compile Include="Puzzles\PuzzleService.cs" />
     <Compile Include="Puzzles\Savedgame.cs" />
