@@ -8,6 +8,8 @@ namespace PixPuzzle.Data
 	/// </summary>
 	public class Path
 	{
+		#region Constructor and... deconstructor!
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PixPuzzle.Data.Path"/> class.
 		/// </summary>
@@ -24,6 +26,16 @@ namespace PixPuzzle.Data
 
 			ExpectedLength = expectedLength;
 		}
+
+		~Path ()
+		{
+			Cells.Clear ();
+			Cells = null;
+		}
+
+		#endregion
+
+		#region Methods
 
 		/// <summary>
 		/// Add a cell to the path
@@ -152,6 +164,10 @@ namespace PixPuzzle.Data
 			return Cells [Cells.Count -1] == cell;
 		}
 
+		#endregion
+
+		#region Properties
+
 		/// <summary>
 		/// The path, an ordered list of cells
 		/// </summary>
@@ -226,10 +242,7 @@ namespace PixPuzzle.Data
 			}
 		}
 
-		~Path ()
-		{
-			Cells.Clear ();
-		}
+		#endregion
 
         public override string ToString()
         {
