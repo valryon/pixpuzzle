@@ -8,19 +8,37 @@ using System.Threading;
 
 namespace PixPuzzle
 {
+	/// <summary>
+	/// The main view of the game, containing the complex PathGridView
+	/// </summary>
 	public partial class GameViewController : UIViewController
 	{
+		#region Fields
+
 		private UIView mGridUIView;
 		private PathGridView mPathGrid;
 		private NSTimer mTimer;
 		private DateTime mCurrentTime;
 		private bool mIsPaused;
 
+		#endregion
+
+		#region Constructor and Initialization
+
+		/// <summary>
+		/// Called by the storyboard
+		/// </summary>
+		/// <param name="handle">Handle.</param>
 		public GameViewController (IntPtr handle)
 			: base(handle)
 		{
 		}
 
+		/// <summary>
+		/// Defines the puzzle the view should display
+		/// </summary>
+		/// <param name="puzzle">Puzzle.</param>
+		/// <param name="selectedPuzzle">Selected puzzle.</param>
 		public void DefinePuzzle (PuzzleData puzzle, UIImage selectedPuzzle)
 		{
 			this.Puzzle = puzzle;
@@ -29,10 +47,57 @@ namespace PixPuzzle
 			UIImage image = selectedPuzzle;
 			Bitmap bitmap = new Bitmap (image);
 
-			mGridUIView = initializeGrid (puzzle, image, bitmap);
+			mGridUIView = InitializeGrid (puzzle, image, bitmap);
 
 			mIsPaused = false;
 			mCurrentTime = new DateTime (0);
+		}
+
+		/// <summary>
+		/// Create a UIView containing the game
+		/// </summary>
+		/// <returns>The grid.</returns>
+		/// <param name="puzzle">Puzzle.</param>
+		/// <param name="image">Image.</param>
+		/// <param name="bitmap">Bitmap.</param>
+		private UIView InitializeGrid (PuzzleData puzzle, UIImage image, Bitmap bitmap)
+		{
+			UIView view = null;
+
+			// Here we create the real game view
+			mPathGrid = new PathGridView (puzzle, (int)image.Size.Width, (int)image.Size.Height);
+			mPathGrid.GridCompleted += GridCompleted;
+
+			// Store it to prevent garbage collection
+			view = mPathGrid.GridViewInternal;
+
+			// Look at each pixel of the image
+			CellColor[][] pixels = new CellColor[(int)image.Size.Width][];
+
+			for (int x=0; x<image.Size.Width; x++) {
+
+				pixels [x] = new CellColor[(int)image.Size.Height];
+
+				for (int y=0; y<image.Size.Height; y++) {
+
+					// Get the pixel color
+					Color c = bitmap.GetPixel (x, y);
+
+					// Transform to generic color
+					pixels [x] [y] = new CellColor () {
+						A = c.A/255f,
+						R = c.R/255f, 
+						G = c.G/255f, 
+						B = c.B/255f
+					};
+
+				}
+			}
+
+			// Transfer pixel data to the internal grid
+			this.mPathGrid.SetupGrid (pixels);
+
+			return view;
 		}
 
 		public override void ViewDidLoad ()
@@ -90,11 +155,11 @@ namespace PixPuzzle
 			ScrollViewGame.AddSubview (mGridUIView);
 
 			// Set timer in a thread
-			var thread = new Thread (initializeTimer as ThreadStart);
+			var thread = new Thread (InitializeTimer as ThreadStart);
 			thread.Start ();
 		}
 
-		private void initializeTimer ()
+		private void InitializeTimer ()
 		{
 			const float updateTimerFrequency = 1f;
 
@@ -116,7 +181,11 @@ namespace PixPuzzle
 			}
 		}
 
-		private void stopTimer ()
+		#endregion
+
+		#region Methods
+
+		private void StopTimer ()
 		{
 			if (mTimer != null) {
 				mTimer.Dispose ();
@@ -124,52 +193,9 @@ namespace PixPuzzle
 			}
 		}
 
-		/// <summary>
-		/// Create a UIView containing the game
-		/// </summary>
-		/// <returns>The grid.</returns>
-		/// <param name="puzzle">Puzzle.</param>
-		/// <param name="image">Image.</param>
-		/// <param name="bitmap">Bitmap.</param>
-		private UIView initializeGrid (PuzzleData puzzle, UIImage image, Bitmap bitmap)
+		private void GridCompleted ()
 		{
-			UIView view = null;
-
-			mPathGrid = new PathGridView (puzzle, (int)image.Size.Width, (int)image.Size.Height);
-			view = mPathGrid.GridViewInternal;
-
-			CellColor[][] pixels = new CellColor[(int)image.Size.Width][];
-
-			// Look at each pixel
-			for (int x=0; x<image.Size.Width; x++) {
-
-				pixels [x] = new CellColor[(int)image.Size.Height];
-
-				for (int y=0; y<image.Size.Height; y++) {
-
-					// Get the pixel color
-					Color c = bitmap.GetPixel (x, y);
-
-					// Transform to generic color
-					pixels [x] [y] = new CellColor () {
-						A = c.A/255f,
-						R = c.R/255f, 
-						G = c.G/255f, 
-						B = c.B/255f
-					};
-
-				}
-			}
-
-			this.mPathGrid.GridCompleted += gridCompleted;
-			this.mPathGrid.SetupGrid (pixels);
-
-			return view;
-		}
-
-		private void gridCompleted ()
-		{
-			stopTimer ();
+			StopTimer ();
 
 			// Register the score
 			this.Puzzle.AddPlayerScore (GameCenterHelper.LocalPlayer.PlayerID, true, mCurrentTime);
@@ -204,9 +230,24 @@ namespace PixPuzzle
 			}
 		}
 
+		private void GoBackToMenu ()
+		{
+			NavigationController.PopToRootViewController (false);
+//
+//			var vc = this.Storyboard.InstantiateViewController ("MenuPlayViewController") as UIViewController;
+//			NavigationController.PushViewController(
+//				vc,
+//				true
+//				);
+		}
+
+		#endregion
+
+		#region Events
+
 		partial void OnButtonQuitPressed (MonoTouch.Foundation.NSObject sender)
 		{
-			stopTimer ();
+			StopTimer ();
 			GoBackToMenu ();
 		}
 
@@ -227,24 +268,19 @@ namespace PixPuzzle
 
 		partial void OnButtonDebugPressed (MonoTouch.Foundation.NSObject sender)
 		{
-			gridCompleted ();
+			GridCompleted ();
 		}
 
-		private void GoBackToMenu ()
-		{
-			NavigationController.PopToRootViewController (false);
-//
-//			var vc = this.Storyboard.InstantiateViewController ("MenuPlayViewController") as UIViewController;
-//			NavigationController.PushViewController(
-//				vc,
-//				true
-//				);
-		}
+		#endregion
+
+		#region Properties
 
 		public PuzzleData Puzzle {
 			get;
 			private set;
 		}
+
+		#endregion
 	}
 }
 
