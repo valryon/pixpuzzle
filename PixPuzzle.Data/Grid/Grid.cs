@@ -43,6 +43,8 @@ namespace PixPuzzle.Data
 			Width = imageWidth;
 			Height = imageHeight;
 
+			// Determine maximum number for the path
+			// TODO Change that, not very interesting
 			MaxPathLength = 9 + ((Math.Max (imageWidth, imageHeight) / 32) * 2);
 		}
 
@@ -270,7 +272,7 @@ namespace PixPuzzle.Data
 			for (int x=0; x<Width; x++) {
 				for (int y=0; y<Height; y++) {
 
-					PathCell cell = GetCell (x, y);
+					Cell cell = GetCell (x, y);
 
 					// Doesn't exists?
 					if (cell == null)
@@ -303,7 +305,7 @@ namespace PixPuzzle.Data
 						if (hasPath) {
 							// Get the path!
 							// For this each cell of the path draw the cell just before them
-							PathCell previousCell = cell.Path.PreviousCell (cell);
+							Cell previousCell = cell.Path.PreviousCell (cell);
 							if (previousCell != null) {
 
 								// Get the direction of the previous cell
@@ -387,7 +389,7 @@ namespace PixPuzzle.Data
 		/// </summary>
 		/// <returns><c>true</c>, if path creation was started, <c>false</c> otherwise.</returns>
 		/// <param name="cell">Cell.</param>
-		public bool StartPathCreation (PathCell cell)
+		public bool StartPathCreation (Cell cell)
 		{
 			if (cell != null) {
 
@@ -430,7 +432,7 @@ namespace PixPuzzle.Data
 		/// Creates the path.
 		/// </summary>
 		/// <param name="cell">Cell.</param>
-		public void CreatePath (PathCell cell)
+		public void CreatePath (Cell cell)
 		{
 			// The path length must be respected
 			bool lengthOk = (FirstPathCell.Path.Length < FirstPathCell.Path.ExpectedLength);
@@ -510,11 +512,11 @@ namespace PixPuzzle.Data
 							// Remove all the cells past the one we jut reached
 							// The current cell will NOT be removed
 //							Console.WriteLine ("Removing cell after "+ cell);
-							List<PathCell> removedCells = FirstPathCell.Path.RemoveCellAfter (cell);
+							List<Cell> removedCells = FirstPathCell.Path.RemoveCellAfter (cell);
 
 							// Update the modified cells
 							// And the removed ones
-							List<PathCell> cellsToUpdate = new List<PathCell> ();
+							List<Cell> cellsToUpdate = new List<Cell> ();
 							cellsToUpdate.AddRange (cell.Path.Cells);
 							cellsToUpdate.AddRange (removedCells);
 
@@ -585,11 +587,11 @@ namespace PixPuzzle.Data
 			OnGridCompleted ();
 		}
 
-		public void RemovePath (PathCell cell)
+		public void RemovePath (Cell cell)
 		{
 			if (cell != null) {
 				if (cell.Path != null) {
-					List<PathCell> removedCells = cell.Path.DeleteItself ();
+					List<Cell> removedCells = cell.Path.DeleteItself ();
 //					Console.WriteLine ("Deleting the path");
 
 					UpdateView (removedCells.ToArray ());
@@ -606,7 +608,7 @@ namespace PixPuzzle.Data
 			/// <returns>The cell.</returns>
 			/// <param name="x">The x coordinate.</param>
 			/// <param name="y">The y coordinate.</param>
-			public PathCell GetCell (int x, int y)
+			public Cell GetCell (int x, int y)
 			{
 				if ((x >= 0 && x < Width) && (y >= 0 && y < Height)) {
 					// Get the cell
@@ -641,7 +643,7 @@ namespace PixPuzzle.Data
 		/// View instance through a cross platform interface
 		/// </summary>
 		/// <value>The view.</value>
-		public IPathGridView View {
+		public IGridView View {
 			get;
 			protected set;
 		}
