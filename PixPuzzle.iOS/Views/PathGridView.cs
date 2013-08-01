@@ -10,12 +10,60 @@ using MonoTouch.Foundation;
 
 namespace PixPuzzle
 {
+	/// <summary>
+	/// Grid iOS view.
+	/// </summary>
+	public class PathGridView : Grid
+	{
+		#region Constants
+
+		public const int CELL_SIZE_IPHONE = 32;
+		public const int CELL_SIZE_IPAD = 48;
+
+		#endregion
+
+		#region Constructor
+
+		public PathGridView (PuzzleData puzzle, int width, int height)
+			: base(puzzle, width, height, AppDelegate.UserInterfaceIdiomIsPhone ? CELL_SIZE_IPHONE : CELL_SIZE_IPAD)
+		{
+			// Create the view 
+			PathGridViewInternal theView = new PathGridViewInternal (this, new RectangleF (0, 0, width * CellSize, height * CellSize));
+
+			// Create the grid and cells views
+			CreateGrid (0,0, theView);
+
+			GridViewInternal = theView;
+		}
+
+		#endregion
+
+		#region Properties
+
+		internal PathGridViewInternal GridViewInternal {
+			get;
+			private set;
+		}
+
+		#endregion
+	}
+
+	/// <summary>
+	/// The real puzzle grid view
+	/// </summary>
 	internal class PathGridViewInternal : UIView, IGridView
 	{
+
+		#region Fields
+
 		private PathGridView mParent;
 		private UIImage mSplashImage, mSplashValidImage, mPathImage;
 		private CGContext mContext;
 		private Rectangle mDrawRect;
+
+		#endregion
+
+		#region Constructor and IDisposable
 
 		public PathGridViewInternal (PathGridView parent, RectangleF frame) 
 			: base(frame)
@@ -28,6 +76,14 @@ namespace PixPuzzle
 			tapGesture.NumberOfTapsRequired = 2;
 			this.AddGestureRecognizer (tapGesture);
 		}
+		
+		protected override void Dispose (bool disposing)
+		{
+			mParent = null;
+			base.Dispose (disposing);
+		}
+
+		#endregion
 	
 		#region iOS Drawing
 
@@ -46,6 +102,10 @@ namespace PixPuzzle
 			mPathImage = new UIImage ("path.png");
 		}
 
+		/// <summary>
+		/// Cocoa draw call with frame part to render
+		/// </summary>
+		/// <param name="rect">Rect.</param>
 		public override void Draw (RectangleF rect)
 		{
 			base.Draw (rect);
@@ -62,6 +122,11 @@ namespace PixPuzzle
 			// iOS Specific
 			SetNeedsDisplayInRect (zoneToRefresh);
 		}
+		
+		public bool IsToRefresh (Cell cell, Rectangle cellRect)
+		{
+			return mDrawRect.IntersectsWith (cellRect) || mDrawRect.Contains (cellRect);
+		}
 
 		public void StartDraw ()
 		{
@@ -71,12 +136,6 @@ namespace PixPuzzle
 			// -- Text
 			mContext.SetTextDrawingMode (CGTextDrawingMode.Fill);
 			mContext.TextMatrix = CGAffineTransform.MakeScale (1f, -1f);
-
-		}
-
-		public bool IsToRefresh (Cell cell, Rectangle cellRect)
-		{
-			return mDrawRect.IntersectsWith (cellRect) || mDrawRect.Contains (cellRect);
 		}
 
 		public void DrawGrid ()
@@ -337,39 +396,10 @@ namespace PixPuzzle
 
 			base.TouchesEnded (touches, evt);
 		}
+
 		#endregion
 
-		protected override void Dispose (bool disposing)
-		{
-			mParent = null;
-			base.Dispose (disposing);
-		}
 	}
-	/// <summary>
-	/// Grid iOS view.
-	/// </summary>
-	public class PathGridView : Grid
-	{
-		// Constants
-		public const int CELL_SIZE_IPHONE = 32;
-		public const int CELL_SIZE_IPAD = 48;
 
-		public PathGridView (PuzzleData puzzle, int width, int height)
-			: base(puzzle, width, height, AppDelegate.UserInterfaceIdiomIsPhone ? CELL_SIZE_IPHONE : CELL_SIZE_IPAD)
-		{
-			// Create the view 
-			PathGridViewInternal theView = new PathGridViewInternal (this, new RectangleF (0, 0, width * CellSize, height * CellSize));
-
-			// Create the grid and cells views
-			CreateGrid (0,0, theView);
-
-			GridViewInternal = theView;
-		}
-
-		internal PathGridViewInternal GridViewInternal {
-			get;
-			private set;
-		}
-	}
 }
 
