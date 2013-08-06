@@ -29,11 +29,9 @@ namespace PixPuzzle.Data
 		}
 		#endregion
 
-		private string puzzlePath;
-		private string customPuzzlePath;
-		private string savedgamePath;
-
-		public Savedgame Savedgame { get; private set; }
+		private string mPuzzlePath;
+		private string mCustomPuzzlePath;
+		private string mSavedgamePath;
 
 		/// <summary>
 		/// Tell the service where to look for puzzles and where is the save game
@@ -44,16 +42,16 @@ namespace PixPuzzle.Data
 		{
 			var path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
 
-			customPuzzlePath = System.IO.Path.Combine(path, "custom");
-			if (Directory.Exists (customPuzzlePath) == false) {
-				Directory.CreateDirectory (customPuzzlePath);
+			mCustomPuzzlePath = System.IO.Path.Combine(path, "custom");
+			if (Directory.Exists (mCustomPuzzlePath) == false) {
+				Directory.CreateDirectory (mCustomPuzzlePath);
 			}
 
 			// Load the saved infos
 			//----------------------------------------------------------------
-			this.savedgamePath = System.IO.Path.Combine (path, saveFilename);
+			this.mSavedgamePath = System.IO.Path.Combine (path, saveFilename);
 
-			if (File.Exists (savedgamePath) == false) {
+			if (File.Exists (mSavedgamePath) == false) {
 
 				Logger.I ("No savedgame found: creating a new one");
 
@@ -71,7 +69,7 @@ namespace PixPuzzle.Data
 			//----------------------------------------------------------------
 			Logger.I ("Initializing puzzles...");
 
-			this.puzzlePath = puzzlePath;
+			this.mPuzzlePath = puzzlePath;
 
 			if (Directory.Exists (puzzlePath) == false) {
 				throw new ArgumentException ("Invalid puzzle path location: " + puzzlePath + " is not a valid directory!");
@@ -81,7 +79,7 @@ namespace PixPuzzle.Data
 			var knowPuzzles = Savedgame.Puzzles.Where(p => p.IsCustom == false).Select (p => p.Filename);
 			bool shouldSave = false;
 
-			foreach (string file in Directory.GetFiles(this.puzzlePath)) {
+			foreach (string file in Directory.GetFiles(this.mPuzzlePath)) {
 				if (knowPuzzles.Contains (file) == false) {
 					Savedgame.Puzzles.Add (new PuzzleData () {
 						Filename = file,
@@ -113,9 +111,13 @@ namespace PixPuzzle.Data
 				puzzles = puzzles.Where (p => p.IsNew).ToList ();
 			}
 
-			if (removeCompleted) {
-				puzzles = puzzles.Where (p => p.BestScore.HasValue == false).ToList ();
+			if (removeCompleted) 
+			{
+				// Look at each score lines
+				// And find if the local player has at least one line
+				puzzles = puzzles.Where (p =>  (p.Scores.Where(s => s.IsLocal).Any ()) ).ToList ();
 			}
+
 
 			return puzzles.ToList ();
 		}
@@ -124,9 +126,10 @@ namespace PixPuzzle.Data
 		/// Save a new custom puzzle
 		/// </summary>
 		#if IOS
+
 		public PuzzleData AddPuzzle (string filename, string owner, MonoTouch.UIKit.UIImage image)
 		{
-			string completeFilePath = System.IO.Path.Combine (customPuzzlePath, filename);
+			string completeFilePath = System.IO.Path.Combine (mCustomPuzzlePath, filename);
 
 			Logger.I ("Adding a new " + owner+ " puzzle " + filename);
 
@@ -153,6 +156,7 @@ namespace PixPuzzle.Data
 
 			return newPuzzle;
 		}
+
 #endif
 
 		/// <summary>
@@ -164,7 +168,7 @@ namespace PixPuzzle.Data
 
 			try {
 				XmlSerializer xs = new XmlSerializer (typeof(Savedgame));
-				using (StreamWriter wr = new StreamWriter(savedgamePath)) {
+				using (StreamWriter wr = new StreamWriter(mSavedgamePath)) {
 					xs.Serialize (wr, Savedgame);
 				}
 
@@ -183,7 +187,7 @@ namespace PixPuzzle.Data
 
 			try {
 				XmlSerializer xs = new XmlSerializer (typeof(Savedgame));
-				using (StreamReader rd = new StreamReader(savedgamePath)) {
+				using (StreamReader rd = new StreamReader(mSavedgamePath)) {
 					Savedgame = xs.Deserialize (rd) as Savedgame;
 				}
 
@@ -193,6 +197,8 @@ namespace PixPuzzle.Data
 				Savedgame = new Savedgame ();
 			}
 		}
+
+		public Savedgame Savedgame { get; private set; }
 	}
 }
 

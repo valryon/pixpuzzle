@@ -24,6 +24,8 @@
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <MtouchProfiling>true</MtouchProfiling>
+    <MtouchUseSGen>true</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -86,6 +88,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
+    <Reference Include="MonoTouch.Dialog-1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -96,6 +99,9 @@
     <Folder Include="Resources\puzzles\" />
     <Folder Include="Resources\puzzles\picross\" />
     <Folder Include="Resources\puzzles\path\" />
+    <Folder Include="Controllers\Menu\" />
+    <Folder Include="Controllers\PuzzlesList\" />
+    <Folder Include="Controllers\FriendsPuzzlesList\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -111,13 +117,49 @@
       <DependentUpon>GameViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\PathGridView.cs" />
-    <Compile Include="Controllers\MenuViewController.cs" />
-    <Compile Include="Controllers\MenuViewController.designer.cs">
-      <DependentUpon>MenuViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="Tools\Camera.cs" />
     <Compile Include="Tools\UIImageEx.cs" />
     <Compile Include="Tools\ImageFilters.cs" />
+    <Compile Include="Controllers\Menu\MenuViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuViewController.designer.cs">
+      <DependentUpon>MenuViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Menu\MenuCreateViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuCreateViewController.designer.cs">
+      <DependentUpon>MenuCreateViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Menu\MenuFriendsViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuFriendsViewController.designer.cs">
+      <DependentUpon>MenuFriendsViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Menu\MenuCreditsViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuCreditsViewController.designer.cs">
+      <DependentUpon>MenuCreditsViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Menu\MenuPlayViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuPlayViewController.designer.cs">
+      <DependentUpon>MenuPlayViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Menu\MenuCreateStep2ViewController.cs" />
+    <Compile Include="Controllers\Menu\MenuCreateStep2ViewController.designer.cs">
+      <DependentUpon>MenuCreateStep2ViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\PuzzlesList\PuzzlesListCellViewController.cs" />
+    <Compile Include="Controllers\PuzzlesList\PuzzleListViewController.cs" />
+    <Compile Include="Controllers\PuzzlesList\PuzzleListDetailViewController.cs" />
+    <Compile Include="Controllers\PuzzlesList\PuzzleListDetailViewController.designer.cs">
+      <DependentUpon>PuzzleListDetailViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListCellViewController.cs" />
+    <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListViewController.cs" />
+    <Compile Include="GameCenterHelper.cs" />
+    <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListNewCellViewController.cs" />
+    <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListNewCellViewController.designer.cs">
+      <DependentUpon>FriendsPuzzleListNewCellViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\FriendsPuzzlesList\FriendsPuzzleListCellViewController.designer.cs">
+      <DependentUpon>FriendsPuzzleListCellViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -133,8 +175,6 @@
     <BundleResource Include="Resources\grid_background_%402X.png" />
     <BundleResource Include="Resources\splash_valid.png" />
     <BundleResource Include="Resources\path.png" />
-    <BundleResource Include="Resources\picross_crossed.png" />
-    <BundleResource Include="Resources\picross_filled.png" />
     <BundleResource Include="..\Puzzles\path\0.png">
       <Link>Resources\puzzles\path\0.png</Link>
     </BundleResource>
@@ -171,8 +211,15 @@
     <BundleResource Include="Resources\testpathfromphoto.jpg" />
     <BundleResource Include="Resources\testpathfromphoto2.jpg" />
     <BundleResource Include="Resources\testpathfromphoto3.jpg" />
+    <BundleResource Include="Resources\icon_friends.jpg" />
+    <BundleResource Include="Resources\icon_completed.jpg" />
+    <BundleResource Include="Resources\pixelnest_studio.png" />
+    <BundleResource Include="Resources\add_icon.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Views\iPad.storyboard" />
+    <InterfaceDefinition Include="Views\PuzzlesListViewCell.xib" />
+    <InterfaceDefinition Include="Views\FriendsPuzzleListCell.xib" />
+    <InterfaceDefinition Include="Views\FriendsPuzzleListNewCell.xib" />
   </ItemGroup>
 </Project>

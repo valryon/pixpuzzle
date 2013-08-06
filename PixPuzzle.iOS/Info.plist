@@ -4,7 +4,6 @@
 <dict>
 	<key>UIDeviceFamily</key>
 	<array>
-		<integer>1</integer>
 		<integer>2</integer>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
@@ -14,8 +13,6 @@
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
@@ -27,5 +24,9 @@
 	<string>io.pixelnest.pixpuzzle</string>
 	<key>CFBundleVersion</key>
 	<string>0.1</string>
+	<key>UIMainStoryboardFile</key>
+	<string>iPad</string>
+	<key>UIMainStoryboardFile~ipad</key>
+	<string>iPad</string>
 </dict>
 </plist>

@@ -10,15 +10,65 @@ using MonoTouch.Foundation;
 
 namespace PixPuzzle
 {
-	internal class PathGridViewInternal : UIView, IPathGridView
+	/// <summary>
+	/// Grid iOS view.
+	/// </summary>
+	public class PathGridView : Grid
 	{
-		private PathGridView parent;
-		private UIImage splashImage, splashValidImage, pathImage;
+		#region Constants
+
+		public const int CELL_SIZE_IPHONE = 32;
+		public const int CELL_SIZE_IPAD = 48;
+
+		#endregion
+
+		#region Constructor
+
+		public PathGridView (PuzzleData puzzle, int width, int height)
+			: base(puzzle, width, height, AppDelegate.UserInterfaceIdiomIsPhone ? CELL_SIZE_IPHONE : CELL_SIZE_IPAD)
+		{
+			// Create the view 
+			PathGridViewInternal theView = new PathGridViewInternal (this, new RectangleF (0, 0, width * CellSize, height * CellSize));
+
+			// Create the grid and cells views
+			CreateGrid (0,0, theView);
+
+			GridViewInternal = theView;
+		}
+
+		#endregion
+
+		#region Properties
+
+		internal PathGridViewInternal GridViewInternal {
+			get;
+			private set;
+		}
+
+		#endregion
+	}
+
+	/// <summary>
+	/// The real puzzle grid view
+	/// </summary>
+	internal class PathGridViewInternal : UIView, IGridView
+	{
+
+		#region Fields
+
+		private PathGridView mParent;
+		private UIImage mSplashImage, mSplashValidImage, mPathImage;
+		private CGContext mContext;
+		private Rectangle mDrawRect;
+
+		#endregion
+
+		#region Constructor and IDisposable
 
 		public PathGridViewInternal (PathGridView parent, RectangleF frame) 
 			: base(frame)
 		{
-			this.parent = parent;
+			this.mParent = parent;
 
 			// -- Gestures
 			// ---- Double tap to delete
@@ -26,36 +76,45 @@ namespace PixPuzzle
 			tapGesture.NumberOfTapsRequired = 2;
 			this.AddGestureRecognizer (tapGesture);
 		}
+		
+		protected override void Dispose (bool disposing)
+		{
+			mParent = null;
+			base.Dispose (disposing);
+		}
+
+		#endregion
 	
 		#region iOS Drawing
-
-		private CGContext context;
-		private Rectangle drawRect;
 
 		public void InitializeViewForDrawing ()
 		{
 			// Find the real final size and location of the frame
-			this.Frame = new RectangleF (parent.GridLocation.X, parent.GridLocation.Y
-			                             , (parent.CellSize * parent.Width) + parent.GridLocation.X + parent.BorderWidth
-			                             , (parent.CellSize * parent.Height) + parent.GridLocation.Y + parent.BorderWidth
+			this.Frame = new RectangleF (mParent.GridLocation.X, mParent.GridLocation.Y
+			                             , (mParent.CellSize * mParent.Width) + mParent.GridLocation.X + mParent.BorderWidth
+			                             , (mParent.CellSize * mParent.Height) + mParent.GridLocation.Y + mParent.BorderWidth
 			                             );
 
 			BackgroundColor = UIColor.FromPatternImage(new UIImage("grid_background.png"));
 
-			splashImage = new UIImage ("splash.png");
-			splashValidImage = new UIImage ("splash_valid.png");
-			pathImage = new UIImage ("path.png");
+			mSplashImage = new UIImage ("splash.png");
+			mSplashValidImage = new UIImage ("splash_valid.png");
+			mPathImage = new UIImage ("path.png");
 		}
 
+		/// <summary>
+		/// Cocoa draw call with frame part to render
+		/// </summary>
+		/// <param name="rect">Rect.</param>
 		public override void Draw (RectangleF rect)
 		{
 			base.Draw (rect);
 
 			// Save the rect
-			this.drawRect = new Rectangle ((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
+			this.mDrawRect = new Rectangle ((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
 
 			// Order the big draw
-			parent.DrawPuzzle ();
+			mParent.DrawPuzzle ();
 		}
 
 		public void OrderRefresh (Rectangle zoneToRefresh)
@@ -63,69 +122,68 @@ namespace PixPuzzle
 			// iOS Specific
 			SetNeedsDisplayInRect (zoneToRefresh);
 		}
+		
+		public bool IsToRefresh (Cell cell, Rectangle cellRect)
+		{
+			return mDrawRect.IntersectsWith (cellRect) || mDrawRect.Contains (cellRect);
+		}
 
 		public void StartDraw ()
 		{
 			// Context properties
-			this.context = UIGraphics.GetCurrentContext ();
+			this.mContext = UIGraphics.GetCurrentContext ();
 
 			// -- Text
-			context.SetTextDrawingMode (CGTextDrawingMode.Fill);
-			context.TextMatrix = CGAffineTransform.MakeScale (1f, -1f);
-
-		}
-
-		public bool IsToRefresh (PathCell cell, Rectangle cellRect)
-		{
-			return drawRect.IntersectsWith (cellRect) || drawRect.Contains (cellRect);
+			mContext.SetTextDrawingMode (CGTextDrawingMode.Fill);
+			mContext.TextMatrix = CGAffineTransform.MakeScale (1f, -1f);
 		}
 
 		public void DrawGrid ()
 		{
-			Point borderStartLocation = parent.BorderStartLocation;
-			int borderWidth = parent.BorderWidth;
+			Point borderStartLocation = mParent.BorderStartLocation;
+			int borderWidth = mParent.BorderWidth;
 
 			// Draw the borders of the grid
 			// ------------------------------------------------------------
-			int borderEndX = borderStartLocation.X + (parent.CellSize * parent.Width) + (borderWidth / 2);
-			int borderEndY = borderStartLocation.Y + (parent.CellSize * parent.Height) + (borderWidth / 2);
+			int borderEndX = borderStartLocation.X + (mParent.CellSize * mParent.Width) + (borderWidth / 2);
+			int borderEndY = borderStartLocation.Y + (mParent.CellSize * mParent.Height) + (borderWidth / 2);
 
-			context.SetStrokeColorWithColor (UIColor.Black.CGColor);
-			context.MoveTo (borderStartLocation.X, borderStartLocation.Y); //start at this point
-			context.SetLineWidth (borderWidth);
+			mContext.SetStrokeColorWithColor (UIColor.Black.CGColor);
+			mContext.MoveTo (borderStartLocation.X, borderStartLocation.Y); //start at this point
+			mContext.SetLineWidth (borderWidth);
 
 			// Draw a square
-			context.AddLineToPoint (borderEndX, borderStartLocation.Y); 
-			context.AddLineToPoint (borderEndX, borderEndY); 
-			context.AddLineToPoint (borderStartLocation.X, borderEndY); 
-			context.AddLineToPoint (borderStartLocation.X, borderStartLocation.Y); 
+			mContext.AddLineToPoint (borderEndX, borderStartLocation.Y); 
+			mContext.AddLineToPoint (borderEndX, borderEndY); 
+			mContext.AddLineToPoint (borderStartLocation.X, borderEndY); 
+			mContext.AddLineToPoint (borderStartLocation.X, borderStartLocation.Y); 
 
 			// Effective draw
-			context.StrokePath ();
+			mContext.StrokePath ();
 
 			// Draw cells 
 			// ------------------------------------------------------------
-			context.SetStrokeColorWithColor (UIColor.Black.CGColor);
-			context.SetLineWidth (1.0f);
-			context.SetLineDash (0.5f, new float[] { 4, 2 });
-			context.MoveTo (borderStartLocation.X, borderStartLocation.X);
+			mContext.SetStrokeColorWithColor (UIColor.Black.CGColor);
+			mContext.SetLineWidth (1.0f);
+			mContext.SetLineDash (0.5f, new float[] { 4, 2 });
+			mContext.MoveTo (borderStartLocation.X, borderStartLocation.X);
 
-			for (int x=0; x<parent.Width; x++) {
-				int cellBorderX = borderStartLocation.X + x * parent.CellSize;
-				context.MoveTo (cellBorderX, borderStartLocation.X);
-				context.AddLineToPoint (cellBorderX, borderStartLocation.Y + parent.Height * parent.CellSize);
+			for (int x=0; x<mParent.Width; x++) {
+				int cellBorderX = borderStartLocation.X + x * mParent.CellSize;
+				mContext.MoveTo (cellBorderX, borderStartLocation.X);
+				mContext.AddLineToPoint (cellBorderX, borderStartLocation.Y + mParent.Height * mParent.CellSize);
 			}
 
-			for (int y=0; y<parent.Height; y++) {
-				int cellBorderY = borderStartLocation.X + y * parent.CellSize;
-				context.MoveTo (borderStartLocation.X, cellBorderY);
-				context.AddLineToPoint (borderStartLocation.X + parent.Width * parent.CellSize, cellBorderY);
+			for (int y=0; y<mParent.Height; y++) {
+				int cellBorderY = borderStartLocation.X + y * mParent.CellSize;
+				mContext.MoveTo (borderStartLocation.X, cellBorderY);
+				mContext.AddLineToPoint (borderStartLocation.X + mParent.Width * mParent.CellSize, cellBorderY);
 			}
 
-			context.StrokePath ();
+			mContext.StrokePath ();
 		}
 
-		public void DrawCellBase (PathCell cell, Rectangle rectangle)
+		public void DrawCellBase (Cell cell, Rectangle rectangle)
 		{
 			bool isValid = cell.Path != null && cell.Path.IsValid;
 			CellColor cellColor = cell.Color;
@@ -135,30 +193,35 @@ namespace PixPuzzle
 			}
 
 			CGColor color = cellColor.UIColor.CGColor;
-			context.SetFillColor (color);
+			mContext.SetFillColor (color);
 
-			// Draw a circle of the color
-			// But reduce the circle value
-			int circleReductionValue = parent.CellSize / 10;
+			if (mParent.ShouldDisplayFilledCells == false) {
+				// Draw a circle of the color
+				// But reduce the circle value
+				int circleReductionValue = mParent.CellSize / 10;
 
-			RectangleF cellValueRect = new RectangleF (rectangle.X + circleReductionValue, rectangle.Y + circleReductionValue, parent.CellSize - 2 * circleReductionValue, parent.CellSize - 2 * circleReductionValue);
+				RectangleF cellValueRect = new RectangleF (rectangle.X + circleReductionValue, rectangle.Y + circleReductionValue, mParent.CellSize - 2 * circleReductionValue, mParent.CellSize - 2 * circleReductionValue);
 
-			UIImage image = null;
+				UIImage image = null;
 
-			if (isValid == false) {
-				image = splashImage;
+				if (isValid == false) {
+					image = mSplashImage;
+				} else {
+					image = mSplashValidImage;
+				}
+
+				image = UIImageEx.GetImageWithOverlayColor (image, cellColor.UIColor);
+
+				mContext.DrawImage (cellValueRect, image.CGImage);
 			} else {
-				image = splashValidImage;
+				// Fill the whole cell to preview puzzle
+				mContext.FillRect (rectangle);
 			}
-
-			image = UIImageEx.GetImageWithOverlayColor (image, cellColor.UIColor);
-
-			context.DrawImage (cellValueRect, image.CGImage);
 		}
 
-		public void DrawPath (PathCell cell, Rectangle pathRect, Point direction, CellColor color)
+		public void DrawPath (Cell cell, Rectangle pathRect, Point direction, CellColor color)
 		{
-			context.DrawImage (pathRect, UIImageEx.GetImageWithOverlayColor(pathImage, color.UIColor).CGImage);
+			mContext.DrawImage (pathRect, UIImageEx.GetImageWithOverlayColor(mPathImage, color.UIColor).CGImage);
 
 			// The old drawing code for perfect paths
 //			context.SetFillColor (color.UIColor.CGColor);
@@ -214,24 +277,24 @@ namespace PixPuzzle
 //			context.FillPath ();
 		}
 
-		public void DrawLastCellIncompletePath (PathCell cell, Rectangle rect, string pathValue, CellColor color)
+		public void DrawLastCellIncompletePath (Cell cell, Rectangle rect, string pathValue, CellColor color)
 		{
 			UIColor colorUnderText = UIColor.LightGray;
 
 			// Draw a gray circle!
-			int circleReductionValue = parent.CellSize / 8;
-			context.SetFillColor (colorUnderText.CGColor);
-			context.FillEllipseInRect (new RectangleF(rect.X + circleReductionValue, rect.Y + circleReductionValue, parent.CellSize-2*circleReductionValue, parent.CellSize-2*circleReductionValue));
+			int circleReductionValue = mParent.CellSize / 8;
+			mContext.SetFillColor (colorUnderText.CGColor);
+			mContext.FillEllipseInRect (new RectangleF(rect.X + circleReductionValue, rect.Y + circleReductionValue, mParent.CellSize-2*circleReductionValue, mParent.CellSize-2*circleReductionValue));
 
 			// Draw the text
-			context.SetFillColor (UIColor.Black.CGColor);
-			context.SelectFont ("Helvetica Neue", 12.0f, CGTextEncoding.MacRoman);
-			context.ShowTextAtPoint (rect.X + parent.CellSize/3, rect.Y + 2 * parent.CellSize / 3, pathValue);
+			mContext.SetFillColor (UIColor.Black.CGColor);
+			mContext.SelectFont ("Helvetica Neue", 12.0f, CGTextEncoding.MacRoman);
+			mContext.ShowTextAtPoint (rect.X + mParent.CellSize/3, rect.Y + 2 * mParent.CellSize / 3, pathValue);
 		}
 
-		public void DrawCellText (PathCell cell, Rectangle location, string text, CellColor color)
+		public void DrawCellText (Cell cell, Rectangle location, string text, CellColor color)
 		{
-			context.SelectFont ("Helvetica Neue", 16.0f, CGTextEncoding.MacRoman);
+			mContext.SelectFont ("Helvetica Neue", 16.0f, CGTextEncoding.MacRoman);
 
 			// Get the reverse color of the background
 			float sumOfComponents = 0;
@@ -247,11 +310,11 @@ namespace PixPuzzle
 				textColor = UIColor.Black;
 			}
 
-			context.SetFillColor (textColor.CGColor);
+			mContext.SetFillColor (textColor.CGColor);
 
 			// Careful with the coordinates!!!
 			// Remember it's a real mess because it's inverted
-			context.ShowTextAtPoint (location.X + parent.CellSize/3, location.Y + 2 * parent.CellSize / 3, text);
+			mContext.ShowTextAtPoint (location.X + mParent.CellSize/3, location.Y + 2 * mParent.CellSize / 3, text);
 		}
 
 		public void EndDraw ()
@@ -263,12 +326,12 @@ namespace PixPuzzle
 
 		#region Grid tools
 
-		private PathCell getCellFromViewCoordinates (PointF viewLocation)
+		private Cell getCellFromViewCoordinates (PointF viewLocation)
 		{
-			int x = (int)(viewLocation.X / (float)parent.CellSize);
-			int y = (int)(viewLocation.Y / (float)parent.CellSize);
+			int x = (int)(viewLocation.X / (float)mParent.CellSize);
+			int y = (int)(viewLocation.Y / (float)mParent.CellSize);
 
-			return parent.GetCell (x, y);
+			return mParent.GetCell (x, y);
 		}
 		#endregion
 
@@ -276,28 +339,34 @@ namespace PixPuzzle
 
 		private void doubleTapEvent (UIGestureRecognizer sender)
 		{
+			// Disable gestures on preview mode
+			if (mParent.ShouldDisplayFilledCells)
+				return; 
+
 			if (sender.NumberOfTouches > 0) {
 
 				PointF touchLocation = sender.LocationInView (this);
 
-				PathCell cell = getCellFromViewCoordinates (touchLocation);
-				parent.RemovePath (cell);
+				Cell cell = getCellFromViewCoordinates (touchLocation);
+				mParent.RemovePath (cell);
 			}
 		}
 
 		public override void TouchesBegan (MonoTouch.Foundation.NSSet touches, UIEvent evt)
 		{
+			// Disable gestures on preview mode
+			if (mParent.ShouldDisplayFilledCells)
+				return; 
+
 			// Touch began: find the cell under the finger and register it as a path start
 			if (touches.Count == 1) {
 				UITouch touch = (UITouch)touches.AnyObject;
 
 				PointF fingerLocation = touch.LocationInView (this);
 
-				Console.WriteLine (fingerLocation);
+				Cell cell = getCellFromViewCoordinates (fingerLocation);
 
-				PathCell cell = getCellFromViewCoordinates (fingerLocation);
-
-				parent.StartPathCreation (cell);
+				mParent.StartPathCreation (cell);
 			}
 			base.TouchesBegan (touches, evt);
 		}
@@ -308,14 +377,14 @@ namespace PixPuzzle
 			if (touches.Count == 1) {
 
 				// Valid movement
-				if (parent.IsCreatingPath) {
+				if (mParent.IsCreatingPath) {
 					UITouch touch = (UITouch)touches.AnyObject;
 
 					PointF fingerLocation = touch.LocationInView (this);
 
-					PathCell cell = getCellFromViewCoordinates (fingerLocation);
+					Cell cell = getCellFromViewCoordinates (fingerLocation);
 
-					parent.CreatePath (cell);
+					mParent.CreatePath (cell);
 				}
 			}
 			base.TouchesMoved (touches, evt);
@@ -323,43 +392,14 @@ namespace PixPuzzle
 
 		public override void TouchesEnded (MonoTouch.Foundation.NSSet touches, UIEvent evt)
 		{
-			parent.EndPathCreation (false);
+			mParent.EndPathCreation (false);
 
 			base.TouchesEnded (touches, evt);
 		}
+
 		#endregion
 
-		protected override void Dispose (bool disposing)
-		{
-			parent = null;
-			base.Dispose (disposing);
-		}
 	}
-	/// <summary>
-	/// Grid iOS view.
-	/// </summary>
-	public class PathGridView : PathGrid
-	{
-		// Constants
-		public const int CellSizeIphone = 32;
-		public const int CellSizeIpad = 48;
 
-		public PathGridView (PuzzleData puzzle, int width, int height)
-			: base(puzzle, width, height, AppDelegate.UserInterfaceIdiomIsPhone ? CellSizeIphone : CellSizeIpad)
-		{
-			// Create the view 
-			PathGridViewInternal theView = new PathGridViewInternal (this, new RectangleF (0, 0, width * CellSize, height * CellSize));
-
-			// Create the grid and cells views
-			CreateGrid (0,0, theView);
-
-			GridViewInternal = theView;
-		}
-
-		internal PathGridViewInternal GridViewInternal {
-			get;
-			private set;
-		}
-	}
 }
 

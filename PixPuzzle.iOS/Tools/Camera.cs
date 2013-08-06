@@ -1,6 +1,7 @@
 using System;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
+using System.Drawing;
 
 namespace PixPuzzle
 {
@@ -14,7 +15,7 @@ namespace PixPuzzle
 	{
 		static UIImagePickerController picker;
 		static Action<NSDictionary> _callback;
-		static UIPopoverController popOver;
+		static UIPopoverController popover;
 
 		static void Init ()
 		{
@@ -33,31 +34,38 @@ namespace PixPuzzle
 				_callback = null;
 
 				picker.DismissViewController (true, null);
+				popover.Dismiss (true);
+
 				cb (info);
 			}
 		}
 
 		public static void TakePicture (UIViewController parent, Action<NSDictionary> callback)
 		{
-			displayPicker (UIImagePickerControllerSourceType.Camera, parent, callback);
+			Init ();
+			picker.SourceType = UIImagePickerControllerSourceType.Camera;
+			_callback = callback;
+
+			if (AppDelegate.UserInterfaceIdiomIsPhone == false) {
+				popover = new UIPopoverController (picker);
+				popover.PresentFromRect (new RectangleF (150, 150, 500, 500), parent.View, UIPopoverArrowDirection.Any, true);
+			} else {
+				parent.PresentViewController (picker, true, null);
+			}
 		}
 
 		public static void SelectPicture (UIViewController parent, Action<NSDictionary> callback)
 		{
-			displayPicker (UIImagePickerControllerSourceType.PhotoLibrary, parent, callback);
-		}
-
-		private static void displayPicker (UIImagePickerControllerSourceType source, UIViewController parent, Action<NSDictionary> callback)
-		{
 			Init ();
-			picker.SourceType = source;
-			picker.AllowsEditing = true;
+			picker.SourceType = UIImagePickerControllerSourceType.PhotoLibrary;
 			_callback = callback;
 
-			if (popOver == null || popOver.ContentViewController == null) { 
-				popOver = new UIPopoverController (picker); 
-			} 
-			popOver.PresentFromRect (parent.View.Frame, parent.View, UIPopoverArrowDirection.Any, true); 
+			if (AppDelegate.UserInterfaceIdiomIsPhone == false) {
+				popover = new UIPopoverController (picker);
+				popover.PresentFromRect (new RectangleF (150, 150, 500, 500), parent.View, UIPopoverArrowDirection.Any, true);
+			} else {
+				parent.PresentViewController (picker, true, null);
+			}
 		}
 	}
 }

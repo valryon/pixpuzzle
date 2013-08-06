@@ -28,6 +28,13 @@ namespace PixPuzzle
 		{
 			Console.WriteLine ("ERROR: " + message + "\n" + e.ToString ());
 		}
+
+#if IOS
+		public static void E (string message, MonoTouch.Foundation.NSError e)
+		{
+			Console.WriteLine ("ERROR: " + message + "\n" + e.ToString ());
+		}
+#endif
 	}
 }
 

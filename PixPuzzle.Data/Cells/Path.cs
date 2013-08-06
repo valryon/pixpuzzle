@@ -8,54 +8,53 @@ namespace PixPuzzle.Data
 	/// </summary>
 	public class Path
 	{
-		/// <summary>
-		/// The path, an ordered list of cells
-		/// </summary>
-		/// <value>The path cells.</value>
-		public List<PathCell> Cells { get; private set; }
-		/// <summary>
-		/// The color is determined by the first cell
-		/// </summary>
-		/// <value>The color of the path.</value>
-		public CellColor Color { get; private set; }
-		/// <summary>
-		/// The expected length of the path, in cells.
-		/// </summary>
-		/// <value>The expected length.</value>
-		public int ExpectedLength { get; private set; }
+		#region Constructor and... deconstructor!
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PixPuzzle.Data.Path"/> class.
 		/// </summary>
 		/// <param name="firstCell">First cell.</param>
 		/// <param name="expectedLength">Expected length.</param>
-		public Path (PathCell firstCell, int expectedLength)
+		public Path (Cell firstCell, int expectedLength)
 		{
 			if (firstCell == null) {
 				throw new ArgumentException ();
 			}
-			Cells = new List<PathCell> ();
+			Cells = new List<Cell> ();
 			Cells.Add (firstCell);
 			Color = firstCell.Color;
 
 			ExpectedLength = expectedLength;
 		}
+
+		~Path ()
+		{
+			Cells.Clear ();
+			Cells = null;
+		}
+
+		#endregion
+
+		#region Methods
+
 		/// <summary>
 		/// Add a cell to the path
 		/// </summary>
 		/// <param name="cell">Cell.</param>
-		public void AddCell (PathCell cell)
+		public void AddCell (Cell cell)
 		{
 			Cells.Add (cell);
 		}
+
 		/// <summary>
 		/// Removes all the cells that are after the given one
 		/// </summary>
 		/// <param name="cell">Cell.</param>
-		public List<PathCell> RemoveCellAfter (PathCell cell)
+		public List<Cell> RemoveCellAfter (Cell cell)
 		{
 			int index = Cells.IndexOf (cell);
 
-			List<PathCell> cellsToRemove = new List<PathCell> ();
+			List<Cell> cellsToRemove = new List<Cell> ();
 
 			for (int i=index+1; i < Cells.Count; i++) {
 				cellsToRemove.Add (Cells[i]);
@@ -69,12 +68,13 @@ namespace PixPuzzle.Data
 
 			return cellsToRemove;
 		}
+
 		/// <summary>
 		/// Delete the path, make it disappear
 		/// </summary>
-		public List<PathCell> DeleteItself ()
+		public List<Cell> DeleteItself ()
 		{
-			List<PathCell>  removedCells = new List<PathCell> ();
+			List<Cell>  removedCells = new List<Cell> ();
 
 			// Prevent 1 path to be deleted
 			if (Cells.Count <= 1)
@@ -102,10 +102,11 @@ namespace PixPuzzle.Data
 		/// </summary>
 		/// <returns>The of.</returns>
 		/// <param name="cell">Cell.</param>
-		public int IndexOf (PathCell cell)
+		public int IndexOf (Cell cell)
 		{
 			return Cells.IndexOf (cell);
 		}
+
 		/// <summary>
 		/// Fusion the specified other path.
 		/// </summary>
@@ -115,7 +116,7 @@ namespace PixPuzzle.Data
 			// The otherPath is the loser
 			// We transfer its data
 			// Then we kill it
-			foreach (PathCell cell in otherPath.Cells) {
+			foreach (Cell cell in otherPath.Cells) {
 				if (Cells.Contains (cell) == false) {
 					AddCell (cell);
 				}
@@ -124,7 +125,7 @@ namespace PixPuzzle.Data
 			otherPath.Cells.Clear ();
 		}
 
-		public PathCell PreviousCell (PathCell cell)
+		public Cell PreviousCell (Cell cell)
 		{
 			if (Cells.Contains (cell) == false)
 				return null;
@@ -137,7 +138,7 @@ namespace PixPuzzle.Data
 			return null;
 		}
 
-		public PathCell NextCell (PathCell cell)
+		public Cell NextCell (Cell cell)
 		{
 			if (Cells.Contains (cell) == false)
 				return null;
@@ -155,18 +156,41 @@ namespace PixPuzzle.Data
 		/// </summary>
 		/// <returns><c>true</c> if this instance is last cell the specified cell; otherwise, <c>false</c>.</returns>
 		/// <param name="cell">Cell.</param>
-		public bool IsLastCell (PathCell cell)
+		public bool IsLastCell (Cell cell)
 		{
 			if (Cells.Count == 0)
 				return false;
 
 			return Cells [Cells.Count -1] == cell;
 		}
+
+		#endregion
+
+		#region Properties
+
+		/// <summary>
+		/// The path, an ordered list of cells
+		/// </summary>
+		/// <value>The path cells.</value>
+		public List<Cell> Cells { get; private set; }
+
+		/// <summary>
+		/// The color is determined by the first cell
+		/// </summary>
+		/// <value>The color of the path.</value>
+		public CellColor Color { get; private set; }
+
+		/// <summary>
+		/// The expected length of the path, in cells.
+		/// </summary>
+		/// <value>The expected length.</value>
+		public int ExpectedLength { get; private set; }
+
 		/// <summary>
 		/// Path first cell
 		/// </summary>
 		/// <value>The first cell.</value>
-		public PathCell FirstCell {
+		public Cell FirstCell {
 			get {
 				if (Cells.Count == 0)
 					return null;
@@ -174,6 +198,7 @@ namespace PixPuzzle.Data
 				return Cells [0];
 			}
 		}
+
 		/// <summary>
 		/// The path is closed and has the expected length
 		/// </summary>
@@ -183,6 +208,7 @@ namespace PixPuzzle.Data
 				return IsClosed && (ExpectedLength == Length);
 			}
 		}
+
 		/// <summary>
 		/// Current path length
 		/// </summary>
@@ -192,6 +218,7 @@ namespace PixPuzzle.Data
 				return Cells.Count;
 			}
 		}
+
 		/// <summary>
 		/// A closed path is a path where the first and last cells contains a number
 		/// </summary>
@@ -203,8 +230,8 @@ namespace PixPuzzle.Data
 					return false;
 				}
 
-				PathCell firstCell = Cells [0];
-				PathCell lastCell = Cells [Cells.Count - 1];
+				Cell firstCell = Cells [0];
+				Cell lastCell = Cells [Cells.Count - 1];
 
 				// Only one cell, more tricky, can be valid
 				if (firstCell == lastCell) {
@@ -215,10 +242,7 @@ namespace PixPuzzle.Data
 			}
 		}
 
-		~Path ()
-		{
-			Cells.Clear ();
-		}
+		#endregion
 
         public override string ToString()
         {

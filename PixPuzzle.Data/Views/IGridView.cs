@@ -8,24 +8,29 @@ using Microsoft.Xna.Framework;
 namespace PixPuzzle.Data
 {
 	/// <summary>
-	/// Common methods for grid views
+	/// Cross platform puzzle render interface
 	/// </summary>
-	public interface IGridView<TCell>
-		where TCell : Cell
+	public interface IGridView
 	{
 		void InitializeViewForDrawing ();
 
 		void OrderRefresh (Rectangle zoneToRefresh);
 
+		bool IsToRefresh (Cell cell, Rectangle cellRect);
+
 		void StartDraw ();
 
-		bool IsToRefresh (TCell cell, Rectangle cellRect);
+		void EndDraw ();
 
 		void DrawGrid ();
 
-		void DrawCellBase (TCell cell,Rectangle rectangle);
+		void DrawCellBase (Cell cell,Rectangle rectangle);
 
-		void EndDraw ();
+		void DrawPath (Cell cell,Rectangle pathRect, Point direction, CellColor color);
+
+		void DrawLastCellIncompletePath (Cell cell,Rectangle rect, string pathValue, CellColor color);
+
+		void DrawCellText (Cell cell, Rectangle location, string text, CellColor color);
 	}
 }
 

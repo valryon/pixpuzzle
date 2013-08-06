@@ -8,8 +8,8 @@ using MonoTouch.Foundation;
 
 namespace PixPuzzle
 {
-	[Register ("MainViewController")]
-	partial class MenuViewController
+	[Register ("MenuFriendsViewController")]
+	partial class MenuFriendsViewController
 	{
 		void ReleaseDesignerOutlets ()
 		{
