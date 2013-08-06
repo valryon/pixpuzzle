@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace PixPuzzle.Data
@@ -44,6 +45,9 @@ namespace PixPuzzle.Data
 		public void AddCell (Cell cell)
 		{
 			Cells.Add (cell);
+			cell.Path = this;
+
+			Cells = Cells.OrderBy (c => c.X).ThenBy (c => c.Y).ToList();
 		}
 
 		/// <summary>

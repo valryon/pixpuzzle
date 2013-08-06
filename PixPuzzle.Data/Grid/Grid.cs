@@ -466,36 +466,29 @@ namespace PixPuzzle.Data
 							bool sameLength = (cell.Path.ExpectedLength == FirstPathCell.Path.ExpectedLength);
 
 							// -- It's a completely different path, do not override
-							if (sameColor == false || sameLength == false) 
-							{
+							if (sameColor == false || sameLength == false) {
 								cancelMove = true;
 								cancelReason = "Cannot mix two differents path.";
-							}
-							else if (cell.IsPathStartOrEnd && FirstPathCell != cell) 
-							{
-								// TODO Fusion between two paths parts
-
-								// Does it cloes the path?
-								if (FirstPathCell.Path.Length + 1 == FirstPathCell.Path.ExpectedLength) 
-								{
-									// Fusion!
-									FirstPathCell.Path.Fusion (cell.Path);
-									cell.Path = FirstPathCell.Path;
-
-									// Update the modified cells
-									UpdateView (FirstPathCell.Path.Cells.ToArray ());
-
-									// End the creation, the path is complete
-									Logger.I ("Path complete!");
-									EndPathCreation (true);
-								}
-								else 
-								{
-									cancelMove = true;
-									cancelReason = "Path has not the right lenght!";
-								}
 							} 
-							else if (FirstPathCell.Path.Cells.Contains (cell) 
+							else if (sameColor && sameLength && FirstPathCell != cell) {
+
+								// Fusion between two paths parts
+								Logger.I ("Fusion!");
+								FirstPathCell.Path.Fusion (cell.Path);
+								cell.Path = FirstPathCell.Path;
+
+								// Update the modified cells
+								UpdateView (FirstPathCell.Path.Cells.ToArray ());
+
+								// Are we ending the path?
+								if (FirstPathCell.Path.IsValid)
+								{
+										// End the creation, the path is complete
+										Logger.I ("Path complete!");
+										EndPathCreation (true);
+								}
+								
+							} else if (FirstPathCell.Path.Cells.Contains (cell) 
 								&& Math.Abs (FirstPathCell.Path.IndexOf (LastSelectedCell) - FirstPathCell.Path.IndexOf (cell)) == 1) {
 								
 								// We're getting back 
