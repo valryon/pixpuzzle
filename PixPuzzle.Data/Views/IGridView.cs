@@ -14,9 +14,7 @@ namespace PixPuzzle.Data
 	{
 		void InitializeViewForDrawing ();
 
-		void OrderRefresh (Rectangle zoneToRefresh);
-
-		bool IsToRefresh (Cell cell, Rectangle cellRect);
+		void Refresh (Rectangle rect);
 
 		void StartDraw ();
 

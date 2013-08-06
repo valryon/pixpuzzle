@@ -11,16 +11,17 @@ namespace PixPuzzle.Data
 
 		public Cell ()
 		{
+			// Default values
+			Path = null;
+			IsPathStartOrEnd = false;
+			IsToDraw = true;
 		}
 
         public Cell(int x, int y)
+			: this()
         {
 			X = x;
 			Y = y;
-
-            // Default values
-            Path = null;
-            IsPathStartOrEnd = false;
         }
 
 		#endregion
@@ -100,6 +101,16 @@ namespace PixPuzzle.Data
             get;
             set;
         }
+
+		/// <summary>
+		/// Shoudle we (re)draw the cell?
+		/// </summary>
+		/// <value><c>true</c> if this instance is to draw; otherwise, <c>false</c>.</value>
+		public bool IsToDraw 
+		{
+			get;
+			set;
+		}
 
         #endregion
     }

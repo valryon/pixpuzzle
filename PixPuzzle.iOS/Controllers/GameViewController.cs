@@ -130,17 +130,15 @@ namespace PixPuzzle
 
 				if (mPathGrid.ShouldDisplayFilledCells == false) {
 					if (ScrollViewGame.ZoomScale <= zoomLimit) {
-						mPathGrid.ShouldDisplayFilledCells = true;
 
-						RectangleF visibleRect = ScrollViewGame.ConvertRectToView (ScrollViewGame.Bounds, mGridUIView);
-						mGridUIView.SetNeedsDisplayInRect (visibleRect);
+						Logger.I("Preview mode: ON");
+						mPathGrid.SetFilledCells(true);
 					}
 				} else {
 					if (ScrollViewGame.ZoomScale > zoomLimit) {
-						mPathGrid.ShouldDisplayFilledCells = false;
 
-						RectangleF visibleRect = ScrollViewGame.ConvertRectToView (ScrollViewGame.Bounds, mGridUIView);
-						mGridUIView.SetNeedsDisplayInRect (visibleRect);
+						Logger.I("Preview mode: OFF");
+						mPathGrid.SetFilledCells(false);
 					}
 				}
 

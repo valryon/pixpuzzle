@@ -53,13 +53,11 @@ namespace PixPuzzle
 	/// </summary>
 	internal class PathGridViewInternal : UIView, IGridView
 	{
-
 		#region Fields
 
 		private PathGridView mParent;
 		private UIImage mSplashImage, mSplashValidImage, mPathImage;
 		private CGContext mContext;
-		private Rectangle mDrawRect;
 
 		#endregion
 
@@ -108,31 +106,24 @@ namespace PixPuzzle
 		/// <param name="rect">Rect.</param>
 		public override void Draw (RectangleF rect)
 		{
+			Logger.D ("Draw rect : "+rect);
 			base.Draw (rect);
-
-			// Save the rect
-			this.mDrawRect = new Rectangle ((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
 
 			// Order the big draw
 			mParent.DrawPuzzle ();
 		}
 
-		public void OrderRefresh (Rectangle zoneToRefresh)
+		public void Refresh (Rectangle rect)
 		{
 			// iOS Specific
-			SetNeedsDisplayInRect (zoneToRefresh);
-		}
-		
-		public bool IsToRefresh (Cell cell, Rectangle cellRect)
-		{
-			return mDrawRect.IntersectsWith (cellRect) || mDrawRect.Contains (cellRect);
+			SetNeedsDisplayInRect (rect);
 		}
 
 		public void StartDraw ()
 		{
 			// Context properties
 			this.mContext = UIGraphics.GetCurrentContext ();
-
+		
 			// -- Text
 			mContext.SetTextDrawingMode (CGTextDrawingMode.Fill);
 			mContext.TextMatrix = CGAffineTransform.MakeScale (1f, -1f);

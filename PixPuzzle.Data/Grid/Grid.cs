@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 #if IOS
 using System.Drawing;
+
 #elif WINDOWS_PHONE
 using Microsoft.Xna.Framework;
-#endif
 
+#endif
 namespace PixPuzzle.Data
 {
 	/// <summary>
@@ -20,10 +21,8 @@ namespace PixPuzzle.Data
 		/// The grid
 		/// </summary>
 		protected Cell[][] Cells;
-
 		protected Cell FirstPathCell, LastSelectedCell;
 		protected int MaxPathLength;
-
 		private Random mRandom = new Random (182);
 
 		#endregion
@@ -53,7 +52,7 @@ namespace PixPuzzle.Data
 		/// </summary>
 		public void CreateGrid (int locationX, int locationY, IGridView view)
 		{
-			Logger.I ("Creating the "+Width +"x"+Height+" grid...");
+			Logger.I ("Creating the " + Width + "x" + Height + " grid...");
 
 			// Create the grid
 			Cells = new Cell[Width][];
@@ -72,8 +71,9 @@ namespace PixPuzzle.Data
 			}
 
 			// Initialize the view
-			if (view == null)
+			if (view == null) {
 				throw new ArgumentException ();
+			}
 
 			this.View = view;
 
@@ -216,22 +216,33 @@ namespace PixPuzzle.Data
 
 			return lastCell;
 		}
-
 		#endregion
 
 		#region Methods
 
 		#region Render
 
+		public void SetFilledCells(bool isFilled)
+		{
+			ShouldDisplayFilledCells = isFilled;
+
+			// Order a complete refresh
+			RefreshZone (new Rectangle(
+				GridLocation.X,
+				GridLocation.Y,
+				Width * CellSize,
+				Height * CellSize
+				));
+		}
+
 		/// <summary>
 		/// Request the grid to be updated, especially some cells that may have been modified
 		/// </summary>
-		/// <param name="cellsToUpdate">Cells to update.</param>
 		public virtual void UpdateView (Cell[] cellsToRefresh)
 		{
 			Rectangle zoneToRefresh = Rectangle.Empty;
 
-			// Get the rect containing all those cells
+			// Get a complete rectangle of cells
 			foreach (Cell cell in cellsToRefresh) {
 
 				int x = GridLocation.X + cell.X * CellSize;
@@ -242,8 +253,7 @@ namespace PixPuzzle.Data
 				if (zoneToRefresh == Rectangle.Empty) {
 					zoneToRefresh = cellRect;
 				} 
-				else 
-				{
+				else {
 #if IOS
 					if (zoneToRefresh.Contains (cellRect) == false || zoneToRefresh.IntersectsWith (cellRect) == false) {
 #elif WINDOWS_PHONE
@@ -252,11 +262,27 @@ namespace PixPuzzle.Data
 						zoneToRefresh = Rectangle.Union (cellRect, zoneToRefresh);
 					}
 				}
+			} // foreach
 
-				// Trigger the refresh 
-				if(zoneToRefresh != Rectangle.Empty) {
-					View.OrderRefresh (zoneToRefresh);
+			RefreshZone (zoneToRefresh);
+		}
+
+		void RefreshZone (Rectangle zoneToRefresh)
+		{
+			// Find cells to refresh in this rect
+			int startX = zoneToRefresh.X / CellSize;
+			int startY = zoneToRefresh.Y / CellSize;
+			for (int x = startX; x < startX + (zoneToRefresh.Width / CellSize); x++) {
+				for (int y = startY; y < startY + (zoneToRefresh.Height / CellSize); y++) {
+					Cell c = GetCell (x, y);
+					if (c != null) {
+						c.IsToDraw = true;
+					}
 				}
+			}
+			// Trigger the refresh 
+			if (zoneToRefresh != Rectangle.Empty) {
+				View.Refresh (zoneToRefresh);
 			}
 		}
 
@@ -268,7 +294,7 @@ namespace PixPuzzle.Data
 			// Initialize the drawing context
 			View.StartDraw ();
 
-			// Draw the grid and cells
+			// Draw the grid and borders
 			View.DrawGrid ();
 
 			// Draw each cell 
@@ -282,14 +308,14 @@ namespace PixPuzzle.Data
 					if (cell == null)
 						continue;
 
+					// Check if the cell is on the refresh short-list
+					if (cell.IsToDraw == false)
+						continue;
+
 					// Get borders
 					int cellStartX = BorderStartLocation.X + (x * CellSize);
 					int cellStartY = BorderStartLocation.Y + (y * CellSize);
 					Rectangle cellRect = new Rectangle (cellStartX, cellStartY, CellSize, CellSize);
-
-					// Check if the cell has to be refreshed
-					if (View.IsToRefresh (cell, cellRect) == false)
-						continue;
 
 					// Get properties
 					bool hasPath = (cell.Path != null);
@@ -376,6 +402,7 @@ namespace PixPuzzle.Data
 							View.DrawCellText (cell, cellRect, cell.Path.ExpectedLength.ToString (), cell.Path.Color);
 						}
 
+						cell.IsToDraw = false;
 					}
 				} // y
 			} // x
@@ -433,9 +460,7 @@ namespace PixPuzzle.Data
 			if (lengthOk == false) {
 				cancelMove = true;
 				cancelReason = "The path is too long!";
-			}
-			else 
-			{
+			} else {
 				// We're in the grid and we moved (not the same cell)
 				if (cell != null && cell != LastSelectedCell) {
 
@@ -446,9 +471,7 @@ namespace PixPuzzle.Data
 					if (Math.Abs (x) > 1 || Math.Abs (y) > 1) {
 						cancelMove = true;
 						cancelReason = "Cannot create a path that is not in a cell next the to the first one.";
-					} 
-					else 
-					{
+					} else {
 						if (cell.Path == null) {
 							// The cell is available for path
 
@@ -469,8 +492,7 @@ namespace PixPuzzle.Data
 							if (sameColor == false || sameLength == false) {
 								cancelMove = true;
 								cancelReason = "Cannot mix two differents path.";
-							} 
-							else if (sameColor && sameLength && FirstPathCell != cell) {
+							} else if (sameColor && sameLength && FirstPathCell != cell) {
 
 								// Fusion between two paths parts
 								Logger.I ("Fusion!");
@@ -481,11 +503,10 @@ namespace PixPuzzle.Data
 								UpdateView (FirstPathCell.Path.Cells.ToArray ());
 
 								// Are we ending the path?
-								if (FirstPathCell.Path.IsValid)
-								{
-										// End the creation, the path is complete
-										Logger.I ("Path complete!");
-										EndPathCreation (true);
+								if (FirstPathCell.Path.IsValid) {
+									// End the creation, the path is complete
+									Logger.I ("Path complete!");
+									EndPathCreation (true);
 								}
 								
 							} else if (FirstPathCell.Path.Cells.Contains (cell) 
@@ -494,7 +515,6 @@ namespace PixPuzzle.Data
 								// We're getting back 
 								// Remove all the cells past the one we jut reached
 								// The current cell will NOT be removed
-	//							Console.WriteLine ("Removing cell after "+ cell);
 								List<Cell> removedCells = FirstPathCell.Path.RemoveCellAfter (cell);
 
 								// Update the modified cells
@@ -504,9 +524,7 @@ namespace PixPuzzle.Data
 								cellsToUpdate.AddRange (removedCells);
 
 								UpdateView (cellsToUpdate.ToArray ());
-							} 
-							else 
-							{
+							} else {
 								// I don't know what's we're doing.
 								// ABANDON ALL THE WORK
 
@@ -516,9 +534,7 @@ namespace PixPuzzle.Data
 							}
 						}
 					}
-				} 
-				else if (cell != FirstPathCell && cell != LastSelectedCell) 
-				{
+				} else if (cell != FirstPathCell && cell != LastSelectedCell) {
 					// The cell is invalid (probably out of the grid)
 					// Stop the path
 					cancelMove = true;
@@ -526,8 +542,7 @@ namespace PixPuzzle.Data
 				}
 			}
 
-			if (cancelMove) 
-			{
+			if (cancelMove) {
 				Logger.I (cancelReason);
 				EndPathCreation (false);
 			}
@@ -542,8 +557,7 @@ namespace PixPuzzle.Data
 		public void EndPathCreation (bool success = false)
 		{
 			// Make sure we're doing path work
-			if (FirstPathCell != null && LastSelectedCell != null) 
-			{
+			if (FirstPathCell != null && LastSelectedCell != null) {
 				// Check if grid is complete
 				// = if all cells are in a valid path
 				bool isComplete = true;
@@ -568,7 +582,7 @@ namespace PixPuzzle.Data
 				FirstPathCell = null;
 			}
 		}
-		
+
 		/// <summary>
 		/// The grid is completed
 		/// </summary>
@@ -580,7 +594,7 @@ namespace PixPuzzle.Data
 				GridCompleted ();
 			}
 		}
-		
+
 		/// <summary>
 		/// Removes the path linked to the given cell
 		/// </summary>
@@ -614,6 +628,7 @@ namespace PixPuzzle.Data
 
 			return null;
 		}
+
 		#endregion
 
 		#endregion
@@ -675,9 +690,11 @@ namespace PixPuzzle.Data
 		}
 
 		public bool ShouldDisplayFilledCells
-		{ get; set; }
+		{ get; private set; }
 
 		#endregion
+
+
 	}
 }
 
