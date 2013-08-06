@@ -1,4 +1,9 @@
 using System;
+#if IOS
+using System.Drawing;
+#elif WINDOWS_PHONE
+using Microsoft.Xna.Framework;
+#endif
 
 namespace PixPuzzle.Data
 {
@@ -65,6 +70,12 @@ namespace PixPuzzle.Data
 			get;
 			set;
 		}
+
+		public Rectangle Rect {
+			get;
+			set;
+		}
+
 		/// <summary>
 		/// Set the right color form the image
 		/// </summary>
@@ -73,6 +84,7 @@ namespace PixPuzzle.Data
 			get;
 			set;
 		}
+
 		/// <summary>
 		/// Cells has been marked by grid creator
 		/// </summary>

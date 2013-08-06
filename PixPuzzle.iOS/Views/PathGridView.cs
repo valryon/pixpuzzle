@@ -174,7 +174,7 @@ namespace PixPuzzle
 			mContext.StrokePath ();
 		}
 
-		public void DrawCellBase (Cell cell, Rectangle rectangle)
+		public void DrawCellBase (Cell cell)
 		{
 			bool isValid = cell.Path != null && cell.Path.IsValid;
 			CellColor cellColor = cell.Color;
@@ -191,7 +191,7 @@ namespace PixPuzzle
 				// But reduce the circle value
 				int circleReductionValue = mParent.CellSize / 10;
 
-				RectangleF cellValueRect = new RectangleF (rectangle.X + circleReductionValue, rectangle.Y + circleReductionValue, mParent.CellSize - 2 * circleReductionValue, mParent.CellSize - 2 * circleReductionValue);
+				RectangleF cellValueRect = new RectangleF (cell.Rect.X + circleReductionValue, cell.Rect.Y + circleReductionValue, mParent.CellSize - 2 * circleReductionValue, mParent.CellSize - 2 * circleReductionValue);
 
 				UIImage image = null;
 
@@ -206,7 +206,7 @@ namespace PixPuzzle
 				mContext.DrawImage (cellValueRect, image.CGImage);
 			} else {
 				// Fill the whole cell to preview puzzle
-				mContext.FillRect (rectangle);
+				mContext.FillRect (cell.Rect);
 			}
 		}
 

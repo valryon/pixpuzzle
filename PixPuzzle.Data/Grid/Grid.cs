@@ -3,11 +3,10 @@ using System.Collections.Generic;
 
 #if IOS
 using System.Drawing;
-
 #elif WINDOWS_PHONE
 using Microsoft.Xna.Framework;
-
 #endif
+
 namespace PixPuzzle.Data
 {
 	/// <summary>
@@ -54,6 +53,14 @@ namespace PixPuzzle.Data
 		{
 			Logger.I ("Creating the " + Width + "x" + Height + " grid...");
 
+			// Calculate border size
+			// TODO This sucks
+			BorderWidth = 4;
+			int borderStartX = GridLocation.X + (BorderWidth / 2);
+			int borderStartY = GridLocation.Y + (BorderWidth / 2);
+			BorderStartLocation = new Point (borderStartX, borderStartY);
+			GridLocation = BorderStartLocation;
+
 			// Create the grid
 			Cells = new Cell[Width][];
 
@@ -67,6 +74,11 @@ namespace PixPuzzle.Data
 					c.X = x;
 					c.Y = y;
 					Cells [x] [y] = c;
+
+					c.Rect = new Rectangle (
+						GridLocation.X + c.X * CellSize, 
+						GridLocation.Y + c.Y * CellSize, 
+						CellSize, CellSize);
 				}
 			}
 
@@ -76,14 +88,6 @@ namespace PixPuzzle.Data
 			}
 
 			this.View = view;
-
-			// Calculate border size
-			// TODO This sucks
-			BorderWidth = 4;
-			int borderStartX = GridLocation.X + (BorderWidth / 2);
-			int borderStartY = GridLocation.Y + (BorderWidth / 2);
-			BorderStartLocation = new Point (borderStartX, borderStartY);
-			GridLocation = BorderStartLocation;
 		}
 
 		/// <summary>
@@ -222,17 +226,17 @@ namespace PixPuzzle.Data
 
 		#region Render
 
-		public void SetFilledCells(bool isFilled)
+		public void SetFilledCells (bool isFilled)
 		{
 			ShouldDisplayFilledCells = isFilled;
 
 			// Order a complete refresh
-			RefreshZone (new Rectangle(
+			RefreshZone (new Rectangle (
 				GridLocation.X,
 				GridLocation.Y,
 				Width * CellSize,
 				Height * CellSize
-				));
+			));
 		}
 
 		/// <summary>
@@ -252,8 +256,7 @@ namespace PixPuzzle.Data
 
 				if (zoneToRefresh == Rectangle.Empty) {
 					zoneToRefresh = cellRect;
-				} 
-				else {
+				} else {
 #if IOS
 					if (zoneToRefresh.Contains (cellRect) == false || zoneToRefresh.IntersectsWith (cellRect) == false) {
 #elif WINDOWS_PHONE
@@ -294,118 +297,125 @@ namespace PixPuzzle.Data
 			// Initialize the drawing context
 			View.StartDraw ();
 
-			// Draw the grid and borders
-			View.DrawGrid ();
+			// Get cells to draw
+			List<Cell> cellsToDraw = new List<Cell> ();
 
-			// Draw each cell 
-			// ------------------------------------------------------------
 			for (int x=0; x<Width; x++) {
 				for (int y=0; y<Height; y++) {
 
 					Cell cell = GetCell (x, y);
 
 					// Doesn't exists?
-					if (cell == null)
-						continue;
+					if (cell != null) {
 
-					// Check if the cell is on the refresh short-list
-					if (cell.IsToDraw == false)
-						continue;
-
-					// Get borders
-					int cellStartX = BorderStartLocation.X + (x * CellSize);
-					int cellStartY = BorderStartLocation.Y + (y * CellSize);
-					Rectangle cellRect = new Rectangle (cellStartX, cellStartY, CellSize, CellSize);
-
-					// Get properties
-					bool hasPath = (cell.Path != null);
-					bool isStartOrEnd = cell.IsPathStartOrEnd;
-					bool isValid = (hasPath && cell.Path.IsValid);
-					bool isLastCell = (hasPath && cell.Path.IsLastCell (cell));
-
-					// Draw what's necessary
-					if (isValid || isStartOrEnd) {
-						View.DrawCellBase (cell, cellRect);
-					}
-
-					// Preview mode is simplier
-					if (ShouldDisplayFilledCells == false) {
-
-						// Draw paths
-						if (hasPath) {
-							// Get the path!
-							// For this each cell of the path draw the cell just before them
-							Cell previousCell = cell.Path.PreviousCell (cell);
-							if (previousCell != null) {
-
-								// Get the direction of the previous cell
-								int previousDirectionX = previousCell.X - cell.X;
-								int previousDirectionY = previousCell.Y - cell.Y;
-
-								// If x or y is set then y or x has to be 0
-
-								// Draw an ellipse between the two cells
-								// This code is brutal
-								int pathStartX;
-								int pathStartY;
-								int pathWidth;
-								int pathHeight;
-
-								if (previousDirectionX != 0) {
-
-									// Horizontal path
-									pathWidth = CellSize;
-									pathHeight = CellSize / 2;
-
-									// Get the middle X of the previous cell
-									pathStartX = cellStartX + (previousDirectionX * pathWidth / 2);
-
-									// Center Y in the current cell
-									pathStartY = cellStartY + ((CellSize - pathHeight) / 2);
-
-								} else {
-
-									// Vertical path
-									pathWidth = CellSize / 2;
-									pathHeight = CellSize;
-
-									// Center X in the current cell
-									pathStartX = cellStartX + ((CellSize - pathWidth) / 2);
-
-									// Get the middle Y of the previous cell
-									pathStartY = cellStartY + (previousDirectionY * pathHeight / 2);
-
-								}
-
-								Rectangle pathRect = new Rectangle (
-									pathStartX,
-									pathStartY,
-									pathWidth,
-									pathHeight
-								);
-
-
-								View.DrawPath (cell, pathRect, new Point (previousDirectionX, previousDirectionY), cell.Path.Color);
-
-								// Text!
-								// -- Last cell of an incomplete path?
-								if ((isLastCell == true) && (isValid == false) && (isStartOrEnd == false)) {
-									View.DrawLastCellIncompletePath (cell, cellRect, cell.Path.Length.ToString (), cell.Path.Color);
-								}
-							}
-
-						} // path
-
-						// Text for node value at ends/Starts
-						if (isStartOrEnd) {
-							// Draw the text
-							View.DrawCellText (cell, cellRect, cell.Path.ExpectedLength.ToString (), cell.Path.Color);
+						// Check if the cell is on the refresh short-list
+						if (cell.IsToDraw) {
+							cellsToDraw.Add (cell);
+							cell.IsToDraw = false;
 						}
 
-						cell.IsToDraw = false;
 					}
-				} // y
-			} // x
+				}
+			}
+
+			// Layer 0 : Background
+			// ================================================
+			View.DrawGrid ();
+
+			// Layer 1 : Cells base
+			// ================================================
+			foreach (var cell in cellsToDraw) {
+
+				// Draw what's necessary
+				if ((cell.Path != null) || (cell.IsPathStartOrEnd)) {
+					View.DrawCellBase (cell);
+				}
+			}
+
+			// Layer 2 : Paths
+			// ================================================
+			foreach (var cell in cellsToDraw) {
+				// Preview mode is simplier
+				if (ShouldDisplayFilledCells == false) {
+
+					// Draw paths
+					if (cell.Path != null) {
+
+						// Get the path!
+						// For this each cell of the path draw the cell just before them
+						Cell previousCell = cell.Path.PreviousCell (cell);
+
+						if (previousCell != null) {
+
+							// Get the direction of the previous cell
+							int previousDirectionX = previousCell.X - cell.X;
+							int previousDirectionY = previousCell.Y - cell.Y;
+
+							// If x or y is set then y or x has to be 0
+
+							// Draw an ellipse between the two cells
+							// This code is brutal
+							int pathStartX;
+							int pathStartY;
+							int pathWidth;
+							int pathHeight;
+
+							if (previousDirectionX != 0) {
+
+								// Horizontal path
+								pathWidth = CellSize;
+								pathHeight = CellSize / 2;
+
+								// Get the middle X of the previous cell
+								pathStartX = cell.Rect.X + (previousDirectionX * pathWidth / 2);
+
+								// Center Y in the current cell
+								pathStartY = cell.Rect.Y + ((CellSize - pathHeight) / 2);
+
+							} 
+							else {
+
+								// Vertical path
+								pathWidth = CellSize / 2;
+								pathHeight = CellSize;
+
+								// Center X in the current cell
+								pathStartX = cell.Rect.X + ((CellSize - pathWidth) / 2);
+
+								// Get the middle Y of the previous cell
+								pathStartY = cell.Rect.Y + (previousDirectionY * pathHeight / 2);
+							}
+
+							Rectangle pathRect = new Rectangle (
+								pathStartX,
+								pathStartY,
+								pathWidth,
+								pathHeight
+							);
+
+
+							View.DrawPath (cell, pathRect, new Point (previousDirectionX, previousDirectionY), cell.Path.Color);
+
+							// -- Last cell of an incomplete path?
+							if ((cell.Path != null) && (cell.Path.IsLastCell (cell)) && (cell.Path.IsValid == false) && (cell.IsPathStartOrEnd == false)) {
+								View.DrawLastCellIncompletePath (cell, cell.Rect, cell.Path.Length.ToString (), cell.Path.Color);
+							}
+						}
+
+					} // path
+				}
+			}
+					
+			// Layer 3 : Texts
+			// ================================================
+			foreach (var cell in cellsToDraw) {
+
+				// Text for node value at ends/Starts
+				if (cell.IsPathStartOrEnd) {
+					// Draw the text
+					View.DrawCellText (cell, cell.Rect, cell.Path.ExpectedLength.ToString (), cell.Path.Color);
+				}
+			}
 
 			// End the drawing
 			View.EndDraw ();
@@ -690,11 +700,12 @@ namespace PixPuzzle.Data
 		}
 
 		public bool ShouldDisplayFilledCells
-		{ get; private set; }
+		{ 
+			get;
+			private set; 
+		}
 
 		#endregion
-
-
 	}
 }
 

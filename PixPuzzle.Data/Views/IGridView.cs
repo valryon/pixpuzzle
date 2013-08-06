@@ -22,7 +22,7 @@ namespace PixPuzzle.Data
 
 		void DrawGrid ();
 
-		void DrawCellBase (Cell cell,Rectangle rectangle);
+		void DrawCellBase (Cell cell);
 
 		void DrawPath (Cell cell,Rectangle pathRect, Point direction, CellColor color);
 
