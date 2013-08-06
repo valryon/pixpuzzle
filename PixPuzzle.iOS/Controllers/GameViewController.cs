@@ -113,7 +113,20 @@ namespace PixPuzzle
 
 			ScrollViewGame.DidZoom += (object sender, EventArgs e) => {
 
-				const float zoomLimit = 0.125f;
+				// Always center content is the image is not entirely visible
+				UIView subView = ScrollViewGame.Subviews[0];
+
+				double offsetX = (ScrollViewGame.Bounds.Width > ScrollViewGame.ContentSize.Width)? 
+					(ScrollViewGame.Bounds.Width - ScrollViewGame.ContentSize.Width) * 0.5 : 0.0;
+
+				double offsetY = (ScrollViewGame.Bounds.Height > ScrollViewGame.ContentSize.Height)? 
+					(ScrollViewGame.Bounds.Height - ScrollViewGame.ContentSize.Height) * 0.5 : 0.0;
+
+				subView.Center = new PointF((float)(ScrollViewGame.ContentSize.Width  * 0.5 + offsetX), 
+				                            (float)(ScrollViewGame.ContentSize.Height * 0.5 + offsetY));
+
+				// Change the way cells are displayed
+				const float zoomLimit = 0.45f;
 
 				if (mPathGrid.ShouldDisplayFilledCells == false) {
 					if (ScrollViewGame.ZoomScale <= zoomLimit) {
@@ -134,13 +147,13 @@ namespace PixPuzzle
 			};
 
 			// Margin
-			int margin = mPathGrid.CellSize * 4;
+//			int margin = 21;
 
 			// Center the grid
-			ScrollViewGame.ContentSize = new SizeF (mGridUIView.Frame.Width + margin, mGridUIView.Frame.Height + margin);
+//			ScrollViewGame.ContentSize = new SizeF (mGridUIView.Frame.Width + margin, mGridUIView.Frame.Height + margin);
 
-			PointF center = new PointF (ScrollViewGame.ContentSize.Width / 2, ScrollViewGame.ContentSize.Height / 2);
-			ScrollViewGame.ContentOffset = new PointF (center.X / 2, center.Y / 2);
+//			PointF center = new PointF (ScrollViewGame.ContentSize.Width / 2, ScrollViewGame.ContentSize.Height / 2);
+//			ScrollViewGame.ContentOffset = new PointF (center.X / 2, center.Y / 2);
 
 			// Scrolling with two fingers
 			foreach (UIGestureRecognizer gestureRecognizer in ScrollViewGame.GestureRecognizers) {     
@@ -151,7 +164,7 @@ namespace PixPuzzle
 				}
 			}
 
-			mGridUIView.Center = center;
+//			mGridUIView.Center = center;
 			ScrollViewGame.AddSubview (mGridUIView);
 
 			// Set timer in a thread
