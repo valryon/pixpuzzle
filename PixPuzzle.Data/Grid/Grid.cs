@@ -318,6 +318,8 @@ namespace PixPuzzle.Data
 				}
 			}
 
+			Logger.D ("Cells to draw:" + cellsToDraw.Count);
+
 			// Layer 0 : Background
 			// ================================================
 			View.DrawGrid ();
@@ -327,7 +329,7 @@ namespace PixPuzzle.Data
 			foreach (var cell in cellsToDraw) {
 
 				// Draw what's necessary
-				if ((cell.Path != null) || (cell.IsPathStartOrEnd)) {
+				if ((cell.Path != null && cell.Path.IsValid) || (cell.IsPathStartOrEnd)) {
 					View.DrawCellBase (cell);
 				}
 			}
@@ -335,6 +337,7 @@ namespace PixPuzzle.Data
 			// Layer 2 : Paths
 			// ================================================
 			foreach (var cell in cellsToDraw) {
+
 				// Preview mode is simplier
 				if (ShouldDisplayFilledCells == false) {
 
@@ -372,8 +375,7 @@ namespace PixPuzzle.Data
 								// Center Y in the current cell
 								pathStartY = cell.Rect.Y + ((CellSize - pathHeight) / 2);
 
-							} 
-							else {
+							} else {
 
 								// Vertical path
 								pathWidth = CellSize / 2;

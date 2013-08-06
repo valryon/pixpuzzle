@@ -46,8 +46,6 @@ namespace PixPuzzle.Data
 		{
 			Cells.Add (cell);
 			cell.Path = this;
-
-			Cells = Cells.OrderBy (c => c.X).ThenBy (c => c.Y).ToList();
 		}
 
 		/// <summary>
@@ -124,6 +122,17 @@ namespace PixPuzzle.Data
 				if (Cells.Contains (cell) == false) {
 					AddCell (cell);
 				}
+			}
+
+			// Sort cells
+			// Get the end and the start
+			var endAndStart = Cells.Where (c => c.IsPathStartOrEnd).OrderBy (c => c.X).ThenBy (c => c.Y);
+
+			Cells = Cells.Where(c => c.IsPathStartOrEnd == false).OrderBy (c => c.X).ThenBy (c => c.Y).ToList();
+			Cells.Insert (0, endAndStart.First ());
+
+			if (endAndStart.Last () != null) {
+				Cells.Add (endAndStart.Last ());
 			}
 
 			otherPath.Cells.Clear ();

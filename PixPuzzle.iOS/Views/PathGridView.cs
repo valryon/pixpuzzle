@@ -187,6 +187,7 @@ namespace PixPuzzle
 			mContext.SetFillColor (color);
 
 			if (mParent.ShouldDisplayFilledCells == false) {
+
 				// Draw a circle of the color
 				// But reduce the circle value
 				int circleReductionValue = mParent.CellSize / 10;
@@ -204,7 +205,9 @@ namespace PixPuzzle
 				image = UIImageEx.GetImageWithOverlayColor (image, cellColor.UIColor);
 
 				mContext.DrawImage (cellValueRect, image.CGImage);
+
 			} else {
+
 				// Fill the whole cell to preview puzzle
 				mContext.FillRect (cell.Rect);
 			}

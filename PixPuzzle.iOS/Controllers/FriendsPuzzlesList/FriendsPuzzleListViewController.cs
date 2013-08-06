@@ -49,8 +49,8 @@ namespace PixPuzzle
 			lastSelectedCell = cell;
 
 			if (cell is FriendsPuzzleListCellViewController) {
-				var friendsCell = cell as FriendsPuzzleListCellViewController;
-				var puzzle = puzzlesWitHFriends [indexPath.Item - 1];
+//				var friendsCell = cell as FriendsPuzzleListCellViewController;
+//				var puzzle = puzzlesWitHFriends [indexPath.Item - 1];
 
 
 			} else if (cell is FriendsPuzzleListNewCellViewController) {
