@@ -192,7 +192,7 @@ namespace PixPuzzle
 				// But reduce the circle value
 				int circleReductionValue = mParent.CellSize / 10;
 
-				RectangleF cellValueRect = new RectangleF (cell.AnimationRect.X + circleReductionValue, cell.AnimationRect.Y + circleReductionValue, mParent.CellSize - 2 * circleReductionValue, mParent.CellSize - 2 * circleReductionValue);
+				RectangleF cellValueRect = new RectangleF (cell.Rect.X + circleReductionValue, cell.Rect.Y + circleReductionValue, mParent.CellSize - 2 * circleReductionValue, mParent.CellSize - 2 * circleReductionValue);
 
 				UIImage image = null;
 
@@ -204,12 +204,13 @@ namespace PixPuzzle
 					mContext.DrawImage (cellValueRect, image.CGImage);
 
 				} else {
-					mContext.FillRect (cell.AnimationRect);
+
+					mContext.FillRect (cell.Rect);
 				}
 			} else {
 
 				// Fill the whole cell to preview puzzle
-				mContext.FillRect (cell.AnimationRect);
+				mContext.FillRect (cell.Rect);
 			}
 		}
 
@@ -318,14 +319,7 @@ namespace PixPuzzle
 
 		public void SelectCell (Cell cell) 
 		{
-//			cell.Scale = 2f;
-//
-//			mParent.UpdateView (new Cell[] { cell });
-//
-//			Animate (2f, () => {
-//				cell.Scale = 1.0f;
-//				mParent.UpdateView (new Cell[] { cell });
-//			});
+
 		}
 
 		public void UnselectCell (Cell cell, bool complete, bool cancel) {

@@ -79,8 +79,6 @@ namespace PixPuzzle.Data
 						GridLocation.X + c.X * CellSize, 
 						GridLocation.Y + c.Y * CellSize, 
 						CellSize, CellSize);
-						
-					c.AnimationRect = c.Rect;
 				}
 			}
 
