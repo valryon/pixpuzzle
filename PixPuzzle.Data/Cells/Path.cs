@@ -118,21 +118,13 @@ namespace PixPuzzle.Data
 			// The otherPath is the loser
 			// We transfer its data
 			// Then we kill it
-			foreach (Cell cell in otherPath.Cells) {
+
+			// Dequeue cells
+			for (int i= otherPath.Cells.Count - 1; i >= 0; i--) {
+				Cell cell = otherPath.Cells [i];
 				if (Cells.Contains (cell) == false) {
 					AddCell (cell);
 				}
-			}
-
-			// Sort cells
-			// Get the end and the start
-			var endAndStart = Cells.Where (c => c.IsPathStartOrEnd).OrderBy (c => c.X).ThenBy (c => c.Y);
-
-			Cells = Cells.Where(c => c.IsPathStartOrEnd == false).OrderBy (c => c.X).ThenBy (c => c.Y).ToList();
-			Cells.Insert (0, endAndStart.First ());
-
-			if (endAndStart.Last () != null) {
-				Cells.Add (endAndStart.Last ());
 			}
 
 			otherPath.Cells.Clear ();
