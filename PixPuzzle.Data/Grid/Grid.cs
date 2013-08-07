@@ -79,6 +79,8 @@ namespace PixPuzzle.Data
 						GridLocation.X + c.X * CellSize, 
 						GridLocation.Y + c.Y * CellSize, 
 						CellSize, CellSize);
+						
+					c.AnimationRect = c.Rect;
 				}
 			}
 
@@ -449,6 +451,8 @@ namespace PixPuzzle.Data
 
 						LastSelectedCell = cell;
 
+						View.SelectCell (cell);
+
 						return true;
 					} 
 				}
@@ -562,12 +566,15 @@ namespace PixPuzzle.Data
 					// Stop the path
 					cancelMove = true;
 					cancelReason = "Invalid cell for path";
+
+					
 				}
 			}
 
 			if (cancelMove) {
 				Logger.I (cancelReason);
 				EndPathCreation (false);
+				View.UnselectCell (cell, false, true);
 			}
 		
 			LastSelectedCell = cell;
@@ -599,6 +606,8 @@ namespace PixPuzzle.Data
 				if (isComplete) {
 					EndGrid ();
 				}
+
+				View.UnselectCell (LastSelectedCell, success, false);
 
 				// Forget cells
 				LastSelectedCell = null;

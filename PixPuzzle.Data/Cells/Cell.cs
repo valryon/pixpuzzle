@@ -20,6 +20,7 @@ namespace PixPuzzle.Data
 			Path = null;
 			IsPathStartOrEnd = false;
 			IsToDraw = true;
+			Scale = 1.0f;
 		}
 
         public Cell(int x, int y)
@@ -72,6 +73,11 @@ namespace PixPuzzle.Data
 		}
 
 		public Rectangle Rect {
+			get;
+			set;
+		}
+
+		public float Scale{
 			get;
 			set;
 		}

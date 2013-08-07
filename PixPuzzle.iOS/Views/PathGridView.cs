@@ -192,24 +192,24 @@ namespace PixPuzzle
 				// But reduce the circle value
 				int circleReductionValue = mParent.CellSize / 10;
 
-				RectangleF cellValueRect = new RectangleF (cell.Rect.X + circleReductionValue, cell.Rect.Y + circleReductionValue, mParent.CellSize - 2 * circleReductionValue, mParent.CellSize - 2 * circleReductionValue);
+				RectangleF cellValueRect = new RectangleF (cell.AnimationRect.X + circleReductionValue, cell.AnimationRect.Y + circleReductionValue, mParent.CellSize - 2 * circleReductionValue, mParent.CellSize - 2 * circleReductionValue);
 
 				UIImage image = null;
 
 				if (isValid == false) {
 					image = mSplashImage;
+
+					image = UIImageEx.GetImageWithOverlayColor (image, cellColor.UIColor);
+
+					mContext.DrawImage (cellValueRect, image.CGImage);
+
 				} else {
-					image = mSplashValidImage;
+					mContext.FillRect (cell.AnimationRect);
 				}
-
-				image = UIImageEx.GetImageWithOverlayColor (image, cellColor.UIColor);
-
-				mContext.DrawImage (cellValueRect, image.CGImage);
-
 			} else {
 
 				// Fill the whole cell to preview puzzle
-				mContext.FillRect (cell.Rect);
+				mContext.FillRect (cell.AnimationRect);
 			}
 		}
 
@@ -313,6 +313,23 @@ namespace PixPuzzle
 
 		public void EndDraw ()
 		{
+
+		}
+
+		public void SelectCell (Cell cell) 
+		{
+//			cell.Scale = 2f;
+//
+//			mParent.UpdateView (new Cell[] { cell });
+//
+//			Animate (2f, () => {
+//				cell.Scale = 1.0f;
+//				mParent.UpdateView (new Cell[] { cell });
+//			});
+		}
+
+		public void UnselectCell (Cell cell, bool complete, bool cancel) {
+
 
 		}
 
