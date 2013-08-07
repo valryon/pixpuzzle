@@ -500,11 +500,28 @@ namespace PixPuzzle.Data
 							bool sameColor = cell.Path.Color.Equals (FirstPathCell.Path.Color);
 							bool sameLength = (cell.Path.ExpectedLength == FirstPathCell.Path.ExpectedLength);
 
+							// Is this an end? We need to be sure we close the path
+							bool fusion = false;
+							if (cell.IsPathStartOrEnd) 
+							{
+								fusion = sameColor && sameLength && FirstPathCell != cell
+									&& (FirstPathCell.Path.Length + cell.Path.Length == FirstPathCell.Path.ExpectedLength);
+
+								if (fusion == false) {
+									cancelMove = true;
+									cancelReason = "Cannot close the path: invalid lengths.";
+								}
+							} else {
+								fusion = sameColor && sameLength && FirstPathCell != cell;
+
+								if (fusion == false) {
+									cancelMove = true;
+									cancelReason = "Cannot mix two differents path.";
+								}
+							}
+
 							// -- It's a completely different path, do not override
-							if (sameColor == false || sameLength == false) {
-								cancelMove = true;
-								cancelReason = "Cannot mix two differents path.";
-							} else if (sameColor && sameLength && FirstPathCell != cell) {
+							if (fusion) {
 
 								// Fusion between two paths parts
 								Logger.I ("Fusion!");
@@ -522,7 +539,8 @@ namespace PixPuzzle.Data
 								}
 								
 							} else if (FirstPathCell.Path.Cells.Contains (cell) 
-								&& Math.Abs (FirstPathCell.Path.IndexOf (LastSelectedCell) - FirstPathCell.Path.IndexOf (cell)) == 1) {
+								&& Math.Abs (FirstPathCell.Path.IndexOf (LastSelectedCell) - FirstPathCell.Path.IndexOf (cell)) == 1
+								&& cancelMove == false) {
 								
 								// We're getting back 
 								// Remove all the cells past the one we jut reached
@@ -536,13 +554,6 @@ namespace PixPuzzle.Data
 								cellsToUpdate.AddRange (removedCells);
 
 								UpdateView (cellsToUpdate.ToArray ());
-							} else {
-								// I don't know what's we're doing.
-								// ABANDON ALL THE WORK
-
-								// You cannot loop so easily!
-								cancelMove = true;
-								cancelReason = "Unreachable code... reached. Time to panic! ";
 							}
 						}
 					}
