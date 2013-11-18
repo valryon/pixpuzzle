@@ -3,15 +3,33 @@ PixPuzzle
 
 A simple Pathpix-like puzzle app, made for fun.
 
-## Specs
+## Description
 
-Works on iOS and Windows Phone.
+PixPuzzle is a simple "connect the dots" game in a grid and with the addition of color.
 
-Same basis, just the render part that is platform specific.
+It takes an image as a source and generate a puzzle from it. The player has to fill all the grid to complete the level and unlock a new image.
+
+## Project state
+
+This project is not under development anymore, as I am not using Xamarin for now.
+
+Plus, I don't want to just make and sell a copy of an existing game. I tried to add some features like "take a picture -> generate a puzzle from it" but I wasn't convinced with the result.
+
+Apart from that, the game is pretty functionnal (but not optimized at all).
+
+## Technical side
+
+This project is made with Xamarin and target iOS devices (mainly iPads).
+
+## Windows Phone?
+
+It used to work on iOS and Windows Phone, but the Windows Phone project hasn't been updated for a while. But still, with few modifications the game should be working again.
 
 ## Screenshots
 
 ### iPad
+
+Old game screenshot :
 
 ![iPad screenshot](http://tof.canardpc.com/view/45cc25de-01ad-488e-9a8e-193efd678468.jpg "iPad screenshot")
 
