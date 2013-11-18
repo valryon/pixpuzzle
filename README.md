@@ -15,7 +15,7 @@ This project is not under development anymore, as I am not using Xamarin for now
 
 Plus, I don't want to just make and sell a copy of an existing game. I tried to add some features like "take a picture -> generate a puzzle from it" but I wasn't convinced with the result.
 
-Apart from that, the game is pretty functionnal (but not optimized at all).
+Apart from that, the game is pretty functionnal (but not optimized at all and with some render issues).
 
 ## Technical side
 
